@@ -172,19 +172,6 @@ public class FallbackRequestHandler implements RequestHandler {
             String cachename = XmlPath.getRootNodeValue(msgdoc);
             CacheRegistration.broadcastRefresh(cachename, MessengerFactory.newInternalMessenger());
             response = "OK";
-        } else if (rootNodeName.equals("_mdw_document_content")) {
-            String documentId = XmlPath.evaluate(msgdoc, "/_mdw_document_content/document_id");
-            String type = XmlPath.evaluate(msgdoc, "/_mdw_document_content/type");
-            try {
-                Document doc = ServiceLocator.getWorkflowServices().getDocument(new Long(documentId));
-                if (type.equals(Object.class.getName())) {
-                    Object obj = getPackage(doc).getObjectValue("java.lang.Object", doc.getContent(getPackage(doc)), true);
-                    response = obj.toString();
-                } else response = doc.getContent(getPackage(doc));
-            } catch (Exception e) {
-                logger.error(e.getMessage(), e);
-                response = "ERROR: " + e.getClass().getName() + " - " + e.getMessage();
-            }
         } else if (rootNodeName.equals("_mdw_task_sla")) {
             try {
                 TaskServices taskServices = ServiceLocator.getTaskServices();

@@ -24,12 +24,13 @@ import org.json.JSONException;
 import com.centurylink.mdw.translator.DocumentReferenceTranslator;
 import com.centurylink.mdw.translator.TranslationException;
 
+@SuppressWarnings("unused")
 public class IntegerListTranslator extends DocumentReferenceTranslator {
 
     @Override
-    public Object realToObject(String str) throws TranslationException {
+    public Object toObject(String str, String type) throws TranslationException {
         try {
-            List<Integer> intList = new ArrayList<Integer>();
+            List<Integer> intList = new ArrayList<>();
             JSONArray jsonArray = new JSONArray(str);
             for (int i = 0; i < jsonArray.length(); i++)
               intList.add((Integer)jsonArray.opt(i));
@@ -41,7 +42,8 @@ public class IntegerListTranslator extends DocumentReferenceTranslator {
     }
 
     @SuppressWarnings("unchecked")
-    public String realToString(Object obj) throws TranslationException {
+    @Override
+    public String toString(Object obj, String variableType) throws TranslationException {
         List<Integer> intList = (List<Integer>) obj;
         JSONArray jsonArray = new JSONArray();
         for (Integer integer : intList)

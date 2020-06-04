@@ -32,7 +32,8 @@ import com.centurylink.mdw.translator.TranslationException;
 
 public class JavaObjectTranslator extends DocumentReferenceTranslator {
 
-    public Object realToObject(String str) throws TranslationException {
+    @Override
+    public Object toObject(String str, String type) throws TranslationException {
         ObjectInputStream ois = null;
         try {
             byte[] decoded = decodeBase64(str);
@@ -76,7 +77,8 @@ public class JavaObjectTranslator extends DocumentReferenceTranslator {
         }
     }
 
-    public String realToString(Object obj) throws TranslationException {
+    @Override
+    public String toString(Object obj, String variableType) throws TranslationException {
         if (!(obj instanceof Serializable))
             throw new TranslationException("Object must implement java.io.Serializable: " + obj.getClass());
 
@@ -106,5 +108,4 @@ public class JavaObjectTranslator extends DocumentReferenceTranslator {
     protected String encodeBase64(byte[] inputBytes) {
         return new String(Base64.encodeBase64(inputBytes));
     }
-
 }

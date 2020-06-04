@@ -58,7 +58,7 @@ public abstract class JsonXmlRestService extends JsonRestService implements XmlS
             Package pkg = getPkg(metaInfo);
             JSONObject jsonObj = null;
             if (xml != null)
-                jsonObj = ((Jsonable)getJaxbTranslator(pkg).realToObject(xml.xmlText())).getJson();
+                jsonObj = ((Jsonable)getJaxbTranslator(pkg).toObject(xml.xmlText(), XmlObject.class.getName())).getJson();
 
             return getJson(jsonObj, metaInfo);
         }

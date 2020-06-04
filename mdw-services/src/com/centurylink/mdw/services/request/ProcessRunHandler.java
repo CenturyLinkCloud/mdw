@@ -37,9 +37,8 @@ public abstract class ProcessRunHandler extends BaseHandler {
             String processType = process.getProcessType();
             Map<String,Object> inputValues = getInputValues(request, message, headers);
             if (processType.equals(ProcessVisibilityConstant.SERVICE)) {
-                String responseContent = invokeServiceProcess(process.getId(), requestId, masterRequestId,
+                return invokeServiceProcess(process.getId(), requestId, masterRequestId,
                         request.getContent(), inputValues, headers);
-                return new Response(responseContent);
             }
             else {
                 launchProcess(process.getId(), requestId, masterRequestId, inputValues, headers);
@@ -88,7 +87,7 @@ public abstract class ProcessRunHandler extends BaseHandler {
                 values = new HashMap<>();
                 String varType = requestVar.getType();
                 if (pkg.getTranslator(varType).isDocumentReferenceVariable()) {
-                    Object document = pkg.getObjectValue(varType, request.getContent(), true);
+                    Object document = pkg.getObjectValue(varType, request.getContent(), true, message.getClass().getName());
                     String path = headers.get(Listener.METAINFO_REQUEST_PATH);
                     Long requestId = new Long(headers.get(Listener.METAINFO_DOCUMENT_ID));
                     Long docId = ServiceLocator.getEventServices().createDocument(varType, OwnerType.DOCUMENT, requestId, document, pkg, path);

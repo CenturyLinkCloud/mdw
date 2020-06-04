@@ -91,8 +91,8 @@ public class ProcessStartEventHandler extends ExternalEventHandlerBase {
                 com.centurylink.mdw.variable.VariableTranslator translator = getPackage().getTranslator(vartype);
                 if (translator instanceof DocumentReferenceTranslator) {
                     DocumentReferenceTranslator docTranslator = (DocumentReferenceTranslator)translator;;
-                    Object document = docTranslator.realToObject(msgdoc.xmlText());
-                    DocumentReference docRef = createDocument(vartype, document,  OwnerType.DOCUMENT, new Long(metaInfo.get(Listener.METAINFO_DOCUMENT_ID)), new Long(0), null, null);
+                    Object document = docTranslator.toObject(msgdoc.xmlText(), null);
+                    DocumentReference docRef = createDocument(vartype, document, OwnerType.DOCUMENT, new Long(metaInfo.get(Listener.METAINFO_DOCUMENT_ID)), new Long(0), null, null);
                     params.put("request", docRef.toString());
                 }
                 else {

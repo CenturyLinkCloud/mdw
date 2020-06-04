@@ -15,7 +15,6 @@
  */
 package com.centurylink.mdw.listener;
 
-import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.StartActivity;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.asset.PackageCache;
@@ -26,6 +25,7 @@ import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.file.Packages;
 import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.model.StringDocument;
 import com.centurylink.mdw.model.asset.AssetPath;
 import com.centurylink.mdw.model.event.InternalEvent;
 import com.centurylink.mdw.model.listener.Listener;
@@ -560,17 +560,17 @@ public class ListenerHelper {
     }
 
     private Long createRequestDocument(String request, Long handlerId, String path) throws RequestHandlerException {
-        String docType = request == null || request.isEmpty() || isJson(request) ? JSONObject.class.getName() : XmlObject.class.getName();
-        return createDocument(docType, request, null, OwnerType.LISTENER_REQUEST, handlerId, path).getDocumentId();
+        String varType = request == null || request.isEmpty() || isJson(request) ? JSONObject.class.getName() : XmlObject.class.getName();
+        return createDocument(varType, request, null, OwnerType.LISTENER_REQUEST, handlerId, path).getDocumentId();
     }
 
     private Long createResponseDocument(Response response, Long ownerId) throws RequestHandlerException {
-        String docType = String.class.getName();
-        return createDocument(docType, response, OwnerType.LISTENER_RESPONSE, ownerId).getDocumentId();
+        String variableType = StringDocument.class.getName();
+        return createDocument(variableType, response, OwnerType.LISTENER_RESPONSE, ownerId).getDocumentId();
     }
 
     private JSONObject createRequestMetaDocument(Map<String,String> metaInfo, Set<String> reqMetaInfo, Long ownerId)
-            throws RequestHandlerException, JSONException{
+            throws RequestHandlerException {
         JSONObject meta = new JsonObject();
         JSONObject headers = new JsonObject();
 
@@ -685,9 +685,9 @@ public class ListenerHelper {
         }
     }
 
-    public DocumentReference createDocument(String docType, Object document, String ownerType, Long ownerId)
+    public DocumentReference createDocument(String variableType, Object document, String ownerType, Long ownerId)
                     throws RequestHandlerException {
-        return createDocument(docType, document, null, ownerType, ownerId);
+        return createDocument(variableType, document, null, ownerType, ownerId);
     }
 
     /**
@@ -695,10 +695,9 @@ public class ListenerHelper {
      * document reference returned can be sent as parameters to start or inform
      * processes.
      *
-     * @param docType
-     *            this should be variable type if the document reference is to
-     *            be bound to variables.
-     * @param document
+     * @param variableType
+     *            Variable type for serializing
+     * @param docObj
      *            The document object itself, such as an XML bean document
      *            (subclass of XmlObject)
      * @param pkg
@@ -713,16 +712,16 @@ public class ListenerHelper {
      *            This should be the external event handler ID for
      *            LISTENER_REQUEST and request document ID for LISTENER_RESPONSE
      */
-    public DocumentReference createDocument(String docType, Object document, Package pkg, String ownerType, Long ownerId)
+    public DocumentReference createDocument(String variableType, Object docObj, Package pkg, String ownerType, Long ownerId)
             throws RequestHandlerException {
-        return createDocument(docType, document, pkg, ownerType, ownerId, null);
+        return createDocument(variableType, docObj, pkg, ownerType, ownerId, null);
     }
 
-    public DocumentReference createDocument(String docType, Object document, Package pkg,
+    public DocumentReference createDocument(String variableType, Object docObj, Package pkg,
             String ownerType, Long ownerId, String path) throws RequestHandlerException {
         // TODO: proper package association (usually pkg is null)
         try {
-            Long docId = ServiceLocator.getEventServices().createDocument(docType, ownerType, ownerId, document, pkg, path);
+            Long docId = ServiceLocator.getEventServices().createDocument(variableType, ownerType, ownerId, docObj, pkg, path);
             return new DocumentReference(docId);
         }
         catch (Exception ex) {
@@ -731,19 +730,7 @@ public class ListenerHelper {
         }
     }
 
-    public void updateDocumentContent(DocumentReference docref, Object doc, String type, Package pkg)
-            throws ActivityException {
-        try {
-            EventServices eventMgr = ServiceLocator.getEventServices();
-            eventMgr.updateDocumentContent(docref.getDocumentId(), doc, type, pkg);
-        }
-        catch (Exception ex) {
-            logger.error(ex.getMessage(), ex);
-            throw new ActivityException(ex.getMessage(), ex);
-        }
-    }
-
-    public ServiceHandler getServiceHandler(String request, Map<String, String> metaInfo)
+    public ServiceHandler getServiceHandler(String request, Map<String,String> metaInfo)
             throws EventException {
         EventServices eventMgr = ServiceLocator.getEventServices();
         String protocol = metaInfo.get(Listener.METAINFO_PROTOCOL);

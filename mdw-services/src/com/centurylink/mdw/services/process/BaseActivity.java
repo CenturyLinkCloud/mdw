@@ -97,7 +97,7 @@ public abstract class BaseActivity implements GeneralActivity {
     /**
      * Repopulates variable values in case they've changed during execution.
      */
-    public ActivityRuntimeContext getRuntimeContext() throws ActivityException {
+    public ActivityRuntimeContext getRuntimeContext() {
         for (VariableInstance var : getParameters()) {
             try {
                 _runtimeContext.getValues().put(var.getName(), getVariableValue(var.getName()));
@@ -562,18 +562,18 @@ public abstract class BaseActivity implements GeneralActivity {
      * The method will throw an exception if the document reference points to
      * a remote document.
      * @param name name
-     * @param varType variable type
+     * @param variableType variable type
      * @param value this is the document
      */
-    protected DocumentReference setParameterValueAsDocument(String name, String varType, Object value)
+    protected DocumentReference setParameterValueAsDocument(String name, String variableType, Object value)
             throws ActivityException {
         DocumentReference docref = (DocumentReference)this.getParameterValue(name);
         if (docref == null) {
-            docref = createDocument(varType, value, OwnerType.VARIABLE_INSTANCE, 0L);
+            docref = createDocument(variableType, value, OwnerType.VARIABLE_INSTANCE, 0L);
             Long varInstId = setParameterValue(name, docref);
             updateDocumentInfo(docref, null, OwnerType.VARIABLE_INSTANCE, varInstId);
         } else {
-            updateDocumentContent(docref, value, varType);
+            updateDocumentContent(docref, value, variableType);
         }
         return docref;
     }
@@ -846,54 +846,54 @@ public abstract class BaseActivity implements GeneralActivity {
      * Given a document reference object (typically bound to a
      * document variable), returns the actual document object.
      */
-    protected Object getDocument(DocumentReference docref, String type) throws ActivityException {
-        Document docvo;
+    protected Object getDocument(DocumentReference docRef, String variableType) throws ActivityException {
+        Document doc;
         try {
-            docvo = engine.getDocument(docref, false);
+            doc = engine.getDocument(docRef, false);
             // deserialize if needed
-            docvo.getObject(type, getPackage());
+            return doc.getObject(variableType, getPackage());
         } catch (Exception ex) {
-            logexception("Error retrieving " + docref, ex);
-            throw new ActivityException("Error retrieving " + docref, ex);
+            logexception("Error retrieving " + docRef, ex);
+            throw new ActivityException("Error retrieving " + docRef, ex);
         }
-        return docvo.getObject(type, getPackage());
     }
 
-    protected String getDocumentContent(DocumentReference docref) throws ActivityException {
-        Document docvo;
+    protected String getDocumentContent(DocumentReference docRef)
+            throws ActivityException {
+        Document doc;
         try {
-            docvo = engine.getDocument(docref, false);
+            doc = engine.getDocument(docRef, false);
+            return doc == null ? null : doc.getContent(getPackage());
         } catch (Exception ex) {
-            logexception("Error retrieving " + docref, ex);
-            throw new ActivityException("Error retrieving " + docref, ex);
+            logexception("Error retrieving " + docRef, ex);
+            throw new ActivityException("Error retrieving " + docRef, ex);
         }
-        return docvo==null?null:docvo.getContent(getPackage());
     }
 
     /**
      * Same as getDocument() but also puts a write lock on it.
      * The lock will be released at the end of the transaction.
      *
-     * @param docref document reference
+     * @param docRef document reference
      */
-    protected Object getDocumentForUpdate(DocumentReference docref, String type)
-            throws ActivityException {
-        Document docvo;
+    protected Object getDocumentForUpdate(DocumentReference docRef, String variableType) throws ActivityException {
+        Document doc;
         try {
-            docvo = engine.getDocument(docref, true);
+            doc = engine.getDocument(docRef, true);
             // deserialize here (TODO why?)
-            Object obj = getPackage().getObjectValue(type, docvo.getContent(getPackage()), true);
-            docvo.setObject(obj, type);
+            Object obj = getPackage().getObjectValue(variableType, doc.getContent(getPackage()), true, doc.getType());
+            doc.setObject(obj);
+            doc.setVariableType(variableType);
         } catch (Exception ex) {
-            logexception("Error retrieving " + docref, ex);
-            throw new ActivityException("Error retrieving " + docref, ex);
+            logexception("Error retrieving " + docRef, ex);
+            throw new ActivityException("Error retrieving " + docRef, ex);
         }
-        return docvo.getObject(type, getPackage());
+        return doc.getObject(variableType, getPackage());
     }
 
-    protected DocumentReference createDocument(String docType, Object document, String ownerType,
+    protected DocumentReference createDocument(String variableType, Object document, String ownerType,
             Long ownerId) throws ActivityException {
-        return createDocument(docType, document, ownerType, ownerId, null, null, null);
+        return createDocument(variableType, document, ownerType, ownerId, null, null, null);
     }
 
     protected DocumentReference createDocument(String docType, Object document, String ownerType,
@@ -901,12 +901,17 @@ public abstract class BaseActivity implements GeneralActivity {
         return createDocument(docType, document, ownerType, ownerId, null, null, path);
     }
 
+    protected DocumentReference createDocument(String variableType, Object document, String ownerType,
+            Long ownerId, Integer statusCode, String statusMessage) throws ActivityException {
+        return createDocument(variableType, document, ownerType, ownerId, statusCode, statusMessage, null);
+    }
+
     /**
      * Create a new document, persisted in database, and return a document
      * reference object, to be bound to a variable.
      *
-     * @param docType type of the document (i.e. variable type)
-     * @param document document object itself
+     * @param variableType type of the document (i.e. variable type)
+     * @param docObj document object itself
      * @param ownerType owner type. More than likely this will be OwnerType.VARIABLE_INSTANCE
      *      other possible types are LISTENER_REQUEST, LISTENER_RESPONSE,
      *      ADAPTOR_REQUEST, ADAPTOR_RESPONSE
@@ -915,19 +920,14 @@ public abstract class BaseActivity implements GeneralActivity {
      * @param statusMessage message
      * @return document reference
      */
-    protected DocumentReference createDocument(String docType, Object document, String ownerType,
-            Long ownerId, Integer statusCode, String statusMessage) throws ActivityException {
-        return createDocument(docType, document, ownerType, ownerId, statusCode, statusMessage, null);
-    }
-
-    protected DocumentReference createDocument(String docType, Object document, String ownerType,
+    protected DocumentReference createDocument(String variableType, Object docObj, String ownerType,
             Long ownerId, Integer statusCode, String statusMessage, String path) throws ActivityException {
         try {
-            if (!(document instanceof String)) {
-                // do serialization here TODO: left over from package-aware translator providers
-                document = getPackage().getStringValue(docType, document, true);
+            if (!(docObj instanceof String)) {
+                // do serialization here TODO: left over from package-aware translator providers?
+                docObj = getPackage().getStringValue(variableType, docObj, true);
             }
-            return engine.createDocument(docType, ownerType, ownerId, statusCode, statusMessage, path, document);
+            return engine.createDocument(variableType, ownerType, ownerId, statusCode, statusMessage, path, docObj, getPackage());
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
             throw new ActivityException(ex.getMessage(), ex);
@@ -937,17 +937,17 @@ public abstract class BaseActivity implements GeneralActivity {
     /**
      * Update the content (actual document object) bound to the given
      * document reference object.
-     * @param docref document reference
-     * @param document document
+     * @param docRef document reference
+     * @param docObj document
      */
-    protected void updateDocumentContent(DocumentReference docref, Object document, String type)
+    protected void updateDocumentContent(DocumentReference docRef, Object docObj, String variableType)
             throws ActivityException {
         try {
-            if (!(document instanceof String)) {
+            if (!(docObj instanceof String)) {
                 // serialize here TODO: leftover support for package aware translator providers
-                document = getPackage().getStringValue(type, document, true);
+                docObj = getPackage().getStringValue(variableType, docObj, true);
             }
-            engine.updateDocumentContent(docref, document, type, getPackage());
+            engine.updateDocumentContent(docRef, docObj, getPackage());
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
             throw new ActivityException(ex.getMessage(), ex);
@@ -1273,7 +1273,7 @@ public abstract class BaseActivity implements GeneralActivity {
 
                 // don't check in production (or for cache-only perf level since old values are not retained)
                 if (!ApplicationContext.isProduction() && (getPerformanceLevel() < 5)) {
-                    boolean changed = hasDocumentValueChanged(varName, value);
+                    boolean changed = hasDocumentValueChanged(varName, varType, value);
 
                     if (changed){
                         if (!isOutputDoc) {
@@ -1318,7 +1318,7 @@ public abstract class BaseActivity implements GeneralActivity {
         return false;
     }
 
-    private boolean hasDocumentValueChanged(String varName, Object newValue) throws DataAccessException {
+    private boolean hasDocumentValueChanged(String varName, String varType, Object newValue) throws DataAccessException {
         DocumentReference docRef = (DocumentReference) getParameterValue(varName);
 
         if (docRef == null)
@@ -1332,20 +1332,21 @@ public abstract class BaseActivity implements GeneralActivity {
         if (newValue == null)
             return true;  // we already know old value is not null
 
+
+        String docType = newValue.getClass().getName();
         String oldString = doc.getContent(getPackage());
-        Object oldObject = getPackage().getObjectValue(doc.getType(), oldString, true);
+        Object oldObject = getPackage().getObjectValue(varType, oldString, true, docType);
 
         if (doc.getType().equals(Object.class.getName()))
             return !newValue.equals(oldObject);
 
         // general comparison involves reserializing since round-trip results are not guaranteed
-        oldString = getPackage().getStringValue(doc.getType(), oldObject, true);
-        String newString = getPackage().getStringValue(doc.getType(), newValue, true);
+        oldString = getPackage().getStringValue(varType, oldObject, true);
+        String newString = getPackage().getStringValue(varType, newValue, true);
         return !newString.equals(oldString);
     }
 
-    public TransactionWrapper startTransaction()
-            throws ActivityException {
+    public TransactionWrapper startTransaction() throws ActivityException {
         try {
             return engine.startTransaction();
         } catch (DataAccessException e) {
@@ -1353,8 +1354,7 @@ public abstract class BaseActivity implements GeneralActivity {
         }
     }
 
-    public void stopTransaction(TransactionWrapper transaction)
-            throws ActivityException {
+    public void stopTransaction(TransactionWrapper transaction) throws ActivityException {
         try {
             engine.stopTransaction(transaction);
         } catch (DataAccessException e) {

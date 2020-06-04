@@ -73,22 +73,22 @@ public class EventServicesImpl implements EventServices {
     /**
      * Method that creates the event log based on the passed in params
      *
-     * @param pEventName event name
-     * @param pEventCategory event category
-     * @param pEventSource event source
-     * @param pEventOwner event owner
-     * @param pEventOwnerId event owner id
+     * @param eventName event name
+     * @param category event category
+     * @param source event source
+     * @param ownerType event owner
+     * @param ownerId event owner id
      * @return EventLog
      */
-    public Long createEventLog(String pEventName, String pEventCategory, String pEventSubCat, String pEventSource,
-            String pEventOwner, Long pEventOwnerId, String user, String modUser, String comments)
+    public Long createEventLog(String eventName, String category, String subcategory, String source,
+            String ownerType, Long ownerId, String user, String modUser, String comments)
             throws DataAccessException, EventException {
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
         try {
             transaction = edao.startTransaction();
-            return edao.recordEventLog(pEventName, pEventCategory, pEventSubCat,
-                    pEventSource, pEventOwner, pEventOwnerId, user, modUser, comments);
+            return edao.recordEventLog(eventName, category, subcategory,
+                    source, ownerType, ownerId, user, modUser, comments);
         } catch (SQLException e) {
             edao.rollbackTransaction(transaction);
             throw new EventException("Failed to create event log", e);
@@ -97,12 +97,12 @@ public class EventServicesImpl implements EventServices {
         }
     }
 
-    public Integer notifyProcess(String eventName, Long docId, String message, int delay)
+    public Integer notifyProcess(String eventName, Long eventInstanceId, String message, int delay)
             throws DataAccessException, EventException {
         EngineDataAccess edao = new EngineDataAccessDB();
         InternalMessenger msgBroker = MessengerFactory.newInternalMessenger();
         ProcessExecutor engine = new ProcessExecutor(edao, msgBroker, false);
-        return engine.notifyProcess(eventName, docId, message, delay);
+        return engine.notifyProcess(eventName, eventInstanceId, message, delay);
     }
 
     /**
@@ -463,7 +463,7 @@ public class EventServicesImpl implements EventServices {
         return wti;
     }
 
-    public void updateDocumentContent(Long docId, Object docObj, String type, Package pkg)
+    public void updateDocumentContent(Long docId, Object docObj, Package pkg)
             throws DataAccessException {
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
@@ -473,7 +473,7 @@ public class EventServicesImpl implements EventServices {
             if (docObj instanceof String)
                 doc.setContent((String)docObj);
             else
-                doc.setObject(docObj, type);
+                doc.setObject(docObj);
             edao.updateDocumentContent(doc.getId(), doc.getContent(pkg));
         } catch (SQLException e) {
             throw new DataAccessException(-1, "Failed to update document content", e);
@@ -488,17 +488,17 @@ public class EventServicesImpl implements EventServices {
         EngineDataAccessDB edao = new EngineDataAccessDB();
         try {
             transaction = edao.startTransaction();
-            Document docvo = edao.getDocument(docid, false);
+            Document doc = edao.getDocument(docid, false);
             if (documentType != null)
-                docvo.setType(documentType);
+                doc.setType(documentType);
             if (ownerType != null) {
-                if (!ownerType.equalsIgnoreCase(docvo.getOwnerType()))
-                    edao.getDocumentDbAccess().updateDocumentDbOwnerType(docvo, ownerType);
-                docvo.setOwnerType(ownerType);
+                if (!ownerType.equalsIgnoreCase(doc.getOwnerType()))
+                    edao.getDocumentDbAccess().updateDocumentDbOwnerType(doc, ownerType);
+                doc.setOwnerType(ownerType);
             }
             if (ownerId != null)
-                docvo.setOwnerId(ownerId);
-            edao.updateDocumentInfo(docvo);
+                doc.setOwnerId(ownerId);
+            edao.updateDocumentInfo(doc);
         }
         catch (SQLException e) {
             throw new DataAccessException(-1, "Failed to update document content", e);
@@ -508,12 +508,12 @@ public class EventServicesImpl implements EventServices {
         }
     }
 
-    public Long createDocument(String type, String ownerType, Long ownerId, Object doc, Package pkg)
+    public Long createDocument(String variableType, String ownerType, Long ownerId, Object docObj, Package pkg)
             throws DataAccessException {
-        return createDocument(type, ownerType, ownerId, doc, pkg, null);
+        return createDocument(variableType, ownerType, ownerId, docObj, pkg,null);
     }
 
-    public Long createDocument(String type, String ownerType, Long ownerId, Object docObj, Package pkg, String path)
+    public Long createDocument(String variableType, String ownerType, Long ownerId, Object docObj, Package pkg, String path)
             throws DataAccessException {
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
@@ -532,8 +532,9 @@ public class EventServicesImpl implements EventServices {
             else if (docObj instanceof String)
                 doc.setContent((String)docObj);
             else
-                doc.setObject(docObj, type);
-            doc.setType(type);
+                doc.setObject(docObj);
+            doc.setVariableType(variableType);
+            doc.setType(docObj == null || docObj instanceof String ? variableType : docObj.getClass().getName());
             doc.setOwnerType(ownerType);
             doc.setOwnerId(ownerId);
             doc.setPath(path);
@@ -545,11 +546,11 @@ public class EventServicesImpl implements EventServices {
         }
     }
 
-    public List<EventLog> getEventLogs(String eventName, String eventSource,
-            String eventOwner, Long ownerId) throws ServiceException {
+    public List<EventLog> getEventLogs(String eventName, String source,
+            String ownerType, Long ownerId) throws ServiceException {
         EventDataAccess dataAccess = new EventDataAccess();
         try {
-            return dataAccess.getEventLogs(eventName, eventSource, eventOwner, ownerId);
+            return dataAccess.getEventLogs(eventName, source, ownerType, ownerId);
         } catch (DataAccessException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
         }

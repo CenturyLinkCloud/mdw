@@ -20,10 +20,10 @@ activities:
   implementor: com.centurylink.mdw.workflow.activity.event.EventWaitActivity
   attributes:
     SLA_DISPLAY_UNITS: Hours
-    WAIT_EVENT_NAMES: '[["RequestHandlers-${masterRequestId}",""]]'
-    rcvdMsgDocVar: notifyMessage
     STATUS_AFTER_TIMEOUT: Cancelled
+    WAIT_EVENT_NAMES: '[["RequestHandlers-${masterRequestId}",""]]'
     WORK_DISPLAY_INFO: x=280,y=100,w=100,h=60
+    rcvdMsgDocVar: notifyMessage
   transitions:
   - id: T2
     to: A2
@@ -40,5 +40,5 @@ variables:
 attributes:
   ArrowStyle: ArrowEnd
   NodeStyle: BoxIcon
-  WORK_DISPLAY_INFO: x=38,y=35,w=162,h=26
   PROCESS_VISIBILITY: PUBLIC
+  WORK_DISPLAY_INFO: x=38,y=35,w=162,h=26

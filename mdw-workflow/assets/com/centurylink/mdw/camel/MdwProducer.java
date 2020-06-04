@@ -215,7 +215,7 @@ public class MdwProducer extends DefaultProducer {
     }
 
     protected Map<String,String> getMetaInfo(Message request) {
-        Map<String,String> metaInfo = new HashMap<String,String>();
+        Map<String,String> metaInfo = new HashMap<>();
         for (String key : request.getHeaders().keySet()) {
             metaInfo.put(key, request.getHeader(key, String.class));
         }

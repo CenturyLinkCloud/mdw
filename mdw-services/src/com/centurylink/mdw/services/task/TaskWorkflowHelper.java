@@ -570,7 +570,7 @@ public class TaskWorkflowHelper {
             }
             jsonMsg.put(TaskAttributeConstant.TASK_ACTION, formAction);
             JSONObject jsonMeta = new JsonObject().put("META", jsonMsg);
-            Long docId = createDocument(JSONObject.class.getName(), jsonMeta);
+            Long docId = createDocument(jsonMeta, JSONObject.class.getName());
             String av = PropertyManager.getProperty(PropertyNames.ACTIVITY_RESUME_DELAY);
             int delay = 2;
             if (av!=null) {
@@ -605,7 +605,7 @@ public class TaskWorkflowHelper {
             param.setName("Action");
             param.setStringValue(action);
 
-            Long docId = createDocument(XmlObject.class.getName(), actionRequestDoc);
+            Long docId = createDocument(actionRequestDoc, XmlObject.class.getName());
             int delay = 2;
             String av = PropertyManager.getProperty(PropertyNames.ACTIVITY_RESUME_DELAY);
             if (av!=null) {
@@ -631,7 +631,7 @@ public class TaskWorkflowHelper {
         eventManager.notifyProcess(eventName, eventInstId, message, delay);
     }
 
-    private Long createDocument(String type, Object value) throws DataAccessException, ServiceException {
+    private Long createDocument(Object value, String variableType) throws DataAccessException, ServiceException {
         if (!OwnerType.PROCESS_INSTANCE.equals(taskInstance.getOwnerType()))
             throw new DataAccessException("Invalid owner for creating task doc: "
                     + taskInstance.getOwnerType() + " (" + taskInstance.getId() + ")");
@@ -640,7 +640,7 @@ public class TaskWorkflowHelper {
         ProcessInstance proc = workflowServices.getProcess(taskInstance.getOwnerId());
         Package pkg = PackageCache.getPackage(proc.getPackageName());
         EventServices eventMgr = ServiceLocator.getEventServices();
-        return eventMgr.createDocument(type, OwnerType.TASK_INSTANCE, taskInstance.getTaskInstanceId(), value, pkg);
+        return eventMgr.createDocument(variableType, OwnerType.TASK_INSTANCE, taskInstance.getTaskInstanceId(), value, pkg);
     }
 
     public Long getActivityInstanceId(boolean sourceActInst)

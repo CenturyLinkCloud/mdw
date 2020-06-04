@@ -12,3 +12,6 @@ start process("Jsonable.proc") {
             testCase: 'Input Variable'
     ]
 }
+
+wait process
+verify process

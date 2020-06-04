@@ -256,7 +256,7 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
                             value = getPackage().getObjectValue(var.getType(), varvalue);
                         }
                         else {
-                            DocumentReference docref = super.createDocument(var.getType(),
+                            DocumentReference docref = createDocument(var.getType(),
                                     varvalue, OwnerType.PROCESS_INSTANCE, this.getProcessInstanceId());
                             value = new DocumentReference(docref.getDocumentId());
                         }

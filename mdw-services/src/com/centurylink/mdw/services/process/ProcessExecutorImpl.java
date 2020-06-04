@@ -30,6 +30,7 @@ import com.centurylink.mdw.model.event.EventType;
 import com.centurylink.mdw.model.event.EventWaitInstance;
 import com.centurylink.mdw.model.event.InternalEvent;
 import com.centurylink.mdw.model.monitor.ScheduledEvent;
+import com.centurylink.mdw.model.request.Response;
 import com.centurylink.mdw.model.variable.Document;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.Variable;
@@ -137,33 +138,34 @@ class ProcessExecutorImpl {
         return variableInstance;
     }
 
-    DocumentReference createDocument(String type, String ownerType, Long ownerId, Object document)
+    DocumentReference createDocument(String variableType, String ownerType, Long ownerId, Object docObj, Package pkg)
             throws DataAccessException {
-        return createDocument(type, ownerType, ownerId, null, null, document);
+        return createDocument(variableType, ownerType, ownerId, null, null, docObj, pkg);
     }
 
-    DocumentReference createDocument(String type, String ownerType, Long ownerId,
-            Integer statusCode, String statusMessage, Object document) throws DataAccessException {
-        return createDocument(type, ownerType, ownerId, statusCode, statusMessage, null, document);
+    DocumentReference createDocument(String variableType, String ownerType, Long ownerId,
+            Integer statusCode, String statusMessage, Object docObj, Package pkg) throws DataAccessException {
+        return createDocument(variableType, ownerType, ownerId, statusCode, statusMessage, null, docObj, pkg);
     }
 
-    DocumentReference createDocument(String type, String ownerType, Long ownerId,
-            Integer statusCode, String statusMessage, String path, Object document)
+    DocumentReference createDocument(String variableType, String ownerType, Long ownerId,
+            Integer statusCode, String statusMessage, String path, Object docObj, Package pkg)
             throws DataAccessException {
         DocumentReference docRef;
         try {
             Document doc = new Document();
-            if (document instanceof String)
-                doc.setContent((String)document);
+            if (docObj instanceof String)
+                doc.setContent((String)docObj);
             else
-                doc.setObject(document, type);
-            doc.setType(type);
+                doc.setObject(docObj);
+            doc.setType(docObj == null || docObj instanceof String ? variableType : docObj.getClass().getName());
+            doc.setVariableType(variableType);
             doc.setOwnerType(ownerType);
             doc.setOwnerId(ownerId);
             doc.setStatusCode(statusCode);
             doc.setStatusMessage(statusMessage);
             doc.setPath(path);
-            edao.createDocument(doc);
+            edao.createDocument(doc, pkg);
             docRef = new DocumentReference(doc.getId());
         } catch (Exception ex) {
             throw new DataAccessException(ex.getMessage(), ex);
@@ -187,14 +189,14 @@ class ProcessExecutorImpl {
         }
     }
 
-    void updateDocumentContent(DocumentReference docRef, Object doc, String type, Package pkg)
+    void updateDocumentContent(DocumentReference docRef, Object doc, Package pkg)
             throws DataAccessException {
         try {
             Document docvo = edao.getDocument(docRef.getDocumentId(), false);
             if (doc instanceof String)
                 docvo.setContent((String)doc);
             else
-                docvo.setObject(doc, type);
+                docvo.setObject(doc);
             edao.updateDocumentContent(docvo.getId(), docvo.getContent(pkg));
         } catch (SQLException ex) {
             throw new DataAccessException(ex.getMessage(), ex);
@@ -226,7 +228,7 @@ class ProcessExecutorImpl {
                         var.setStringValue(value);
                     }
                     else {
-                        var.setData(createDocument(var.getType(), OwnerType.PROCESS_INSTANCE, procInstId, value));
+                        var.setData(createDocument(variable.getType(), OwnerType.PROCESS_INSTANCE, procInstId, value, getPackage(process)));
                     }
                 }
                 else  {
@@ -246,8 +248,7 @@ class ProcessExecutorImpl {
     ProcessInstance createProcessInstance(Long processId, String ownerType,
             Long ownerId, String secondaryOwnerType, Long secondaryOwnerId,
             String masterRequestId, Map<String,String> parameters, String label, String template)
-            throws ProcessException, DataAccessException
-    {
+            throws ProcessException, DataAccessException {
         ProcessInstance pi = null;
         try {
             Process process;
@@ -358,7 +359,7 @@ class ProcessExecutorImpl {
         }
     }
 
-    String getServiceProcessResponse(Long procInstId, String varName, Package pkg) throws DataAccessException {
+    Response getServiceProcessResponse(Long procInstId, String varName, Package pkg) throws DataAccessException {
         try {
             VariableInstance varInst;
             if (varName == null) {
@@ -372,12 +373,16 @@ class ProcessExecutorImpl {
             }
             if (varInst == null)
                 return null;
+            Response response = new Response();
             if (varInst.isDocument(pkg)) {
-                Document docvo = getDocument((DocumentReference)varInst.getData(pkg), false);
-                return docvo.getContent(pkg);
+                Document doc = getDocument((DocumentReference)varInst.getData(pkg), false);
+                response.setContent(doc.getContent(pkg));
+                response.setObject(doc.getObject(varInst.getType(), pkg));
             } else {
-                return varInst.getStringValue(pkg);
+                response.setContent(varInst.getStringValue(pkg));
+                response.setObject(varInst.getData(pkg));
             }
+            return response;
         } catch (SQLException ex) {
             throw new DataAccessException("Failed to get value for variable " + varName, ex);
         }
@@ -1841,8 +1846,8 @@ class ProcessExecutorImpl {
                     Object value = var.getData(pkg);
                     if (value instanceof DocumentReference) {
                         try {
-                            Document docVO = getDocument((DocumentReference) value, false);
-                            value = docVO == null ? null : docVO.getObject(var.getType(), pkg);
+                            Document doc = getDocument((DocumentReference) value, false);
+                            value = doc == null ? null : doc.getObject(var.getType(), pkg);
                         }
                         catch (DataAccessException ex) {
                             logger.error(ex.getMessage(), ex);
@@ -1868,13 +1873,13 @@ class ProcessExecutorImpl {
                                 for (String varName : updated.keySet()) {
                                     if (processInstance.getVariables() == null)
                                         processInstance.setVariables(new ArrayList<>());
-                                    Variable varVO = process.getVariable(varName);
-                                    if (varVO == null || !varVO.isInput())
+                                    Variable variable = process.getVariable(varName);
+                                    if (variable == null || !variable.isInput())
                                         throw new ProcessException("Process '" + process.getQualifiedLabel() + "' has no such input variable defined: " + varName);
                                     if (processInstance.getVariable(varName) != null)
                                         throw new ProcessException("Process '" + process.getQualifiedLabel() + "' input variable already populated: " + varName);
-                                    if (runtimeContext.getPackage().getTranslator(varVO.getType()).isDocumentReferenceVariable()) {
-                                        DocumentReference docRef = createDocument(varVO.getType(), OwnerType.VARIABLE_INSTANCE, 0L, updated.get(varName));
+                                    if (runtimeContext.getPackage().getTranslator(variable.getType()).isDocumentReferenceVariable()) {
+                                        DocumentReference docRef = createDocument(variable.getType(), OwnerType.VARIABLE_INSTANCE, 0L, updated.get(varName), getPackage(process));
                                         VariableInstance varInst = createVariableInstance(processInstance, varName, docRef);
                                         updateDocumentInfo(docRef, process.getVariable(varInst.getName()).getType(), OwnerType.VARIABLE_INSTANCE, varInst.getId(), null, null);
                                         processInstance.getVariables().add(varInst);
@@ -1902,7 +1907,7 @@ class ProcessExecutorImpl {
     }
 
     public DocumentReference createActivityExceptionDocument(ProcessInstance processInst,
-            ActivityInstance actInstVO, BaseActivity activityImpl, Throwable th) throws DataAccessException {
+            ActivityInstance activityInst, BaseActivity activityImpl, Throwable th) throws DataAccessException {
         ActivityException actEx;
         if (th instanceof ActivityException) {
             actEx = (ActivityException) th;
@@ -1915,18 +1920,18 @@ class ProcessExecutorImpl {
             actEx.setStackTrace(th.getStackTrace());
         }
 
+        Package pkg = getPackage(getMainProcessDefinition(processInst));
         // populate activity context
-        if (actInstVO != null) {
+        if (activityInst != null) {
             Process process = getProcessDefinition(processInst);
-            Package pkg = getPackage(getMainProcessDefinition(processInst));
             if (pkg != null)
                 processInst.setPackageName(pkg.getName());
-            Activity activity = process.getActivity(actInstVO.getActivityId());
+            Activity activity = process.getActivity(activityInst.getActivityId());
 
             ActivityImplementor activityImplementor = ImplementorCache.get(activity.getImplementor());
             String category = activityImplementor == null ? GeneralActivity.class.getName() : activityImplementor.getCategory();
             ActivityRuntimeContext runtimeContext = new ActivityRuntimeContext(null, pkg, process, processInst,
-                    getDataAccess().getPerformanceLevel(), isInService(), activity, category, actInstVO,
+                    getDataAccess().getPerformanceLevel(), isInService(), activity, category, activityInst,
                     activityImpl instanceof SuspendableActivity);
             // TODO option to suppress variables
             if (activityImpl == null) {
@@ -1944,18 +1949,18 @@ class ProcessExecutorImpl {
                             Document doc = getDocument((DocumentReference)value, false);
                             value = doc == null ? null : doc.getObject(var.getType(), pkg);
                         }
-                        runtimeContext.getVariables().put(var.getName(), processInst.getVariable(var.getName()).getData(pkg));
+                        runtimeContext.getValues().put(var.getName(), processInst.getVariable(var.getName()).getData(pkg));
                     }
                 }
                 catch (ActivityException | DataAccessException ex) {
-                    engineLogger.error(processInst.getProcessId(), processInst.getId(), actInstVO.getActivityId(), actInstVO.getId(), ex.getMessage(), ex);
+                    engineLogger.error(processInst.getProcessId(), processInst.getId(), activityInst.getActivityId(), activityInst.getId(), ex.getMessage(), ex);
                 }
             }
 
             actEx.setRuntimeContext(runtimeContext);
         }
 
-        return createDocument(Exception.class.getName(), OwnerType.ACTIVITY_INSTANCE, actInstVO.getId(), actEx);
+        return createDocument(Exception.class.getName(), OwnerType.ACTIVITY_INSTANCE, activityInst.getId(), actEx, pkg);
     }
 
     public DocumentReference createProcessExceptionDocument(ProcessInstance processInst, Throwable th)
@@ -1971,39 +1976,36 @@ class ProcessExecutorImpl {
                 procEx = new ProcessException(th.toString(), th.getCause());
             procEx.setStackTrace(th.getStackTrace());
         }
-        Long procId = 0L;
-        if (processInst != null) {
-            procId = processInst.getId();
-            Process process = getProcessDefinition(processInst);
-            Package pkg = getPackage(getMainProcessDefinition(processInst));
-            if (pkg != null)
-                processInst.setPackageName(pkg.getName());
+        Package pkg = getPackage(getMainProcessDefinition(processInst));
+        Long procId = processInst.getId();
+        Process process = getProcessDefinition(processInst);
+        if (pkg != null)
+            processInst.setPackageName(pkg.getName());
 
-            ProcessRuntimeContext runtimeContext = new ProcessRuntimeContext(null, pkg, process, processInst,
-                    getDataAccess().getPerformanceLevel(), isInService());
+        ProcessRuntimeContext runtimeContext = new ProcessRuntimeContext(null, pkg, process, processInst,
+                getDataAccess().getPerformanceLevel(), isInService());
 
-            try {
-                processInst.setVariables(getDataAccess().getProcessInstanceVariables(processInst.getId()));
-            } catch (SQLException ignored) {}
+        try {
+            processInst.setVariables(getDataAccess().getProcessInstanceVariables(processInst.getId()));
+        } catch (SQLException ignored) {}
 
-            for (VariableInstance var : processInst.getVariables()) {
-                Object value = var.getData(pkg);
-                if (value instanceof DocumentReference) {
-                    try {
-                        Document docVO = getDocument((DocumentReference) value, false);
-                        value = docVO == null ? null : docVO.getObject(var.getType(), pkg);
-                    }
-                    catch (DataAccessException ex) {
-                        engineLogger.error(processInst.getProcessId(), processInst.getId(), processInst.getMasterRequestId(), ex.getMessage(), ex);
-                    }
+        for (VariableInstance var : processInst.getVariables()) {
+            Object value = var.getData(pkg);
+            if (value instanceof DocumentReference) {
+                try {
+                    Document doc = getDocument((DocumentReference) value, false);
+                    value = doc == null ? null : doc.getObject(var.getType(), pkg);
                 }
-                runtimeContext.getVariables().put(var.getName(), value);
+                catch (DataAccessException ex) {
+                    engineLogger.error(processInst.getProcessId(), processInst.getId(), processInst.getMasterRequestId(), ex.getMessage(), ex);
+                }
             }
-
-            procEx.setRuntimeContext(runtimeContext);
+            runtimeContext.getValues().put(var.getName(), value);
         }
 
-        return createDocument(Exception.class.getName(), OwnerType.PROCESS_INSTANCE, procId, procEx);
+        procEx.setRuntimeContext(runtimeContext);
+
+        return createDocument(Exception.class.getName(), OwnerType.PROCESS_INSTANCE, procId, procEx, pkg);
     }
 
     private Package getPackage(Process process) {

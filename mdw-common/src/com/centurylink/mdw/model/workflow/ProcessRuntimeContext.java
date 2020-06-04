@@ -409,7 +409,7 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext, 
                 if (translator instanceof JavaObjectTranslator)
                     return obj.toString();
                 else if (translator instanceof DocumentReferenceTranslator)
-                    return ((DocumentReferenceTranslator) translator).realToString(obj);
+                    return ((DocumentReferenceTranslator)translator).toString(obj, var.getType());
                 else
                     return translator.toString(obj);
             } catch (Exception ex) {
@@ -425,7 +425,7 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext, 
         try {
             VariableTranslator translator = getPackage().getTranslator(var.getType());
             if (translator instanceof DocumentReferenceTranslator)
-                return ((DocumentReferenceTranslator)translator).realToObject(strVal);
+                return ((DocumentReferenceTranslator)translator).toObject(strVal, null);
             else
                 return translator.toObject(strVal);
         } catch (Exception ex) {

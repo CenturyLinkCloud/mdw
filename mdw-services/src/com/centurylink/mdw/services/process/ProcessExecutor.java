@@ -25,6 +25,7 @@ import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.RetryableTransaction;
 import com.centurylink.mdw.model.event.EventWaitInstance;
 import com.centurylink.mdw.model.event.InternalEvent;
+import com.centurylink.mdw.model.request.Response;
 import com.centurylink.mdw.model.variable.Document;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.VariableInstance;
@@ -825,26 +826,26 @@ public class ProcessExecutor implements RetryableTransaction {
         }
     }
 
-    public DocumentReference createDocument(String type, String ownerType, Long ownerId, Object doc)
+    public DocumentReference createDocument(String variableType, String ownerType, Long ownerId, Object docObj, Package pkg)
             throws DataAccessException {
-        return createDocument(type, ownerType, ownerId, null, null, doc);
+        return createDocument(variableType, ownerType, ownerId, null, null, docObj, pkg);
     }
 
-    public DocumentReference createDocument(String type, String ownerType, Long ownerId, Integer statusCode,
-            String statusMessage, Object doc) throws DataAccessException {
-        return createDocument(type, ownerType, ownerId, statusCode, statusMessage, null, doc);
+    public DocumentReference createDocument(String variableType, String ownerType, Long ownerId, Integer statusCode,
+            String statusMessage, Object docObj, Package pkg) throws DataAccessException {
+        return createDocument(variableType, ownerType, ownerId, statusCode, statusMessage, null, docObj, pkg);
     }
 
-    public DocumentReference createDocument(String type, String ownerType, Long ownerId, Integer statusCode,
-            String statusMessage, String path, Object doc) throws DataAccessException {
+    public DocumentReference createDocument(String variableType, String ownerType, Long ownerId, Integer statusCode,
+            String statusMessage, String path, Object docObj, Package pkg) throws DataAccessException {
         TransactionWrapper transaction = null;
         try {
             transaction = startTransaction();
-            return engineImpl.createDocument(type, ownerType, ownerId, statusCode, statusMessage, path, doc);
+            return engineImpl.createDocument(variableType, ownerType, ownerId, statusCode, statusMessage, path, docObj, pkg);
         } catch (DataAccessException ex) {
             if (canRetryTransaction(ex)) {
                 transaction = (TransactionWrapper)initTransactionRetry(transaction);
-                return ((ProcessExecutor)getTransactionRetrier()).createDocument(type, ownerType, ownerId, statusCode, statusMessage, path, doc);
+                return ((ProcessExecutor)getTransactionRetrier()).createDocument(variableType, ownerType, ownerId, statusCode, statusMessage, path, docObj, pkg);
             }
             else {
                 throw ex;
@@ -854,16 +855,16 @@ public class ProcessExecutor implements RetryableTransaction {
         }
     }
 
-    public void updateDocumentContent(DocumentReference docRef, Object doc, String type, Package pkg)
+    public void updateDocumentContent(DocumentReference docRef, Object doc, Package pkg)
             throws DataAccessException {
         TransactionWrapper transaction = null;
         try {
             transaction = startTransaction();
-            engineImpl.updateDocumentContent(docRef, doc, type, pkg);
+            engineImpl.updateDocumentContent(docRef, doc, pkg);
         } catch (DataAccessException ex) {
             if (canRetryTransaction(ex)) {
                 transaction = (TransactionWrapper)initTransactionRetry(transaction);
-                ((ProcessExecutor)getTransactionRetrier()).updateDocumentContent(docRef, doc, type, pkg);
+                ((ProcessExecutor)getTransactionRetrier()).updateDocumentContent(docRef, doc, pkg);
             }
             else {
                 throw ex;
@@ -1046,7 +1047,7 @@ public class ProcessExecutor implements RetryableTransaction {
         }
     }
 
-    public String getSynchronousProcessResponse(Long procInstId, String varName, Package pkg)
+    public Response getSynchronousProcessResponse(Long procInstId, String varName, Package pkg)
             throws DataAccessException {
         TransactionWrapper transaction = null;
         try {

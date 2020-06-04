@@ -12,7 +12,8 @@ import org.json.JSONObject;
 @Variable(type="com.google.gson.JsonElement")
 public class GsonTranslator extends DocumentReferenceTranslator implements JsonTranslator {
 
-    public Object realToObject(String str) throws TranslationException {
+    @Override
+    public Object toObject(String str, String type) throws TranslationException {
         try {
             JSONObject json = new JsonObject(str);
             return createJsonable(json);
@@ -22,7 +23,8 @@ public class GsonTranslator extends DocumentReferenceTranslator implements JsonT
         }
     }
 
-    public String realToString(Object obj) throws TranslationException {
+    @Override
+    public String toString(Object obj, String variableType) throws TranslationException {
         Jsonable jsonable = (Jsonable) obj;
         JSONObject json = new JsonObject();
         try {

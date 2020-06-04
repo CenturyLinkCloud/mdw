@@ -113,7 +113,7 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
         }
     }
 
-    private void updateExecutionPlan(ProcessExecutionPlanDocument process_plan)
+    private void updateExecutionPlan(ProcessExecutionPlanDocument exePlan)
         throws ActivityException {
         String plan_varname = getAttributeValue(EXECUTION_PLAN_VARIABLE);
         DocumentReference docref = (DocumentReference)getParameterValue(plan_varname);
@@ -121,11 +121,11 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
         String str;
         if (Yaml.class.getName().equals(varType))  { // TODO better way that supports other types like JSONObject and Jsonable
             DocumentReferenceTranslator translator = (DocumentReferenceTranslator)getPackage().getTranslator(varType);
-            Object obj = ((XmlDocumentTranslator)translator).fromDomNode(process_plan.getDomNode());
-            str = translator.realToString(obj);
+            Object obj = ((XmlDocumentTranslator)translator).fromDomNode(exePlan.getDomNode());
+            str = translator.toString(obj, varType);
         }
         else {
-            str = process_plan.xmlText();
+            str = exePlan.xmlText();
         }
         super.updateDocumentContent(docref, str, getParameterType(plan_varname));
     }
@@ -436,10 +436,9 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
                             if (outputVariableUpdated.get(varname))
                                 throw new ActivityException("Output Document variable value already returned by another sub process");
                             else
-                                outputVariableUpdated.put(varname,  Boolean.valueOf(true));
+                                outputVariableUpdated.put(varname, Boolean.TRUE);
                         }
-                        DocumentReference docref = super.createDocument(var.getType(),
-                                value, OwnerType.PROCESS_INSTANCE, this.getProcessInstanceId());
+                        DocumentReference docref = createDocument(var.getType(), value, OwnerType.PROCESS_INSTANCE, this.getProcessInstanceId());
                         value0 = new DocumentReference(docref.getDocumentId());
 
                      // check map for variable, not allowed multiple children to update same docs

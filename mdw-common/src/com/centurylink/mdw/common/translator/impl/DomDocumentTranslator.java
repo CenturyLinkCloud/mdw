@@ -25,7 +25,8 @@ import com.centurylink.mdw.xml.DomHelper;
 
 public class DomDocumentTranslator extends DocumentReferenceTranslator implements XmlDocumentTranslator {
 
-    public Object realToObject(String str) throws TranslationException {
+    @Override
+    public Object toObject(String str, String type) throws TranslationException {
         try {
             return DomHelper.toDomDocument(str);
         } catch (Exception e) {
@@ -33,7 +34,8 @@ public class DomDocumentTranslator extends DocumentReferenceTranslator implement
         }
     }
 
-    public String realToString(Object obj) throws TranslationException {
+    @Override
+    public String toString(Object obj, String variableType) throws TranslationException {
 
         try {
             Document document = (Document) obj;

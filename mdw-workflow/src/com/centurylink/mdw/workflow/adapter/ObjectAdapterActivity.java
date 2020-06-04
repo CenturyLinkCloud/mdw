@@ -309,14 +309,14 @@ public abstract class ObjectAdapterActivity extends DefaultActivityImpl
 
     protected Long logResponse(Response response) {
         try {
-            DocumentReference docref = createDocument(String.class.getName(), response.getContent(),
+            DocumentReference docRef = createDocument(String.class.getName(), response.getContent(),
                     OwnerType.ADAPTER_RESPONSE, getActivityInstanceId(), response.getStatusCode(), response.getStatusMessage(), response.getPath());
 
             Long elapsedTime = getEngine().getRequestCompletionTime(OwnerType.ADAPTER, getActivityInstanceId());
             if (elapsedTime != null)
                 getEngine().setElapsedTime(OwnerType.ADAPTER, getActivityInstanceId(), elapsedTime);
 
-            return docref.getDocumentId();
+            return docRef.getDocumentId();
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
             return null;

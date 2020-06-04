@@ -41,9 +41,14 @@ import com.centurylink.mdw.translator.XmlDocumentTranslator;
  * declares the type (class name) of the JavaBean object.
  * Implements XmlDocumentTranslator only for serializing as ExecutionPlan (TODO fix that).
  */
-public class YamlTranslator extends DocumentReferenceTranslator implements XmlDocumentTranslator, JsonTranslator {
+public class YamlTranslator extends DocumentReferenceTranslator
+        implements XmlDocumentTranslator, JsonTranslator {
 
-    public Object realToObject(String str) throws TranslationException {
+    /**
+     * TODO honor passed type
+     */
+    @Override
+    public Object toObject(String str, String type) throws TranslationException {
         try {
             Representer representer = new Representer();
             representer.getPropertyUtils().setSkipMissingProperties(true);
@@ -69,7 +74,8 @@ public class YamlTranslator extends DocumentReferenceTranslator implements XmlDo
         }
     }
 
-    public String realToString(Object obj) throws TranslationException {
+    @Override
+    public String toString(Object obj, String variableType) throws TranslationException {
         try {
             return new Yaml(getRepresenter(), getDumperOptions()).dump(obj);
         }

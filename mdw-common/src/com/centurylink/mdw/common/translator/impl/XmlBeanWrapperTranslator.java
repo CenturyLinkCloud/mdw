@@ -27,12 +27,13 @@ import java.lang.reflect.Constructor;
 @Deprecated
 public class XmlBeanWrapperTranslator extends DocumentReferenceTranslator implements XmlDocumentTranslator {
 
-    public Object realToObject(String str) throws TranslationException {
+    @Override
+    public Object toObject(String str, String type) throws TranslationException {
         try {
             int xmlIdx = str.indexOf('<');
-            String type = str.substring(0, xmlIdx).trim();
+            String declaredType = str.substring(0, xmlIdx).trim();
             String xml = str.substring(xmlIdx);
-            Class<?> wrapperClass = Class.forName(type);
+            Class<?> wrapperClass = Class.forName(declaredType);
             Constructor<?> constructor = wrapperClass.getConstructor(new Class[]{String.class});
             return constructor.newInstance(xml);
         } catch (Exception e) {
@@ -40,7 +41,8 @@ public class XmlBeanWrapperTranslator extends DocumentReferenceTranslator implem
         }
     }
 
-    public String realToString(Object obj) throws TranslationException {
+    @Override
+    public String toString(Object obj, String variableType) throws TranslationException {
         XmlBeanWrapper xmlBeanWrapper = (XmlBeanWrapper) obj;
         return xmlBeanWrapper.getClass().getName() + "\n" + xmlBeanWrapper.getXml();
     }
@@ -52,5 +54,4 @@ public class XmlBeanWrapperTranslator extends DocumentReferenceTranslator implem
     public Object fromDomNode(Node domNode) throws TranslationException {
         throw new UnsupportedOperationException("Cannot create XmlBeanWrapper from DOM Node");
     }
-
 }

@@ -135,7 +135,7 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
                 else if (translator instanceof JsonableTranslator)
                     return ((JsonableTranslator)translator).toJson(request).toString(2);
                 else if (translator instanceof DocumentReferenceTranslator)
-                    return ((DocumentReferenceTranslator)translator).realToString(request);
+                    return ((DocumentReferenceTranslator)translator).toString(request, varInst.getType());
                 else
                     return translator.toString(request);
             }

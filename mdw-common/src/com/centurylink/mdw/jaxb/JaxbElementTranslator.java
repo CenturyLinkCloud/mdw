@@ -15,22 +15,43 @@
  */
 package com.centurylink.mdw.jaxb;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-
 import com.centurylink.mdw.translator.DocumentReferenceTranslator;
 import com.centurylink.mdw.translator.TranslationException;
 import com.centurylink.mdw.translator.XmlDocumentTranslator;
 import com.centurylink.mdw.xml.DomHelper;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 
 public class JaxbElementTranslator extends DocumentReferenceTranslator implements XmlDocumentTranslator {
+
+    @Override
+    public Object toObject(String str, String type) throws TranslationException {
+        try {
+            ByteArrayInputStream in = new ByteArrayInputStream(str.getBytes());
+            return unmarshaller.unmarshal(in);
+        } catch (JAXBException ex) {
+            throw new TranslationException(ex.getMessage(), ex);
+        }
+    }
+
+    @Override
+    public String toString(Object obj, String variableType) throws TranslationException {
+        try {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+            marshaller.marshal(obj, out);
+            return out.toString();
+        }
+        catch (JAXBException ex) {
+            throw new TranslationException(ex.getMessage(), ex);
+        }
+    }
 
     private Marshaller marshaller;
     public Marshaller getMarshaller() { return marshaller; }
@@ -41,32 +62,11 @@ public class JaxbElementTranslator extends DocumentReferenceTranslator implement
     public void setUnmarshaller(Unmarshaller unmarshaller) { this.unmarshaller = unmarshaller; }
 
     public Object getJaxbObject(String xml) throws TranslationException {
-        return realToObject(xml);
+        return toObject(xml, null);
     }
 
     public String getXml(Object jaxbObject) throws TranslationException {
-        return realToString(jaxbObject);
-    }
-
-    public Object realToObject(String str) throws TranslationException {
-        try {
-            ByteArrayInputStream in = new ByteArrayInputStream(str.getBytes());
-            return unmarshaller.unmarshal(in);
-        } catch (JAXBException ex) {
-            throw new TranslationException(ex.getMessage(), ex);
-        }
-    }
-
-    public String realToString(Object obj) throws TranslationException {
-        try {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-            marshaller.marshal(obj, out);
-            return out.toString();
-        }
-        catch (JAXBException ex) {
-            throw new TranslationException(ex.getMessage(), ex);
-        }
+        return toString(jaxbObject, null);
     }
 
     public Document toDomDocument(Object obj) throws TranslationException {

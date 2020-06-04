@@ -27,6 +27,8 @@ import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.request.RequestHandlerException;
 import com.centurylink.mdw.service.data.process.ProcessCache;
+import com.centurylink.mdw.services.EventServices;
+import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.process.ProcessEngineDriver;
 import com.centurylink.mdw.services.request.Acknowledgement;
 import com.centurylink.mdw.services.request.BaseHandler;
@@ -38,6 +40,7 @@ import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.xml.XmlPath;
 import org.apache.xmlbeans.XmlObject;
 
+import javax.xml.bind.JAXBElement;
 import java.io.IOException;
 import java.util.Map;
 
@@ -124,8 +127,9 @@ public abstract class ExternalEventHandlerBase extends BaseHandler implements Ex
             int performanceLevel, Map<String,String> headers) throws Exception {
         Map<String,String> stringParams = translateInputValues(processId, parameters);
         ProcessEngineDriver engineDriver = new ProcessEngineDriver();
-        return engineDriver.invokeService(processId, OwnerType.DOCUMENT, requestId, masterRequestId,
+        Response response = engineDriver.invokeService(processId, OwnerType.DOCUMENT, requestId, masterRequestId,
                 masterRequest, stringParams, responseVarName, performanceLevel, null, null, headers);
+        return response == null ? null : response.getContent();
     }
 
     protected String invokeServiceProcess(Long processId, Long eventInstId, String masterRequestId,
@@ -240,18 +244,25 @@ public abstract class ExternalEventHandlerBase extends BaseHandler implements Ex
         }
     }
 
-    protected void updateDocumentContent(DocumentReference docref, Object doc, String type)
+    protected void updateDocumentContent(DocumentReference docref, Object doc, String variableType)
             throws ActivityException {
         ListenerHelper helper = new ListenerHelper();
-        helper.updateDocumentContent(docref, doc, type, getPackage());
+        try {
+            EventServices eventMgr = ServiceLocator.getEventServices();
+            eventMgr.updateDocumentContent(docref.getDocumentId(), doc, pkg);
+        }
+        catch (Exception ex) {
+            logger.error(ex.getMessage(), ex);
+            throw new ActivityException(ex.getMessage(), ex);
+        }
     }
 
     public String marshalJaxb(Object jaxbObject, Package pkg) throws Exception {
-          return getJaxbTranslator(pkg).realToString(jaxbObject);
+          return getJaxbTranslator(pkg).toString(jaxbObject, JAXBElement.class.getName());
     }
 
     public Object unmarshalJaxb(String xml, Package pkg) throws Exception {
-        return getJaxbTranslator(pkg).realToObject(xml);
+        return getJaxbTranslator(pkg).toObject(xml, JAXBElement.class.getName());
     }
 
     static String JAXB_TRANSLATOR_CLASS = "com.centurylink.mdw.jaxb.JaxbElementTranslator";

@@ -33,9 +33,42 @@ import java.lang.reflect.Method;
 public class XmlBeanTranslator extends DocumentReferenceTranslator implements XmlDocumentTranslator {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
-    // Note that, due to static loading, the logger should be defined before xmlOptions
-    // Note also using a static method instead of static block just for code niceness
     private static XmlOptions xmlOptions = getXmlOptions();
+
+    /**
+     * TODO honor passed type to create appropriate instance
+     */
+    @Override
+    public Object toObject(String str, String type) throws TranslationException {
+        try {
+            XmlObject xmlBean = XmlObject.Factory.parse(str, xmlOptions);
+            return xmlBean;
+        }
+        catch (XmlException e) {
+            throw new TranslationException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public String toString(Object obj, String variableType) throws TranslationException {
+        XmlObject xmlBean = (XmlObject) obj;
+        XmlOptions tempOptions = new XmlOptions(xmlOptions);
+        tempOptions.setSavePrettyPrint();
+        return xmlBean.xmlText(tempOptions);
+    }
+
+    public Document toDomDocument(Object obj) throws TranslationException {
+        return (Document) ((XmlObject) obj).getDomNode();
+    }
+
+    public Object fromDomNode(Node domNode) throws TranslationException {
+        try {
+            return XmlObject.Factory.parse(domNode);
+        }
+        catch (XmlException ex) {
+            throw new TranslationException(ex.getMessage(), ex);
+        }
+    }
 
     /**
      * Moved this to a static block/method so it's done only once
@@ -105,35 +138,4 @@ public class XmlBeanTranslator extends DocumentReferenceTranslator implements Xm
         return xmlOptions;
 
     }
-
-    public Object realToObject(String str) throws TranslationException {
-        try {
-            XmlObject xmlBean = XmlObject.Factory.parse(str, xmlOptions);
-            return xmlBean;
-        }
-        catch (XmlException e) {
-            throw new TranslationException(e.getMessage(), e);
-        }
-    }
-
-    public String realToString(Object obj) throws TranslationException {
-        XmlObject xmlBean = (XmlObject) obj;
-        XmlOptions tempOptions = new XmlOptions(xmlOptions);
-        tempOptions.setSavePrettyPrint();
-        return xmlBean.xmlText(tempOptions);
-    }
-
-    public Document toDomDocument(Object obj) throws TranslationException {
-        return (Document) ((XmlObject) obj).getDomNode();
-    }
-
-    public Object fromDomNode(Node domNode) throws TranslationException {
-        try {
-            return XmlObject.Factory.parse(domNode);
-        }
-        catch (XmlException ex) {
-            throw new TranslationException(ex.getMessage(), ex);
-        }
-    }
-
 }

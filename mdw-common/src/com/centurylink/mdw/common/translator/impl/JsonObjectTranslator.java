@@ -23,9 +23,11 @@ import com.centurylink.mdw.translator.DocumentReferenceTranslator;
 import com.centurylink.mdw.translator.JsonTranslator;
 import com.centurylink.mdw.translator.TranslationException;
 
+@SuppressWarnings("unused")
 public class JsonObjectTranslator extends DocumentReferenceTranslator implements JsonTranslator {
 
-    public Object realToObject(String str) throws TranslationException {
+    @Override
+    public Object toObject(String str, String type) throws TranslationException {
         try {
             return new JsonObject(str);
         } catch (JSONException e) {
@@ -33,7 +35,7 @@ public class JsonObjectTranslator extends DocumentReferenceTranslator implements
         }
     }
 
-    public String realToString(Object obj) throws TranslationException {
+    public String toString(Object obj, String variableType) throws TranslationException {
         try {
             JSONObject jsonObject = (JSONObject) obj;
             return jsonObject.toString(2);

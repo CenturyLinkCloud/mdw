@@ -116,32 +116,37 @@ public class EngineDataAccessCache implements EngineDataAccess {
     }
 
     public synchronized Document getDocument(Long documentId, boolean forUpdate) throws SQLException {
-        Document docvo = null;
+        Document doc = null;
         if (cacheDocument == CACHE_OFF) {
-            docvo = edadb.getDocument(documentId, forUpdate);
-        } else if (cacheDocument == CACHE_ONLY) {
-            docvo = documentCache.get(documentId);
-            if (docvo == null) {  // Could be a pass-by-reference document from non-cache-only parent process
+            doc = edadb.getDocument(documentId, forUpdate);
+        }
+        else if (cacheDocument == CACHE_ONLY) {
+            doc = documentCache.get(documentId);
+            if (doc == null) {  // Could be a pass-by-reference document from non-cache-only parent process
                 try {
-                    docvo = loadDocument(documentId, forUpdate);
+                    doc = loadDocument(documentId, forUpdate);
                 }
                 catch (DataAccessException e) {
                     throw new SQLException(e);
                 }
             }
-        } else {
+        }
+        else {
             if (forUpdate) {
-                docvo = edadb.getDocument(documentId, true);
-                if (docvo!=null) documentCache.put(documentId, docvo);
-            } else {
-                docvo = documentCache.get(documentId);
-                if (docvo==null) {
-                    docvo = edadb.getDocument(documentId, forUpdate);
-                    if (docvo!=null) documentCache.put(documentId, docvo);
+                doc = edadb.getDocument(documentId, true);
+                if (doc != null)
+                    documentCache.put(documentId, doc);
+            }
+            else {
+                doc = documentCache.get(documentId);
+                if (doc == null) {
+                    doc = edadb.getDocument(documentId, forUpdate);
+                    if (doc != null)
+                        documentCache.put(documentId, doc);
                 }
             }
         }
-        return docvo;
+        return doc;
     }
 
     /**
@@ -176,6 +181,7 @@ public class EngineDataAccessCache implements EngineDataAccess {
         } else if (cacheDocument == CACHE_ONLY) {
             Document doc0 = documentCache.get(doc.getId());
             doc0.setType(doc.getType());
+            doc0.setVariableType(doc.getVariableType());
             doc0.setOwnerId(doc.getOwnerId());
             doc0.setOwnerType(doc.getOwnerType());
         } else {
@@ -183,6 +189,7 @@ public class EngineDataAccessCache implements EngineDataAccess {
             Document doc0 = documentCache.get(doc.getId());
             if (doc0 != doc) {
                 doc0.setType(doc.getType());
+                doc0.setVariableType(doc.getVariableType());
                 doc0.setOwnerId(doc.getOwnerId());
                 doc0.setOwnerType(doc.getOwnerType());
             }
@@ -258,21 +265,17 @@ public class EngineDataAccessCache implements EngineDataAccess {
         }
     }
 
-    public synchronized Long createDocument(Document docvo) throws SQLException {
-        return createDocument(docvo, null);
-    }
-
-    public synchronized Long createDocument(Document docvo, Package pkg) throws SQLException {
+    public synchronized Long createDocument(Document doc, Package pkg) throws SQLException {
         if (cacheDocument == CACHE_OFF) {
-            edadb.createDocument(docvo, pkg);
+            edadb.createDocument(doc, pkg);
         } else if (cacheDocument == CACHE_ONLY) {
-            docvo.setId(getNextInternalId());
-            documentCache.put(docvo.getId(), docvo);
+            doc.setId(getNextInternalId());
+            documentCache.put(doc.getId(), doc);
         } else {
-            edadb.createDocument(docvo);
-            documentCache.put(docvo.getId(), docvo);
+            edadb.createDocument(doc, pkg);
+            documentCache.put(doc.getId(), doc);
         }
-        return docvo.getId();
+        return doc.getId();
     }
 
     public void addDocumentToCache(Document docvo) {

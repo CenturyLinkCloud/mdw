@@ -25,7 +25,11 @@ import org.json.JSONObject;
 
 public class JsonableTranslator extends DocumentReferenceTranslator implements JsonTranslator {
 
-    public Object realToObject(String str) throws TranslationException {
+    /**
+     * TODO honor runtime type
+     */
+    @Override
+    public Object toObject(String str, String type) throws TranslationException {
         try {
             JSONObject json = new JsonObject(str);
             return createJsonable(json);
@@ -35,7 +39,11 @@ public class JsonableTranslator extends DocumentReferenceTranslator implements J
         }
     }
 
-    public String realToString(Object obj) throws TranslationException {
+    /**
+     * TODO prop-driven JSONABLE_TYPE population
+     */
+    @Override
+    public String toString(Object obj, String variableType) throws TranslationException {
         Jsonable jsonable = (Jsonable) obj;
         JSONObject json = new JsonObject();
         try {

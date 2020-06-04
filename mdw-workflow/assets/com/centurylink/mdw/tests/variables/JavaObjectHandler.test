@@ -16,3 +16,6 @@ def response = post http("api/REST/variablesTest/JavaObject") {
 }"""
 }
 assert response.code == 200
+
+wait process("JavaObject.proc")
+verify process

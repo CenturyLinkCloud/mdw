@@ -58,7 +58,7 @@ public class HybridService extends JsonXmlRestService
         String response = super.getXml(xml, metaInfo);
         if (response != null) {
             try {
-                response = getJaxbTranslator(getPkg(metaInfo)).realToString(new Employee(new JSONObject(response)));
+                response = getJaxbTranslator(getPkg(metaInfo)).toString(new Employee(new JSONObject(response)), Employee.class.getName());
             }
             catch (Exception e) {
                 throw new ServiceException(e.getMessage());

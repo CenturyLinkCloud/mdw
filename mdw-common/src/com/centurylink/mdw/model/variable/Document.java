@@ -18,10 +18,9 @@ package com.centurylink.mdw.model.variable;
 import com.centurylink.mdw.cache.asset.PackageCache;
 import com.centurylink.mdw.model.workflow.Package;
 
-import java.io.Serializable;
 import java.util.Date;
 
-public class Document implements Serializable {
+public class Document {
 
     /**
      * Actual runtime type
@@ -38,12 +37,10 @@ public class Document implements Serializable {
 
     /**
      * Declared variable type for translating
-     * (falls back to document type)
+     * (falls back to document type for compatibility)
      */
     private String variableType;
-    public String getVariableType() {
-        return variableType == null ? type : variableType;
-    }
+    public String getVariableType() { return variableType; }
     public void setVariableType(String variableType) {
         this.variableType = variableType;
     }
@@ -113,7 +110,7 @@ public class Document implements Serializable {
         if (content == null && object != null) {
             if (pkg == null)
                 pkg = PackageCache.getMdwBasePackage();
-            content = pkg.getStringValue(type, object, true);
+            content = pkg.getStringValue(getVariableType(), object, true);
         }
         return content;
     }
@@ -127,29 +124,26 @@ public class Document implements Serializable {
     }
 
     private Object object;  // object content
-    public Object getObject(String type, Package pkg) {
+    public Object getObject(String variableType, Package pkg) {
         if (pkg == null)
             pkg = PackageCache.getMdwBasePackage();
-        if (type == null || type.equals(this.type)) {
+        if (variableType == null || variableType.equals(this.variableType)) {
             if (object == null && content != null) {
-                object = pkg.getObjectValue(this.type, content, true);
+                object = pkg.getObjectValue(variableType, content, true, type);
             }
         } else {
+            this.variableType = variableType;
             if (content != null) {
-                this.type = type;
-                object = pkg.getObjectValue(this.type, content, true);
+                object = pkg.getObjectValue(variableType, content, true, type);
             } else if (object != null) {
-                content = pkg.getStringValue(this.type, object, true);
-                this.type = type;
-                object = pkg.getStringValue(this.type, content, true);
+                content = pkg.getStringValue(variableType, object, true);
+                object = pkg.getStringValue(variableType, content, true);
             }
         }
         return object;
     }
-    public void setObject(Object object, String type) {
+    public void setObject(Object object) {
         this.object = object;
-        if (type != null)
-            this.type = type;
         content = null;
     }
 }

@@ -1,0 +1,57 @@
+process: # 10612
+  name: Jsonable
+  instance: 1
+  activity: # 1 "2020-06-04 17:04:59.009"
+    name: Start
+    status: Completed
+  activity: # 4 "2020-06-04 17:04:59.023"
+    name: Create/Update
+    status: Completed
+  activity: # 6 "2020-06-04 17:04:59.273"
+    name: Further Updates
+    status: Completed
+  activity: # 2 "2020-06-04 17:04:59.474"
+    name: Stop
+    status: Completed
+  variable: # 12383
+    name: local
+    value: |
+      {
+        "country": "Japan",
+        "elevation": 12388,
+        "name": "Fuji"
+      }
+  variable: # 12376
+    name: request
+    value: |
+      {
+        "country": "Tanzania",
+        "elevation": 19339,
+        "name": "Kilimanjaro"
+      }
+  variable: # 12378
+    name: requestHeaders
+    value: |
+      {
+        "AuthenticatedUser": "mdwapp",
+        "Content-Type": "application/json",
+        "HttpMethod": "POST",
+        "Protocol": "REST",
+        "RemoteAddr": "${~.*}",
+        "RemoteHost": "${~.*}",
+        "RemotePort": "${~\\d*}",
+        "RequestPath": "variablesTest/Jsonable",
+        "RequestURL": "http://${~.*}/mdw/api/REST/variablesTest/Jsonable",
+        "ServiceClass": "com.centurylink.mdw.hub.servlet.RestServlet",
+        "accept": "${~.*}",
+        "connection": "keep-alive",
+        "content-length": "${~\\d*}",
+        "content-type": "application/json",
+        "document-id": "${~\\d*}",
+        "host": "${~.*}",
+        "mdw-request-id": "${masterRequestId}",
+        "user-agent": "${~.*}"
+      }
+  variable: # 12377
+    name: testCase
+    value: Request Handler

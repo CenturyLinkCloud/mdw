@@ -22,6 +22,7 @@ import com.centurylink.mdw.model.event.Event;
 import com.centurylink.mdw.model.report.Hotspot;
 import com.centurylink.mdw.model.report.Insight;
 import com.centurylink.mdw.model.report.Timepoint;
+import com.centurylink.mdw.model.request.Response;
 import com.centurylink.mdw.model.variable.Document;
 import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.workflow.Package;
@@ -181,20 +182,20 @@ public interface WorkflowServices {
     Long launchProcess(Process process, String masterRequestId, String ownerType,
             Long ownerId, Map<String, String> params) throws ServiceException;
 
-    Object invokeServiceProcess(String processName, Object masterRequest, String masterRequestId,
+    Response invokeServiceProcess(String processName, Object masterRequest, String masterRequestId,
             Map<String, Object> parameters, Map<String, String> headers) throws ServiceException;
 
-    String invokeServiceProcess(Process process, String masterRequestId, String ownerType,
+    Response invokeServiceProcess(Process process, String masterRequestId, String ownerType,
             Long ownerId, Map<String, String> params, Map<String, String> headers) throws ServiceException;
 
     /**
      * responseHeaders will be populated from process variable, if any
      */
-    Object invokeServiceProcess(String processName, Object masterRequest, String masterRequestId,
-            Map<String, Object> parameters, Map<String, String> headers, Map<String, String> responseHeaders) throws ServiceException;
+    Response invokeServiceProcess(String processName, Object masterRequest, String masterRequestId,
+            Map<String, Object> parameters, Map<String,String> headers, Map<String,String> responseHeaders) throws ServiceException;
 
-    String invokeServiceProcess(Process process, String masterRequestId, String ownerType,
-            Long ownerId, Map<String, String> params) throws ServiceException;
+    Response invokeServiceProcess(Process process, String masterRequestId, String ownerType,
+            Long ownerId, Map<String,String> params) throws ServiceException;
 
     Integer notify(String event, String message, int delay) throws ServiceException;
 
@@ -220,9 +221,7 @@ public interface WorkflowServices {
      * Converts a document to a string, applying a consistent format for XML and JSON.
      * Use when comparing document values (such as in Automated Tests).
      */
-    String getDocumentStringValue(Long id) throws ServiceException;
-
-    String getDocType(Object docObj);
+    String getDocumentStringValue(Long id, String variableType, Package pkg) throws ServiceException;
 
     ProcessRun runProcess(ProcessRun runRequest) throws ServiceException;
 

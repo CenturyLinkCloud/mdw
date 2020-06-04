@@ -15,3 +15,6 @@ def response = post http("api/REST/variablesTest/Jsonable") {
 }"""
 }
 assert response.code == 200
+
+wait process("Jsonable.proc")
+verify process

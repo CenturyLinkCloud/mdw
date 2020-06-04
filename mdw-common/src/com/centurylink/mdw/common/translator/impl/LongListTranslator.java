@@ -15,21 +15,21 @@
  */
 package com.centurylink.mdw.common.translator.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.centurylink.mdw.translator.DocumentReferenceTranslator;
+import com.centurylink.mdw.translator.TranslationException;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import com.centurylink.mdw.translator.DocumentReferenceTranslator;
-import com.centurylink.mdw.translator.TranslationException;
+import java.util.ArrayList;
+import java.util.List;
 
+@SuppressWarnings("unused")
 public class LongListTranslator extends DocumentReferenceTranslator {
 
     @Override
-    public Object realToObject(String str) throws TranslationException {
+    public Object toObject(String str, String type) throws TranslationException {
         try {
-            List<Long> longList = new ArrayList<Long>();
+            List<Long> longList = new ArrayList<>();
             JSONArray jsonArray = new JSONArray(str);
             for (int i = 0; i < jsonArray.length(); i++)
                 longList.add(jsonArray.opt(i) == null ? null : jsonArray.getLong(i));
@@ -41,12 +41,11 @@ public class LongListTranslator extends DocumentReferenceTranslator {
     }
 
     @SuppressWarnings("unchecked")
-    public String realToString(Object obj) throws TranslationException {
+    public String toString(Object obj, String variableType) throws TranslationException {
         List<Long> longList = (List<Long>) obj;
         JSONArray jsonArray = new JSONArray();
         for (Long longElement : longList)
             jsonArray.put(longElement);
         return jsonArray.toString();
     }
-
 }

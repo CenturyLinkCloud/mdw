@@ -176,12 +176,12 @@ public class EventWaitActivity extends AbstractWait implements com.centurylink.m
         try {
             String rcvdMsgDocVar = getAttributeValueSmart(RECEIVED_MESSAGE_DOC_VAR);
             if (rcvdMsgDocVar != null && !rcvdMsgDocVar.isEmpty()) {
-                Process processVO = getProcessDefinition();
-                Variable variableVO = processVO.getVariable(rcvdMsgDocVar);
-                if (variableVO == null)
-                    throw new ActivityException("Received Message Variable '" + rcvdMsgDocVar + "' is not defined or is not Document Type for process " + processVO.getQualifiedLabel());
+                Process process = getProcessDefinition();
+                Variable variable = process.getVariable(rcvdMsgDocVar);
+                if (variable == null)
+                    throw new ActivityException("Received Message Variable '" + rcvdMsgDocVar + "' is not defined or is not Document Type for process " + process.getQualifiedLabel());
                 if (message != null) {
-                    this.setParameterValueAsDocument(rcvdMsgDocVar, variableVO.getType(), message);
+                    setParameterValueAsDocument(rcvdMsgDocVar, variable.getType(), message);
                 }
             }
         }

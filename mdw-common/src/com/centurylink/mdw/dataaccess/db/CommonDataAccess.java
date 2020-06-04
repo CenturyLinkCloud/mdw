@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.dataaccess.db;
 
+import com.centurylink.mdw.cache.VariableTypeCache;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
@@ -372,7 +373,7 @@ public class CommonDataAccess {
     public Document getDocument(Long documentId) throws DataAccessException {
         try {
             db.openConnection();
-            return this.getDocument(documentId, false);
+            return getDocument(documentId, false);
         } catch (SQLException ex) {
             throw new DataAccessException("Failed to load document: " + documentId, ex);
         } finally {
@@ -425,12 +426,14 @@ public class CommonDataAccess {
             doc.setOwnerId(rs.getLong("OWNER_ID"));
             doc.setType(rs.getString("DOCUMENT_TYPE"));
             if (OwnerType.VARIABLE_INSTANCE.equals(doc.getOwnerType())) {
-                query = "select VARIABLE_TYPE from VARIABLE_INSTANCE where VARIABLE_INST_ID = ?";
+                query = "select VARIABLE_TYPE, VARIABLE_TYPE_ID from VARIABLE_INSTANCE where VARIABLE_INST_ID = ?";
                 rs = db.runSelect(query, doc.getOwnerId());
                 if (rs.next()) {
                     String variableType = rs.getString(1);
-                    if (variableType != null && !variableType.isEmpty())
-                        doc.setVariableType(variableType);
+                    if (variableType == null || variableType.isEmpty()) {
+                        variableType = VariableTypeCache.getVariableType(rs.getInt(2)).getName();
+                    }
+                    doc.setVariableType(variableType);
                 }
             }
             boolean foundInDocDb = false;

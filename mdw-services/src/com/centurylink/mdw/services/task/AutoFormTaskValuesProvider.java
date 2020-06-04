@@ -80,8 +80,8 @@ public class AutoFormTaskValuesProvider implements TaskValuesProvider {
                     throw new ServiceException(400, "Variable not found: " + name);
                 }
                 else {
-                    String type = var.getType();
-                    runtimeContext.getValues().put(name, runtimeContext.getPackage().getObjectValue(type, values.get(name), true));
+                    runtimeContext.getValues().put(name,
+                            runtimeContext.getPackage().getObjectValue(var.getType(), values.get(name), true));
                 }
             }
         }

@@ -256,10 +256,6 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         db.runUpdate(query, args);
     }
 
-    public Long createDocument(Document doc) throws SQLException {
-        return createDocument(doc, null);
-    }
-
     public Long createDocument(Document doc, Package pkg) throws SQLException {
         Long docId = db.isMySQL() ? null : getNextId("MDW_COMMON_INST_ID_SEQ");
         String query = "insert into DOCUMENT " +

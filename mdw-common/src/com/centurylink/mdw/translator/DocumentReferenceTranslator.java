@@ -30,15 +30,19 @@ public abstract class DocumentReferenceTranslator extends BaseTranslator {
 
     /**
      * toString converts DocumentReference to string,
-     * whereas this method converts the real object to string
+     * whereas this method serializes the actual object to string
+     * @param obj document object
+     * @param variableType declared variable type
      */
-    public abstract String realToString(Object obj)
-    throws TranslationException;
+    public abstract String toString(Object obj, String variableType)
+            throws TranslationException;
 
     /**
-     * toObject converts String to DocumentReference
-     * whereas this methods converts the string to real object
+     * toObject converts String to DocumentReference,
+     * whereas this methods deserializes to actual object
+     * @param str string representation
+     * @param type document runtime type
      */
-    public abstract Object realToObject(String str)
-    throws TranslationException;
+    public abstract Object toObject(String str, String type)
+            throws TranslationException;
 }

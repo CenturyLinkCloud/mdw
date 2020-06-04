@@ -158,41 +158,48 @@ public class Package implements Comparable<Package> {
         }
     }
 
-    public Object getObjectValue(String type, String strValue) throws TranslationException {
-        return getObjectValue(type, strValue, false);
+    public Object getObjectValue(String variableType, String strValue) throws TranslationException {
+        return getObjectValue(variableType, strValue, false, null);
+    }
+
+    @Deprecated
+    public Object getObjectValue(String variableType, String strValue, boolean deep)
+            throws TranslationException {
+        return getObjectValue(variableType, strValue, deep, null);
     }
 
     /**
      * Translates a string to a deserialized object using this package's ClassLoader.
      */
-    public Object getObjectValue(String type, String strValue, boolean deep) throws TranslationException {
+    public Object getObjectValue(String variableType, String strValue, boolean deep, String documentType)
+            throws TranslationException {
         if (strValue == null || strValue.trim().isEmpty() || strValue.equals(VariableTranslator.EMPTY_STRING))
             return null;
-        VariableTranslator translator = getTranslator(type);
+        VariableTranslator translator = getTranslator(variableType);
         if (translator == null)
-            throw new TranslationException("Translator not found: " + type);
+            throw new TranslationException("Translator not found: " + variableType);
         if (deep && translator instanceof DocumentReferenceTranslator)
-            return ((DocumentReferenceTranslator)translator).realToObject(strValue);
+            return ((DocumentReferenceTranslator)translator).toObject(strValue, documentType);
         else
             return translator.toObject(strValue);
     }
 
 
-    public String getStringValue(String type, Object objValue) throws TranslationException {
-        return getStringValue(type, objValue, false);
+    public String getStringValue(String variableType, Object objValue) throws TranslationException {
+        return getStringValue(variableType, objValue, false);
     }
 
     /**
      * Translates an object to its serialized string representation using this package's ClassLoader.
      */
-    public String getStringValue(String type, Object objValue, boolean deep) throws TranslationException {
+    public String getStringValue(String variableType, Object objValue, boolean deep) throws TranslationException {
         if (objValue == null)
             return deep ? "" : VariableTranslator.EMPTY_STRING;  // TODO: why
-        VariableTranslator translator = getTranslator(type);
+        VariableTranslator translator = getTranslator(variableType);
         if (translator == null)
-            throw new TranslationException("Translator not found: " + type);
+            throw new TranslationException("Translator not found: " + variableType);
         if (deep && translator instanceof DocumentReferenceTranslator)
-            return ((DocumentReferenceTranslator)translator).realToString(objValue);
+            return ((DocumentReferenceTranslator)translator).toString(objValue, variableType);
         else
             return translator.toString(objValue);
     }

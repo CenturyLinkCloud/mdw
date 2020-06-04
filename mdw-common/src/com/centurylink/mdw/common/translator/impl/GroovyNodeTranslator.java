@@ -33,7 +33,7 @@ import groovy.util.XmlParser;
 @Deprecated
 public class GroovyNodeTranslator extends DocumentReferenceTranslator implements XmlDocumentTranslator {
 
-    public Object realToObject(String str) throws TranslationException {
+    public Object toObject(String str, String type) throws TranslationException {
         try {
             return new XmlParser().parseText(str);
         } catch (Exception e) {
@@ -41,7 +41,7 @@ public class GroovyNodeTranslator extends DocumentReferenceTranslator implements
         }
     }
 
-    public String realToString(Object obj) throws TranslationException {
+    public String toString(Object obj, String variableType) throws TranslationException {
         StringWriter writer = null;
         try {
             Node node = (Node) obj;
@@ -63,7 +63,7 @@ public class GroovyNodeTranslator extends DocumentReferenceTranslator implements
     public Document toDomDocument(Object obj) throws TranslationException {
         // TODO: avoid reparsing
         try {
-            return DomHelper.toDomDocument(realToString(obj));
+            return DomHelper.toDomDocument(toString(obj, null));
         }
         catch (Exception ex) {
             throw new TranslationException(ex.getMessage(), ex);
@@ -72,7 +72,7 @@ public class GroovyNodeTranslator extends DocumentReferenceTranslator implements
 
     public Object fromDomNode(org.w3c.dom.Node domNode) throws TranslationException {
         try {
-            return realToObject(DomHelper.toXml(domNode));
+            return toObject(DomHelper.toXml(domNode), null);
         }
         catch (Exception ex) {
             throw new TranslationException(ex.getMessage(), ex);

@@ -32,6 +32,7 @@ import com.centurylink.mdw.model.event.EventType;
 import com.centurylink.mdw.model.event.InternalEvent;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.monitor.ScheduledEvent;
+import com.centurylink.mdw.model.request.Response;
 import com.centurylink.mdw.model.variable.Document;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.Variable;
@@ -682,19 +683,20 @@ public class ProcessEngineDriver {
         }
     }
 
-    private void addDocumentToCache(ProcessExecutor engine, Long docid, String type, String content) {
+    private void addDocumentToCache(ProcessExecutor engine, Long docId, String variableType, String docType, String content, Package pkg) {
         if (content != null) {
-            if (docid == 0L) {
+            if (docId == 0L) {
                 try {
-                    engine.createDocument(type, OwnerType.LISTENER_REQUEST, 0L, content);
+                    engine.createDocument(variableType, OwnerType.LISTENER_REQUEST, 0L, content, pkg);
                 } catch (DataAccessException e) {
                     // should never happen, as this is cache only
                 }
             } else {
                 Document doc = new Document();
                 doc.setContent(content);
-                doc.setId(docid);
-                doc.setType(type);
+                doc.setId(docId);
+                doc.setType(docType);
+                doc.setVariableType(variableType);
                 engine.addDocumentToCache(doc);
             }
         }
@@ -704,7 +706,7 @@ public class ProcessEngineDriver {
      * Invoke a real-time service process.
      * @return the service response
      */
-    public String invokeService(Long processId, String ownerType,
+    public Response invokeService(Long processId, String ownerType,
             Long ownerId, String masterRequestId, String masterRequest,
             Map<String,String> parameters, String responseVarName, Map<String,String> headers) throws Exception {
         return invokeService(processId, ownerType, ownerId, masterRequestId, masterRequest, parameters, responseVarName, 0, null, null, headers);
@@ -735,7 +737,7 @@ public class ProcessEngineDriver {
      * @return response message, which is obtained from the variable named ie responseVarName
      *      of the process.
      */
-    public String invokeService(Long processId, String ownerType,
+    public Response invokeService(Long processId, String ownerType,
             Long ownerId, String masterRequestId, String masterRequest,
             Map<String,String> parameters, String responseVarName, int performanceLevel,
             String secondaryOwnerType, Long secondaryOwnerId, Map<String,String> headers)
@@ -753,8 +755,9 @@ public class ProcessEngineDriver {
         ProcessExecutor engine = new ProcessExecutor(edao, msgBroker, true);
         engineLogger.setPerformanceLevel(performanceLevel);
         if (performanceLevel >= 5) {
-            if (OwnerType.DOCUMENT.equals(ownerType))
-                addDocumentToCache(engine, ownerId, XmlObject.class.getName(), masterRequest);
+            if (OwnerType.DOCUMENT.equals(ownerType)) {
+                addDocumentToCache(engine, ownerId, XmlObject.class.getName(), XmlObject.class.getName(), masterRequest, pkg);
+            }
             if (parameters != null) {
                 for (String key : parameters.keySet()) {
                     String value = parameters.get(key);
@@ -764,8 +767,9 @@ public class ProcessEngineDriver {
                             Document doc = engine.loadDocument(docRef, false);
                             if (doc != null) {
                                 String docContent = doc.getContent(pkg);
-                                if (docContent != null)
-                                    addDocumentToCache(engine, docRef.getDocumentId(), doc.getType(), docContent);
+                                if (docContent != null) {
+                                    addDocumentToCache(engine, docRef.getDocumentId(), process.getVariable(key).getType(), doc.getType(), docContent, pkg);
+                                }
                             }
                         }
                     }
@@ -777,12 +781,15 @@ public class ProcessEngineDriver {
         boolean completed = mainProcessInst.getStatusCode().equals(WorkStatus.STATUS_COMPLETED);
         if (headers != null)
             headers.put(Listener.METAINFO_MDW_PROCESS_INSTANCE_ID, mainProcessInst.getId().toString());
-        String resp = completed ? engine.getSynchronousProcessResponse(mainProcessInst.getId(), responseVarName, pkg) : null;
+        Response response = null;
+        if (completed) {
+            response = engine.getSynchronousProcessResponse(mainProcessInst.getId(), responseVarName, pkg);
+        }
         long stopMilli = System.currentTimeMillis();
         logger.info("Synchronous process executed in " +
                 ((stopMilli - startMilli) / 1000.0) + " seconds at performance level " + performanceLevel);
         if (completed)
-            return resp;
+            return response;
         if (lastException == null)
             throw new ProcessException("Process instance not completed");
         throw new ProcessException(lastException.getMessage(), lastException);
@@ -901,13 +908,13 @@ public class ProcessEngineDriver {
         engine.createVariableInstance(pi, VariableConstants.REQUEST, docref);
     }
 
-    private void bindRequestHeadersVariable(Process procdef, Map<String,String> headers,
+    private void bindRequestHeadersVariable(Process process, Map<String,String> headers,
             ProcessExecutor engine, ProcessInstance pi) throws DataAccessException {
-        Variable headersVO = procdef.getVariable(VariableConstants.REQUEST_HEADERS);
-        if (headersVO == null)
+        Variable headersVar = process.getVariable(VariableConstants.REQUEST_HEADERS);
+        if (headersVar == null)
             return;
-        int cat = headersVO.getVariableCategory();
-        String vartype = headersVO.getType();
+        int cat = headersVar.getVariableCategory();
+        String varType = headersVar.getType();
         if (cat != Variable.CAT_INPUT && cat != Variable.CAT_INOUT)
             return;
         List<VariableInstance> viList = pi.getVariables();
@@ -918,16 +925,13 @@ public class ProcessEngineDriver {
             }
         }
 
-        if (vartype.equals(Map.class.getName())) {
-            engine.createVariableInstance(pi, VariableConstants.REQUEST_HEADERS, headers);
-        }
-        else if (vartype.equals("java.util.Map<String,String>") || vartype.equals(Object.class.getName())) {
-            DocumentReference docRef = engine.createDocument(vartype, OwnerType.VARIABLE_INSTANCE, 0L, headers);
+        if (varType.equals("java.util.Map<String,String>") || varType.equals(Object.class.getName())) {
+            DocumentReference docRef = engine.createDocument(varType, OwnerType.VARIABLE_INSTANCE, 0L, headers, getPackage(process));
             VariableInstance varInst = engine.createVariableInstance(pi, VariableConstants.REQUEST_HEADERS, docRef);
-            engine.updateDocumentInfo(docRef, null, null, varInst.getInstanceId(), null, null);
+            engine.updateDocumentInfo(docRef, null, null, varInst.getId(), null, null);
         }
         else {
-            logger.info("Implicit requestHeaders supports variable types " + Map.class.getName() + " or " + Object.class.getName());
+            logger.info("Implicit requestHeaders supports variable type java.util.Map<String,String>");
         }
     }
 

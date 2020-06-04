@@ -58,9 +58,9 @@ public abstract class BaseHandler implements RequestHandler {
      * @param masterRequestId Master request ID to be assigned to the process instance
      * @param inputValues input value bindings for the process instance to be created
      * @param headers request headers
-     * @return response message, which is obtained from the response variable
+     * @return response message, populated with content from the response variable
      */
-    protected String invokeServiceProcess(Long processId, Long requestId, String masterRequestId,
+    protected Response invokeServiceProcess(Long processId, Long requestId, String masterRequestId,
             String masterRequest, Map<String,Object> inputValues, Map<String,String> headers)
             throws ProcessException, DataAccessException {
         Map<String,String> stringParams = translateInputValues(processId, inputValues);
@@ -121,7 +121,7 @@ public abstract class BaseHandler implements RequestHandler {
                         VariableTranslator translator = pkg.getTranslator(variable.getType());
                         if (translator instanceof DocumentReferenceTranslator) {
                             DocumentReferenceTranslator docTranslator = (DocumentReferenceTranslator) translator;
-                            String docStr = docTranslator.realToString(val);
+                            String docStr = docTranslator.toString(val, null);
                             stringValues.put(key, docStr);
                         } else {
                             stringValues.put(key, translator.toString(val));

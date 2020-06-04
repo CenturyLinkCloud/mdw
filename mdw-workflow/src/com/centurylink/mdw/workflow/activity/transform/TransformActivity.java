@@ -149,7 +149,7 @@ public class TransformActivity extends ScriptExecutorActivity {
         VariableTranslator inTranslator = getPackage().getTranslator(inputVarType);
         if (inTranslator instanceof DocumentReferenceTranslator) {
             DocumentReferenceTranslator docRefTranslator = (DocumentReferenceTranslator) inTranslator;
-            String input = docRefTranslator.realToString(getVariableValue(inputVarName));
+            String input = docRefTranslator.toString(getValue(inputVarName), inputVarType);
             output = transform(input, transform);
         }
         else {
@@ -164,7 +164,7 @@ public class TransformActivity extends ScriptExecutorActivity {
           throw new ActivityException("Output document is not writable: " + outputVarName);
         if (outTranslator instanceof DocumentReferenceTranslator) {
             DocumentReferenceTranslator docRefTranslator = (DocumentReferenceTranslator) outTranslator;
-            Object doc = docRefTranslator.realToObject(output);
+            Object doc = docRefTranslator.toObject(output, outputVarType);
             setVariableValue(outputVarName, outputVarType, doc);
         }
         else {
@@ -186,11 +186,11 @@ public class TransformActivity extends ScriptExecutorActivity {
                         value = builder;
                     }
                     else {
-                        value = new XmlParser().parseText(docRefTranslator.realToString(value));
+                        value = new XmlParser().parseText(docRefTranslator.toString(value, varType));
                     }
                 }
                 else {
-                    value = new XmlSlurper().parseText(docRefTranslator.realToString(value));
+                    value = new XmlSlurper().parseText(docRefTranslator.toString(value, varType));
                 }
             }
             catch (Exception ex) {
@@ -209,7 +209,7 @@ public class TransformActivity extends ScriptExecutorActivity {
             try {
                 if (value instanceof Node)
                   new XmlNodePrinter(new PrintWriter(outputDocumentWriter)).print((Node)value);
-                Object doc = docRefTranslator.realToObject(outputDocumentWriter.toString());
+                Object doc = docRefTranslator.toObject(outputDocumentWriter.toString(), varType);
                 super.setVariableValue(varName, varType, doc);
             }
             catch (Exception ex) {

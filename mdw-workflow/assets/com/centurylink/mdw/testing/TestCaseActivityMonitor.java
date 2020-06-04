@@ -75,7 +75,7 @@ public class TestCaseActivityMonitor implements ActivityMonitor {
                     Map<String,Object> updates = null;
                     Map<String,String> variables = stubResponse.getVariables();
                     if (variables != null) {
-                        updates = new HashMap<String,Object>();
+                        updates = new HashMap<>();
                         for (String name : variables.keySet()) {
                             String strValue = variables.get(name);
                             Process process = runtimeContext.getProcess();

@@ -10,5 +10,5 @@ start process("SimpleDynamicJava") {
     variables = [ responsibleParty: "dxoakes",
                   instructions: asset("escalate.xml").text ]
 }
-sleep 60
+sleep 30
 verify process("SimpleDynamicJava")

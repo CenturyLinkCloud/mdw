@@ -1,0 +1,24 @@
+process: # 10609
+  name: JavaObject
+  instance: 1
+  activity: # 1 "2020-06-04 17:03:35.013"
+    name: Start
+    status: Completed
+  activity: # 3 "2020-06-04 17:03:35.034"
+    name: Populate
+    status: Completed
+  activity: # 5 "2020-06-04 17:03:35.064"
+    name: Update
+    status: Completed
+  activity: # 2 "2020-06-04 17:03:35.096"
+    name: Stop
+    status: Completed
+  variable: # 12369
+    name: mountain
+    value: Fuji, 12388 ft, Japan
+  variable: # 12370
+    name: mountains
+    value: [Denali, 20310 ft, United States, K2, 28251 ft, Pakistan, Evans, 14271 ft, United States]
+  variable: # 12368
+    name: testCase
+    value: Input Variable

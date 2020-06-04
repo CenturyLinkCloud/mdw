@@ -24,10 +24,11 @@ import org.json.JSONException;
 import com.centurylink.mdw.translator.DocumentReferenceTranslator;
 import com.centurylink.mdw.translator.TranslationException;
 
+@SuppressWarnings("unused")
 public class StringListTranslator extends DocumentReferenceTranslator {
 
     @Override
-    public Object realToObject(String str) throws TranslationException {
+    public Object toObject(String str, String type) throws TranslationException {
         try {
             List<String> stringList = new ArrayList<>();
             JSONArray jsonArray = new JSONArray(str);
@@ -41,7 +42,8 @@ public class StringListTranslator extends DocumentReferenceTranslator {
     }
 
     @SuppressWarnings("unchecked")
-    public String realToString(Object obj) throws TranslationException {
+    @Override
+    public String toString(Object obj, String variableType) throws TranslationException {
         List<String> stringList = (List<String>) obj;
         JSONArray jsonArray = new JSONArray();
         for (String string : stringList)

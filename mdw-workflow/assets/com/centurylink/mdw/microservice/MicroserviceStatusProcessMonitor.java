@@ -56,12 +56,13 @@ public class MicroserviceStatusProcessMonitor implements ProcessMonitor {
                     tw = db.startTransaction();
                     VariableInstance varInst = context.getProcessInstance().getVariable(serviceSummaryVarName);
                     if (varInst.getDocumentId() != null) {
-                        Document docVo = db.getDocument(varInst.getDocumentId(), true);
-                        if (docVo != null && docVo.getContent(null) != null) {
-                            summary = (ServiceSummary)docVo.getObject(varInst.getType(), context.getPackage());
+                        Document doc = db.getDocument(varInst.getDocumentId(), true);
+                        if (doc != null && doc.getContent(null) != null) {
+                            summary = (ServiceSummary)doc.getObject(varInst.getType(), context.getPackage());
                             summary.getMicroservice(microserviceName, context.getProcessInstanceId()).setStatus(WorkStatus.STATUSNAME_COMPLETED);
-                            docVo.setObject(summary, varInst.getType());
-                            db.updateDocumentContent(docVo.getId(), docVo.getContent(context.getPackage()));
+                            doc.setObject(summary);
+                            doc.setVariableType(varInst.getType());
+                            db.updateDocumentContent(doc.getId(), doc.getContent(context.getPackage()));
                             context.logInfo("Updated status for microservice " + microserviceName);
                             WorkflowServices wfs = ServiceLocator.getWorkflowServices();
                             wfs.notify("service-summary-update-" + context.getMasterRequestId(), null, 2);

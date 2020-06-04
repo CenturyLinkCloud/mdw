@@ -220,7 +220,7 @@ public abstract class JsonRestService extends RestService implements JsonService
         JSONObject responseJson;
         Map<String,String> responseHeaders = new HashMap<>();
         Object responseObject = ServiceLocator.getWorkflowServices().invokeServiceProcess(name,
-                request, requestId, parameters, headers, responseHeaders);
+                request, requestId, parameters, headers, responseHeaders).getObject();
         if (responseObject instanceof JSONObject)
             responseJson = (JSONObject) responseObject;
         else if (responseObject instanceof Jsonable)

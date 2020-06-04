@@ -126,16 +126,13 @@ public interface EngineDataAccess {
     Document getDocument(Long documentId, boolean forUpdate)
     throws DataAccessException, SQLException;
 
-    Long createDocument(Document docvo)
-    throws DataAccessException, SQLException;
-
-    Long createDocument(Document docvo, Package pkg)
+    Long createDocument(Document doc, Package pkg)
     throws DataAccessException, SQLException;
 
     void updateDocumentContent(Long documentId, String content)
     throws DataAccessException, SQLException;
 
-    void updateDocumentInfo(Document docvo)
+    void updateDocumentInfo(Document doc)
     throws SQLException;
 
     Long getRequestCompletionTime(String ownerType, Long ownerId)
@@ -175,8 +172,6 @@ public interface EngineDataAccess {
 
     void stopTransaction(TransactionWrapper transaction)
     throws DataAccessException;
-
-    /////// miscellaneous
 
     DatabaseAccess getDatabaseAccess();
     DocumentDbAccess getDocumentDbAccess();

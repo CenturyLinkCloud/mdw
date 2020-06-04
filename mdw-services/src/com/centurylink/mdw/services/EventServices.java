@@ -37,14 +37,14 @@ public interface EventServices {
     void createAuditLog(UserAction userAction)
             throws DataAccessException, EventException;
 
-    Long createEventLog(String pEventName, String pEventCategory, String pEventSubCat, String pEventSource,
-            String pEventOwner, Long pEventOwnerId, String user, String modUser, String comments)
+    Long createEventLog(String eventName, String category, String subcategory, String source,
+            String ownerType, Long ownerId, String user, String modUser, String comments)
             throws DataAccessException, EventException;
 
-    List<EventLog> getEventLogs(String pEventName, String pEventSource,
-            String pEventOwner, Long pEventOwnerId) throws ServiceException;
+    List<EventLog> getEventLogs(String eventName, String source,
+            String ownerType, Long ownerId) throws ServiceException;
 
-    Integer notifyProcess(String pEventName, Long pEventInstId, String message, int delay)
+    Integer notifyProcess(String eventName, Long eventInstanceId, String message, int delay)
             throws DataAccessException, EventException;
 
     /**
@@ -72,16 +72,16 @@ public interface EventServices {
     VariableInstance setVariableInstance(Long procInstId, String name, Object value, Package pkg)
             throws DataAccessException;
 
-    void updateDocumentContent(Long docid, Object doc, String type, Package pkg)
+    void updateDocumentContent(Long docid, Object docObj, Package pkg)
             throws DataAccessException;
 
     void updateDocumentInfo(Long docid, String documentType, String ownerType, Long ownerId)
             throws DataAccessException;
 
-    Long createDocument(String type, String ownerType, Long ownerId, Object doc, Package pkg)
+    Long createDocument(String variableType, String ownerType, Long ownerId, Object docObj, Package pkg)
             throws DataAccessException;
 
-    Long createDocument(String type, String ownerType, Long ownerId, Object doc, Package pkg, String path)
+    Long createDocument(String variableType, String ownerType, Long ownerId, Object docObj, Package pkg, String path)
             throws DataAccessException;
 
     void sendDelayEventsToWaitActivities(String masterRequestId)

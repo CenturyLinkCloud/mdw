@@ -128,11 +128,12 @@ public abstract class InvokeProcessActivityBase extends AbstractWait implements 
             Integer status = lockActivityInstance();
             if (msg.isProcess()) {
                 boolean done = resumeOnProcessFinish(msg, status);
-                if (done) onFinish();
+                if (done)
+                    onFinish();
                 return done;
             } else {
-                 String messageString = this.getMessageFromEventMessage(msg);
-                 this.setReturnCode(msg.getCompletionCode());
+                String messageString = this.getMessageFromEventMessage(msg);
+                setReturnCode(msg.getCompletionCode());
                 processOtherMessage(messageString);
                 handleEventCompletionCode();
                 return true;

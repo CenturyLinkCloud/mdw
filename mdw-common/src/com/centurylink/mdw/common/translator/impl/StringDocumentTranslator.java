@@ -21,13 +21,15 @@ import com.centurylink.mdw.translator.DocumentReferenceTranslator;
 import com.centurylink.mdw.translator.JsonTranslator;
 import com.centurylink.mdw.translator.TranslationException;
 
-public class StringDocumentTranslator extends DocumentReferenceTranslator implements JsonTranslator
-{
-    public Object realToObject(String str) throws TranslationException {
+public class StringDocumentTranslator extends DocumentReferenceTranslator implements JsonTranslator {
+
+    @Override
+    public Object toObject(String str, String type) throws TranslationException {
         return str;
     }
 
-    public String realToString(Object obj) throws TranslationException {
+    @Override
+    public String toString(Object obj, String variableType) throws TranslationException {
         return obj.toString();
     }
 

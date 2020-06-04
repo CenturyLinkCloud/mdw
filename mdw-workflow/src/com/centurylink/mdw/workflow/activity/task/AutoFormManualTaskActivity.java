@@ -95,20 +95,14 @@ public class AutoFormManualTaskActivity extends ManualTaskActivity {
     }
 
     protected boolean messageIsTaskAction(String messageString) throws ActivityException {
-        if (messageString.startsWith("{")) {
-            JSONObject jsonobj;
-            try {
-                jsonobj = new JsonObject(messageString);
-                JSONObject meta = jsonobj.has("META")?jsonobj.getJSONObject("META"):null;
-                if (meta==null || !meta.has(TaskAttributeConstant.TASK_ACTION)) return false;
-                String action = meta.getString(TaskAttributeConstant.TASK_ACTION);
-                return action!=null && action.startsWith("@");
-            } catch (JSONException e) {
-                throw new ActivityException(0, "Failed to parse JSON message", e);
-            }
-        } else {
-            int k = messageString.indexOf("FORMDATA");
-            return k>0 && k<8;
+        try {
+            JSONObject jsonobj = new JsonObject(messageString);
+            JSONObject meta = jsonobj.has("META")?jsonobj.getJSONObject("META"):null;
+            if (meta==null || !meta.has(TaskAttributeConstant.TASK_ACTION)) return false;
+            String action = meta.getString(TaskAttributeConstant.TASK_ACTION);
+            return action!=null && action.startsWith("@");
+        } catch (JSONException e) {
+            throw new ActivityException("Failed to parse JSON message", e);
         }
     }
 
@@ -161,11 +155,7 @@ public class AutoFormManualTaskActivity extends ManualTaskActivity {
      * The method updates all variables specified as non-readonly
      *
      * @param datadoc
-     * @return completion code; when it returns null, the completion
-     *   code is taken from the completionCode parameter of
-     *   the message with key FormDataDocument.ATTR_ACTION
-     * @throws ActivityException
-     * @throws JSONException
+     * @return completion code
      */
     protected String extractFormData(JSONObject datadoc)
             throws ActivityException, JSONException {

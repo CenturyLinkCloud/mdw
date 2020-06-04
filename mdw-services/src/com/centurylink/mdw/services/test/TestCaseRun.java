@@ -20,7 +20,6 @@ import com.centurylink.mdw.adapter.AdapterStubRequest;
 import com.centurylink.mdw.adapter.AdapterStubResponse;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.bpm.MDWStatusMessageDocument;
-import com.centurylink.mdw.cache.asset.AssetCache;
 import com.centurylink.mdw.cache.asset.PackageCache;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
@@ -29,6 +28,7 @@ import com.centurylink.mdw.config.YamlBuilder;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.java.CompiledJavaCache;
 import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.model.asset.AssetVersion;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.task.TaskInstance;
@@ -421,7 +421,7 @@ public class TestCaseRun implements Runnable {
         String val = var.getStringValue(pkg);
         if (var.isDocument(pkg)) {
             try {
-                val = workflowServices.getDocumentStringValue(new DocumentReference(val).getDocumentId());
+                val = workflowServices.getDocumentStringValue(new DocumentReference(val).getDocumentId(), var.getType(), pkg);
             }
             catch (ServiceException ex) {
                 throw new TestException(ex.getMessage(), ex);
@@ -439,15 +439,15 @@ public class TestCaseRun implements Runnable {
             return false;
 
         try {
-            List<Process> processVos = new ArrayList<>();
+            List<Process> processDefs = new ArrayList<>();
             if (isVerbose())
                 log.println("loading runtime data for processes:");
             for (TestCaseProcess process : processes) {
                 if (isVerbose())
                     log.println("  - " + process.getLabel());
-                processVos.add(process.getProcess());
+                processDefs.add(process.getProcess());
             }
-            processInstances = loadResults(processVos, expectedResults, processes[0]);
+            processInstances = loadResults(processDefs, expectedResults, processes[0]);
             if (processInstances.isEmpty())
                 throw new IllegalStateException("No process instances found for masterRequestId: " + masterRequestId);
             return verifyProcesses(expectedResults);
@@ -532,11 +532,8 @@ public class TestCaseRun implements Runnable {
             return getProcess(path);
         try {
             String assetPath = path.indexOf('/') > 0 ? path : getTestCase().getPackage() + '/' + path;
-            Asset asset = AssetCache.getAsset(assetPath);
-            if (asset != null) {
-                // don't require cache refresh to make changes
-                asset.load();
-            }
+            Asset asset = new Asset(ApplicationContext.getAssetRoot(), new AssetVersion(assetPath, 0));
+            asset.load();
             return asset;
         }
         catch (IOException ex) {

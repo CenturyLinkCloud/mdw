@@ -16,11 +16,9 @@ import com.centurylink.mdw.model.request.Request;
 import com.centurylink.mdw.model.request.Response;
 import com.centurylink.mdw.model.task.TaskInstance;
 import com.centurylink.mdw.model.task.UserTaskAction;
-import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.workflow.ActivityInstance;
-import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.request.RequestHandler;
@@ -137,17 +135,16 @@ public class TestHandler extends BaseHandler {
                 params.put(param.getName(), param.getStringValue());
         }
         String processType = proc.getProcessType();
-        String resp;
         if (processType.equals(ProcessVisibilityConstant.SERVICE)) {
             Map<String,String> stringParams = translateInputValues(proc.getId(), params);
             ProcessEngineDriver engineDriver = new ProcessEngineDriver();
-            resp = engineDriver.invokeService(proc.getId(), OwnerType.DOCUMENT, requestId, masterRequestId,
+            Response resp = engineDriver.invokeService(proc.getId(), OwnerType.DOCUMENT, requestId, masterRequestId,
                     message, stringParams, null, performanceLevel, null, null, metaInfo);
+            return resp == null ? null : resp.getContent();
         } else {
             launchProcess(proc.getId(), requestId, masterRequestId, params, null);
-            resp = createSuccessResponse(null);
+            return createSuccessResponse(null);
         }
-        return resp;
     }
 
     /**
@@ -173,7 +170,7 @@ public class TestHandler extends BaseHandler {
         EventServices eventMgr = ServiceLocator.getEventServices();
         eventName = translatePlaceHolder(eventName, xmlbean, eventMgr);
         Long docid = eventMgr.createDocument(StringDocument.class.getName(), OwnerType.DOCUMENT,
-                new Long(metaInfo.get(Listener.METAINFO_DOCUMENT_ID)), msgContent, null);
+                new Long(metaInfo.get(Listener.METAINFO_DOCUMENT_ID)), msgContent, null, StringDocument.class.getName());
         logger.debug("Regression tester notify process with event '" + eventName + "'");
         super.notifyProcesses(eventName, docid, msgContent, 0);
         return createSuccessResponse(null);
@@ -321,37 +318,6 @@ public class TestHandler extends BaseHandler {
                 EventServices eventManager = ServiceLocator.getEventServices();
                 Long procInstId = taskInst.getOwnerId();
                 ProcessInstance procInst = eventManager.getProcessInstance(procInstId);
-                Process procdef = ProcessCache.getProcess(procInst.getProcessId());
-                if (procInst.isEmbedded()) {
-                    procInstId = procInst.getOwnerId();
-                }
-                for (Parameter param : params) {
-                    String pname = param.getName();
-                    if (pname.startsWith("formdata.")) {
-                        String varname = pname.substring(9);
-                        VariableInstance var = eventManager.getVariableInstance(procInstId, varname);
-                        Package pkg = PackageCache.getPackage(procdef.getPackageName());
-                        if (var == null) {
-                            Variable vardef = procdef.getVariable(varname);
-                            if (vardef == null)
-                                throw new RequestHandlerException("The variable is not defined: " + varname);
-                            if (pkg.getTranslator(vardef.getType()).isDocumentReferenceVariable()) {
-                                Long docid = eventManager.createDocument(vardef.getType(),
-                                        OwnerType.PROCESS_INSTANCE, procInstId, param.getStringValue(), pkg);
-                                eventManager.setVariableInstance(procInstId, varname, new DocumentReference(docid), pkg);
-                            } else {
-                                eventManager.setVariableInstance(procInstId, varname, param.getStringValue(), pkg);
-                            }
-                        } else {
-                            if (var.isDocument(pkg)) {
-                                DocumentReference docref = (DocumentReference)var.getData(pkg);
-                                eventManager.updateDocumentContent(docref.getDocumentId(), param.getStringValue(), var.getType(), null);
-                            } else {
-                                eventManager.setVariableInstance(procInstId, varname, param.getStringValue(), pkg);
-                            }
-                        }
-                    }
-                }
             }
         }
         ServiceLocator.getTaskServices().performAction(taskInstId, directAction, cuid, cuid, null, null, true);

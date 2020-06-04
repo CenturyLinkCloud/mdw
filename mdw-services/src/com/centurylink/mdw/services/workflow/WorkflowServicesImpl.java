@@ -38,6 +38,7 @@ import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.report.Hotspot;
 import com.centurylink.mdw.model.report.Insight;
 import com.centurylink.mdw.model.report.Timepoint;
+import com.centurylink.mdw.model.request.Response;
 import com.centurylink.mdw.model.system.SysInfo;
 import com.centurylink.mdw.model.system.SysInfoCategory;
 import com.centurylink.mdw.model.task.TaskInstance;
@@ -73,14 +74,12 @@ import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
 import com.centurylink.mdw.variable.VariableTranslator;
-import com.centurylink.mdw.xml.XmlBeanWrapper;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.yaml.snakeyaml.Yaml;
 
-import javax.xml.bind.JAXBElement;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -437,7 +436,8 @@ public class WorkflowServicesImpl implements WorkflowServices {
             // ensure consistent formatting for doc values
             String str = varInst.getStringValue(runtimeContext.getPackage());
             if (varInst != null && str != null && str.startsWith("DOCUMENT:"))
-                stringVal = getDocumentStringValue(new DocumentReference(varInst.getStringValue(runtimeContext.getPackage())).getDocumentId());
+                stringVal = getDocumentStringValue(new DocumentReference(varInst.getStringValue(runtimeContext.getPackage())).getDocumentId(),
+                        var.getType(), runtimeContext.getPackage());
         }
         else {
             stringVal = runtimeContext.getValueAsString(name);
@@ -487,8 +487,8 @@ public class WorkflowServicesImpl implements WorkflowServices {
                     Object value = var.getData(pkg);
                     if (value instanceof DocumentReference) {
                         try {
-                            Document docVO = getWorkflowDataAccess().getDocument(((DocumentReference)value).getDocumentId());
-                            value = docVO == null ? null : docVO.getObject(var.getType(), pkg);
+                            Document doc = getWorkflowDataAccess().getDocument(((DocumentReference)value).getDocumentId());
+                            value = doc == null ? null : doc.getObject(var.getType(), pkg);
                             vars.put(var.getName(), value);
                         }
                         catch (TranslationException ex) {
@@ -545,7 +545,8 @@ public class WorkflowServicesImpl implements WorkflowServices {
     }
 
     public ProcessInstance getProcessForTrigger(Long triggerId) throws ServiceException {
-        String ownerContent = getDocumentStringValue(triggerId);
+        Document doc = getDocument(triggerId);
+        String ownerContent = getDocumentStringValue(triggerId, doc.getVariableType(), getPackage(doc));
         try {
             JSONObject json = new JsonObject(ownerContent);
             if (!json.has("runtimeContext")) {
@@ -849,12 +850,12 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
     }
 
-    public Object invokeServiceProcess(String name, Object masterRequest, String masterRequestId,
+    public Response invokeServiceProcess(String name, Object masterRequest, String masterRequestId,
             Map<String,Object> parameters, Map<String,String> headers) throws ServiceException {
         return invokeServiceProcess(name, masterRequest, masterRequestId, parameters, headers, null);
     }
 
-    public Object invokeServiceProcess(String processName, Object masterRequest, String masterRequestId,
+    public Response invokeServiceProcess(String processName, Object masterRequest, String masterRequestId,
             Map<String,Object> parameters, Map<String,String> headers, Map<String,String> responseHeaders)
             throws ServiceException {
         try {
@@ -863,10 +864,14 @@ public class WorkflowServicesImpl implements WorkflowServices {
             Process process = ProcessCache.getProcess(processName);
             Package pkg = PackageCache.getPackage(process.getPackageName());
             if (masterRequest != null) {
-                String docType = getDocType(masterRequest);
+                String varType = StringDocument.class.getName();
+                if (masterRequest instanceof JSONObject)
+                    varType = JSONObject.class.getName();
+                else if (masterRequest instanceof Jsonable)
+                    varType = Jsonable.class.getName();
                 EventServices eventMgr = ServiceLocator.getEventServices();
-                docId = eventMgr.createDocument(docType, OwnerType.LISTENER_REQUEST, 0L, masterRequest, pkg);
-                request = pkg.getStringValue(docType, masterRequest, true);
+                docId = eventMgr.createDocument(varType, OwnerType.LISTENER_REQUEST, 0L, masterRequest, pkg);
+                request = pkg.getStringValue(varType, masterRequest, true);
                 if (headers == null)
                     headers = new HashMap<>();
                 headers.put(Listener.METAINFO_DOCUMENT_ID, docId.toString());
@@ -877,15 +882,8 @@ public class WorkflowServicesImpl implements WorkflowServices {
             String responseVarName = "response";  // currently not configurable
 
             ProcessEngineDriver engineDriver = new ProcessEngineDriver();
-            String resp = engineDriver.invokeService(process.getId(), OwnerType.DOCUMENT, docId, masterRequestId,
+            Response response = engineDriver.invokeService(process.getId(), OwnerType.DOCUMENT, docId, masterRequestId,
                     request, stringParams, responseVarName, headers);
-            Object response = resp;
-            if (resp != null) {
-                Variable var = process.getVariable(responseVarName);
-                if (var != null && var.isOutput() && !var.isString()) {
-                    response = pkg.getObjectValue(var.getType(), resp, true);
-                }
-            }
             Variable responseHeadersVar = process.getVariable("responseHeaders");
             if (responseHeaders != null && responseHeadersVar != null && responseHeadersVar.getType().equals(
                     "java.util.Map<String,String>")) {
@@ -911,12 +909,12 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
     }
 
-    public String invokeServiceProcess(Process process, String masterRequestId, String ownerType,
+    public Response invokeServiceProcess(Process process, String masterRequestId, String ownerType,
             Long ownerId, Map<String,String> params) throws ServiceException {
         return invokeServiceProcess(process, masterRequestId, ownerType, ownerId, params, null);
     }
 
-    public String invokeServiceProcess(Process process, String masterRequestId, String ownerType,
+    public Response invokeServiceProcess(Process process, String masterRequestId, String ownerType,
             Long ownerId, Map<String,String> params, Map<String,String> headers) throws ServiceException {
         try {
             ProcessEngineDriver driver = new ProcessEngineDriver();
@@ -935,8 +933,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
     public Integer notify(String event, String message, int delay) throws ServiceException {
         try {
             EventServices eventManager = ServiceLocator.getEventServices();
-            Long docId = eventManager.createDocument(StringDocument.class.getName(), OwnerType.INTERNAL_EVENT, 0L,
-                    message, null);
+            Long docId = eventManager.createDocument(StringDocument.class.getName(), OwnerType.INTERNAL_EVENT, 0L, message, null);
             return eventManager.notifyProcess(event, docId, message, delay);
         }
         catch (Exception ex) {
@@ -955,10 +952,15 @@ public class WorkflowServicesImpl implements WorkflowServices {
             Long docId = 0L;
             String message = null;
             if (eventMessage != null) {
-                String docType = getDocType(eventMessage);
+                String varType = StringDocument.class.getName();
+                if (eventMessage instanceof JSONObject)
+                    varType = JSONObject.class.getName();
+                else if (eventMessage instanceof Jsonable)
+                    varType = Jsonable.class.getName();
+
                 EventServices eventMgr = ServiceLocator.getEventServices();
-                docId = eventMgr.createDocument(docType, OwnerType.LISTENER_REQUEST, 0L, eventMessage, runtimePackage);
-                message = runtimePackage.getStringValue(docType, eventMessage, true);
+                docId = eventMgr.createDocument(varType, OwnerType.LISTENER_REQUEST, 0L, eventMessage, runtimePackage);
+                message = runtimePackage.getStringValue(StringDocument.class.getName(), eventMessage, true);
             }
             EventServices eventManager = ServiceLocator.getEventServices();
             return eventManager.notifyProcess(eventName, docId, message, delay);
@@ -1072,13 +1074,13 @@ public class WorkflowServicesImpl implements WorkflowServices {
      * and these need to be updated to use this method.
      */
     public void createDocument(ProcessRuntimeContext context, String varName, Object value) throws ServiceException {
-        String type = context.getProcess().getVariable(varName).getType();
+        String varType = context.getProcess().getVariable(varName).getType();
         EventServices eventMgr = ServiceLocator.getEventServices();
         Long procInstId = context.getProcessInstance().isEmbedded() ? context.getProcessInstance().getOwnerId() : context.getProcessInstanceId();
         try {
-            Long docId = eventMgr.createDocument(type, OwnerType.PROCESS_INSTANCE, procInstId, value, context.getPackage());
+            Long docId = eventMgr.createDocument(varType, OwnerType.PROCESS_INSTANCE, procInstId, value, context.getPackage());
             VariableInstance varInst = eventMgr.setVariableInstance(procInstId, varName, new DocumentReference(docId), context.getPackage());
-            eventMgr.updateDocumentInfo(docId, type, OwnerType.VARIABLE_INSTANCE, varInst.getId());
+            eventMgr.updateDocumentInfo(docId, varType, OwnerType.VARIABLE_INSTANCE, varInst.getId());
         }
         catch (DataAccessException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error creating document for process: " + procInstId, ex);
@@ -1160,7 +1162,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
             throw new ServiceException(ServiceException.NOT_FOUND, varName + " not found for process: " +
                     context.getProcessInstanceId());
         try {
-            eventMgr.updateDocumentContent(varInst.getDocumentId(), value, varInst.getType(), context.getPackage());
+            eventMgr.updateDocumentContent(varInst.getDocumentId(), value, context.getPackage());
         }
         catch (DataAccessException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error updating document: " +
@@ -1174,8 +1176,8 @@ public class WorkflowServicesImpl implements WorkflowServices {
         if (parameters != null) {
             for (String key : parameters.keySet()) {
                 Object val = parameters.get(key);
-                Variable vo = process.getVariable(key);
-                if (vo == null) {
+                Variable variable = process.getVariable(key);
+                if (variable == null) {
                     throw new ProcessException("Variable '" + key + "' not found for process: " + process.getName() +
                             " v" + process.getVersionString() + "(id=" + process.getId() + ")");
                 }
@@ -1184,7 +1186,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
                     translated = (String) val;
                 else {
                     Package pkg = PackageCache.getPackage(process.getPackageName());
-                    translated = pkg.getStringValue(vo.getType(), val, true);
+                    translated = pkg.getStringValue(variable.getType(), val, true);
                 }
                 stringParams.put(key, translated);
             }
@@ -1192,48 +1194,19 @@ public class WorkflowServicesImpl implements WorkflowServices {
         return stringParams;
     }
 
-    /**
-     * TODO: There's gotta be a better way
-     */
-    public String getDocType(Object docObj) {
-        if (docObj instanceof String || docObj instanceof StringDocument)
-            return StringDocument.class.getName();
-        else if (docObj instanceof XmlObject)
-            return XmlObject.class.getName();
-        else if (docObj instanceof XmlBeanWrapper)
-            return XmlBeanWrapper.class.getName();
-        else if (docObj instanceof groovy.util.Node)
-            return groovy.util.Node.class.getName();
-        else if (docObj instanceof JAXBElement)
-            return JAXBElement.class.getName();
-        else if (docObj instanceof Document)
-            return Document.class.getName();
-        else if (docObj instanceof JSONObject)
-            return JSONObject.class.getName();
-        else if (docObj.getClass().getName().equals("org.apache.camel.component.cxf.CxfPayload"))
-            return "org.apache.camel.component.cxf.CxfPayload";
-        else if (docObj instanceof Jsonable)
-            return Jsonable.class.getName();
-        else if (docObj instanceof Yaml)
-            return Yaml.class.getName();
-        else
-            return Object.class.getName();
-    }
-
     @SuppressWarnings("deprecation")
-    public String getDocumentStringValue(Long id) throws ServiceException {
+    public String getDocumentStringValue(Long id, String variableType, Package pkg) throws ServiceException {
         try {
             Document doc = getWorkflowDataAccess().getDocument(id);
             if (doc.getType() == null)
                 throw new ServiceException(ServiceException.INTERNAL_ERROR, "Unable to determine document type.");
 
-            Package pkg = getPackage(doc);
-
+            doc.setVariableType(variableType);
             // check raw content for parsability
             if (doc.getContent(pkg) == null || doc.getContent(pkg).isEmpty())
                 return doc.getContent(pkg);
 
-            VariableTranslator translator = pkg.getTranslator(doc.getType());
+            VariableTranslator translator = pkg.getTranslator(doc.getVariableType());
             if (translator instanceof JavaObjectTranslator) {
                 Object obj = doc.getObject(Object.class.getName(), pkg);
                 return obj.toString();
@@ -1242,12 +1215,12 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 return doc.getContent(pkg);
             }
             else if (translator instanceof XmlDocumentTranslator && !(translator instanceof YamlTranslator)) {
-                org.w3c.dom.Document domDoc = ((XmlDocumentTranslator)translator).toDomDocument(doc.getObject(doc.getType(), pkg));
+                org.w3c.dom.Document domDoc = ((XmlDocumentTranslator)translator).toDomDocument(doc.getObject(doc.getVariableType(), pkg));
                 XmlObject xmlBean = XmlObject.Factory.parse(domDoc);
                 return xmlBean.xmlText(new XmlOptions().setSavePrettyPrint().setSavePrettyPrintIndent(4));
             }
             else if (translator instanceof JsonTranslator && !(translator instanceof YamlTranslator)) {
-                JSONObject jsonObj = ((JsonTranslator)translator).toJson(doc.getObject(doc.getType(), pkg));
+                JSONObject jsonObj = ((JsonTranslator)translator).toJson(doc.getObject(doc.getVariableType(), pkg));
                 if (jsonObj instanceof JsonObject) {
                     return jsonObj.toString(2);
                 }
@@ -1351,24 +1324,21 @@ public class WorkflowServicesImpl implements WorkflowServices {
         EngineDataAccessDB dataAccess = new EngineDataAccessDB();
         try {
             boolean isYaml = !JsonUtil.isJson(processAsset.getFile());
-
             EventServices eventServices = ServiceLocator.getEventServices();
             dataAccess.getDatabaseAccess().openConnection();
             ProcessInstance procInst = dataAccess.getProcessInstance(instanceId);
             String content = isYaml ? Yamlable.toString(process,2) : process.getJson().toString(2);
             long docId = procInst.getInstanceDefinitionId();
+            Package pkg = PackageCache.getPackage(process.getPackageName());
             if (docId == 0L) {
-                docId = eventServices.createDocument(isYaml ? Yaml.class.getName() : JSONObject.class.getName(), OwnerType.PROCESS_INSTANCE_DEF,
-                        instanceId, content, PackageCache.getPackage(process.getPackageName()));
+                docId = eventServices.createDocument(isYaml ? Yaml.class.getName() : JSONObject.class.getName(), OwnerType.PROCESS_INSTANCE_DEF, instanceId, content, pkg);
                 String[] fields = new String[]{"COMMENTS"};
                 String comment = procInst.getComment() == null ? "" : procInst.getComment();
                 Object[] args = new Object[]{comment + "|HasInstanceDef|" + docId, null};
-                dataAccess.updateTableRow("PROCESS_INSTANCE", "process_instance_id", instanceId,
-                        fields, args);
+                dataAccess.updateTableRow("PROCESS_INSTANCE", "process_instance_id", instanceId, fields, args);
             }
             else {
-                eventServices.updateDocumentContent(docId, content, isYaml ? Yaml.class.getName() : JSONObject.class.getName(),
-                        PackageCache.getPackage(process.getPackageName()));
+                eventServices.updateDocumentContent(docId, content, pkg);
                 if (!isYaml) // maybe old save was Jsonable doc type
                     eventServices.updateDocumentInfo(docId, JSONObject.class.getName(), OwnerType.PROCESS_INSTANCE_DEF, instanceId);
             }
