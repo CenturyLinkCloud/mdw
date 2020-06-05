@@ -29,29 +29,6 @@ process: # 10612
         "elevation": 19339,
         "name": "Kilimanjaro"
       }
-  variable: # 12378
-    name: requestHeaders
-    value: |
-      {
-        "AuthenticatedUser": "mdwapp",
-        "Content-Type": "application/json",
-        "HttpMethod": "POST",
-        "Protocol": "REST",
-        "RemoteAddr": "${~.*}",
-        "RemoteHost": "${~.*}",
-        "RemotePort": "${~\\d*}",
-        "RequestPath": "variablesTest/Jsonable",
-        "RequestURL": "http://${~.*}/mdw/api/REST/variablesTest/Jsonable",
-        "ServiceClass": "com.centurylink.mdw.hub.servlet.RestServlet",
-        "accept": "${~.*}",
-        "connection": "keep-alive",
-        "content-length": "${~\\d*}",
-        "content-type": "application/json",
-        "document-id": "${~\\d*}",
-        "host": "${~.*}",
-        "mdw-request-id": "${masterRequestId}",
-        "user-agent": "${~.*}"
-      }
   variable: # 12377
     name: testCase
     value: Request Handler

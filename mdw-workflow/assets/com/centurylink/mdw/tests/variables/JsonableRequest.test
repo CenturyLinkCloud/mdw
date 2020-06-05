@@ -13,4 +13,6 @@ def response = post http("api/com/centurylink/mdw/tests/variables/Jsonable") {
 }
 
 wait process("Jsonable.proc")
-verify process
+verify process {
+    excludeVariables = ['requestHeaders']
+}
