@@ -42,7 +42,7 @@
 9. (Formal builds only) On GitHub:
   - Make sure all closed issues have the current milestone assigned; otherwise they will not be included in release notes.
   - Create a milestone marker for the next build. (https://github.com/CenturyLinkCloud/mdw/milestones/new)
-  - Assign any un-delivered issues and pull requests for the current build's milestone to the next build's milestone.
+  - Assign any undelivered issues and pull requests for the current build's milestone to the next build's milestone.
   - Close this build's milestone in GitHub.
 
 10. Release Notes
@@ -73,6 +73,6 @@
    - Update the framework assets:
      ```
      cd mdw-demo
-     mdw update (--snapshots)
+     mdw update
      ```
   - Commit and push changes
