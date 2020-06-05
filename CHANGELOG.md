@@ -1,5 +1,26 @@
 # Change Log
 
+## [6.1.36](https://github.com/CenturyLinkCloud/mdw/tree/6.1.36) (2020-06-05)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.35...6.1.36)
+
+**Implemented enhancements:**
+
+- Annotation driven customization [\#842](https://github.com/CenturyLinkCloud/mdw/issues/842)
+
+**Closed issues:**
+
+- Dangling autotests due to server shutdown [\#844](https://github.com/CenturyLinkCloud/mdw/issues/844)
+
+**Compatibility Notes:**
+
+- New database column VARIABLE_INSTANCE.VARIABLE_TYPE is added with this release:
+  https://github.com/CenturyLinkCloud/mdw/tree/master/mdw/database
+- JSON-format package meta files (.mdw/package.json) are no longer supported.
+  Apps still using package.json must convert to package.yaml using the CLI (`mdw convert --packages`).
+- API methods `WorkflowServices.invokeServiceProcess()` and `ProcessEngineDriver.invokeServiceProcess()`
+  now return a Response modle object instead of a plain string.  To unwrap the raw string payload,
+  use `Response.getContent()`.
+
 ## [6.1.35](https://github.com/CenturyLinkCloud/mdw/tree/6.1.35) (2020-05-14)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.34...6.1.35)
 
