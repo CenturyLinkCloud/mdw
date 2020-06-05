@@ -1,7 +1,7 @@
 schemaVersion: '6.1'
 name: com.centurylink.mdw.zipkin.tests
-version: 6.1.36
+version: 6.1.37-SNAPSHOT
 
 dependencies:
-  - com.centurylink.mdw.testing v6.1.36
-  - com.centurylink.mdw.zipkin v6.1.36
+  - com.centurylink.mdw.testing v6.1.37-SNAPSHOT
+  - com.centurylink.mdw.zipkin v6.1.37-SNAPSHOT
