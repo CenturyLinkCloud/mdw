@@ -94,6 +94,43 @@
 </ul>
 </li>
 <li class="blockList">
+<h2 title="Package">Package&nbsp;com.centurylink.mdw.adapter</h2>
+<ul class="blockList">
+<li class="blockList"><a name="com.centurylink.mdw.adapter.AdapterException">
+<!--   -->
+</a>
+<h3>Class <a href="com/centurylink/mdw/adapter/AdapterException.html" title="class in com.centurylink.mdw.adapter">com.centurylink.mdw.adapter.AdapterException</a> extends <a href="com/centurylink/mdw/common/MdwException.html" title="class in com.centurylink.mdw.common">MdwException</a> implements Serializable</h3>
+<ul class="blockList">
+<li class="blockList">
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockListLast">
+<h4>retryable</h4>
+<pre>boolean retryable</pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a name="com.centurylink.mdw.adapter.ConnectionException">
+<!--   -->
+</a>
+<h3>Class <a href="com/centurylink/mdw/adapter/ConnectionException.html" title="class in com.centurylink.mdw.adapter">com.centurylink.mdw.adapter.ConnectionException</a> extends java.lang.Exception implements Serializable</h3>
+<ul class="blockList">
+<li class="blockList">
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockListLast">
+<h4>code</h4>
+<pre>int code</pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList">
 <h2 title="Package">Package&nbsp;com.centurylink.mdw.app</h2>
 <ul class="blockList">
 <li class="blockList"><a name="com.centurylink.mdw.app.WorkflowException">
@@ -186,6 +223,27 @@
 </ul>
 </li>
 <li class="blockList">
+<h2 title="Package">Package&nbsp;com.centurylink.mdw.cli.impls</h2>
+<ul class="blockList">
+<li class="blockList"><a name="com.centurylink.mdw.cli.impls.Implementors">
+<!--   -->
+</a>
+<h3>Class <a href="com/centurylink/mdw/cli/impls/Implementors.html" title="class in com.centurylink.mdw.cli.impls">com.centurylink.mdw.cli.impls.Implementors</a> extends java.util.LinkedHashMap&lt;java.lang.String,<a href="com/centurylink/mdw/model/workflow/ActivityImplementor.html" title="class in com.centurylink.mdw.model.workflow">ActivityImplementor</a>&gt; implements Serializable</h3>
+<ul class="blockList">
+<li class="blockList">
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockListLast">
+<h4>assetRoot</h4>
+<pre>java.io.File assetRoot</pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList">
 <h2 title="Package">Package&nbsp;com.centurylink.mdw.common</h2>
 <ul class="blockList">
 <li class="blockList"><a name="com.centurylink.mdw.common.MdwException">
@@ -268,34 +326,12 @@
 <li class="blockList"><a name="com.centurylink.mdw.connector.adapter.AdapterException">
 <!--   -->
 </a>
-<h3>Class <a href="com/centurylink/mdw/connector/adapter/AdapterException.html" title="class in com.centurylink.mdw.connector.adapter">com.centurylink.mdw.connector.adapter.AdapterException</a> extends <a href="com/centurylink/mdw/common/MdwException.html" title="class in com.centurylink.mdw.common">MdwException</a> implements Serializable</h3>
-<ul class="blockList">
-<li class="blockList">
-<h3>Serialized Fields</h3>
-<ul class="blockList">
-<li class="blockListLast">
-<h4>retryable</h4>
-<pre>boolean retryable</pre>
-</li>
-</ul>
-</li>
-</ul>
+<h3>Class <a href="com/centurylink/mdw/connector/adapter/AdapterException.html" title="class in com.centurylink.mdw.connector.adapter">com.centurylink.mdw.connector.adapter.AdapterException</a> extends <a href="com/centurylink/mdw/adapter/AdapterException.html" title="class in com.centurylink.mdw.adapter">AdapterException</a> implements Serializable</h3>
 </li>
 <li class="blockList"><a name="com.centurylink.mdw.connector.adapter.ConnectionException">
 <!--   -->
 </a>
-<h3>Class <a href="com/centurylink/mdw/connector/adapter/ConnectionException.html" title="class in com.centurylink.mdw.connector.adapter">com.centurylink.mdw.connector.adapter.ConnectionException</a> extends java.lang.Exception implements Serializable</h3>
-<ul class="blockList">
-<li class="blockList">
-<h3>Serialized Fields</h3>
-<ul class="blockList">
-<li class="blockListLast">
-<h4>code</h4>
-<pre>int code</pre>
-</li>
-</ul>
-</li>
-</ul>
+<h3>Class <a href="com/centurylink/mdw/connector/adapter/ConnectionException.html" title="class in com.centurylink.mdw.connector.adapter">com.centurylink.mdw.connector.adapter.ConnectionException</a> extends <a href="com/centurylink/mdw/adapter/ConnectionException.html" title="class in com.centurylink.mdw.adapter">ConnectionException</a> implements Serializable</h3>
 </li>
 </ul>
 </li>
@@ -310,108 +346,49 @@
 </ul>
 </li>
 <li class="blockList">
-<h2 title="Package">Package&nbsp;com.centurylink.mdw.dataaccess.file</h2>
-<ul class="blockList">
-<li class="blockList"><a name="com.centurylink.mdw.dataaccess.file.AssetFile">
-<!--   -->
-</a>
-<h3>Class <a href="com/centurylink/mdw/dataaccess/file/AssetFile.html" title="class in com.centurylink.mdw.dataaccess.file">com.centurylink.mdw.dataaccess.file.AssetFile</a> extends java.io.File implements Serializable</h3>
-<ul class="blockList">
-<li class="blockList">
-<h3>Serialized Fields</h3>
-<ul class="blockList">
-<li class="blockList">
-<h4>id</h4>
-<pre>long id</pre>
-</li>
-<li class="blockList">
-<h4>revision</h4>
-<pre><a href="com/centurylink/mdw/dataaccess/AssetRevision.html" title="class in com.centurylink.mdw.dataaccess">AssetRevision</a> revision</pre>
-</li>
-<li class="blockList">
-<h4>parent</h4>
-<pre><a href="com/centurylink/mdw/dataaccess/file/PackageDir.html" title="class in com.centurylink.mdw.dataaccess.file">PackageDir</a> parent</pre>
-</li>
-<li class="blockListLast">
-<h4>logicalFile</h4>
-<pre>java.io.File logicalFile</pre>
-<div class="block">com.centurylink.mdw.demo.intro/HandleOrder.proc v0.18</div>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="blockList"><a name="com.centurylink.mdw.dataaccess.file.PackageDir">
-<!--   -->
-</a>
-<h3>Class <a href="com/centurylink/mdw/dataaccess/file/PackageDir.html" title="class in com.centurylink.mdw.dataaccess.file">com.centurylink.mdw.dataaccess.file.PackageDir</a> extends java.io.File implements Serializable</h3>
-<ul class="blockList">
-<li class="blockList">
-<h3>Serialized Fields</h3>
-<ul class="blockList">
-<li class="blockList">
-<h4>storageDir</h4>
-<pre>java.io.File storageDir</pre>
-</li>
-<li class="blockList">
-<h4>versionControl</h4>
-<pre><a href="com/centurylink/mdw/dataaccess/VersionControl.html" title="interface in com.centurylink.mdw.dataaccess">VersionControl</a> versionControl</pre>
-</li>
-<li class="blockList">
-<h4>logicalDir</h4>
-<pre>java.io.File logicalDir</pre>
-<div class="block">/com.centurylink.mdw.demo.intro v0.0.17</div>
-</li>
-<li class="blockList">
-<h4>archive</h4>
-<pre>boolean archive</pre>
-</li>
-<li class="blockList">
-<h4>pkgName</h4>
-<pre>java.lang.String pkgName</pre>
-</li>
-<li class="blockList">
-<h4>pkgVersion</h4>
-<pre>java.lang.String pkgVersion</pre>
-</li>
-<li class="blockList">
-<h4>schemaVersion</h4>
-<pre>java.lang.String schemaVersion</pre>
-</li>
-<li class="blockList">
-<h4>pkgId</h4>
-<pre>long pkgId</pre>
-</li>
-<li class="blockList">
-<h4>yaml</h4>
-<pre>java.lang.Boolean yaml</pre>
-</li>
-<li class="blockList">
-<h4>metaFile</h4>
-<pre>java.io.File metaFile</pre>
-</li>
-<li class="blockList">
-<h4>assetFiles</h4>
-<pre>java.util.Map&lt;K,V&gt; assetFiles</pre>
-<div class="block">logical file to AssetFile</div>
-</li>
-<li class="blockListLast">
-<h4>vcsDiffType</h4>
-<pre><a href="com/centurylink/mdw/dataaccess/file/GitDiffs.DiffType.html" title="enum in com.centurylink.mdw.dataaccess.file">GitDiffs.DiffType</a> vcsDiffType</pre>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="blockList">
 <h2 title="Package">Package&nbsp;com.centurylink.mdw.event</h2>
 <ul class="blockList">
 <li class="blockList"><a name="com.centurylink.mdw.event.EventHandlerException">
 <!--   -->
 </a>
-<h3>Class <a href="com/centurylink/mdw/event/EventHandlerException.html" title="class in com.centurylink.mdw.event">com.centurylink.mdw.event.EventHandlerException</a> extends <a href="com/centurylink/mdw/app/WorkflowException.html" title="class in com.centurylink.mdw.app">WorkflowException</a> implements Serializable</h3>
+<h3>Class <a href="com/centurylink/mdw/event/EventHandlerException.html" title="class in com.centurylink.mdw.event">com.centurylink.mdw.event.EventHandlerException</a> extends <a href="com/centurylink/mdw/request/RequestHandlerException.html" title="class in com.centurylink.mdw.request">RequestHandlerException</a> implements Serializable</h3>
+</li>
+</ul>
+</li>
+<li class="blockList">
+<h2 title="Package">Package&nbsp;com.centurylink.mdw.file</h2>
+<ul class="blockList">
+<li class="blockList"><a name="com.centurylink.mdw.file.Packages">
+<!--   -->
+</a>
+<h3>Class <a href="com/centurylink/mdw/file/Packages.html" title="class in com.centurylink.mdw.file">com.centurylink.mdw.file.Packages</a> extends java.util.TreeMap&lt;java.lang.String,java.io.File&gt; implements Serializable</h3>
+<ul class="blockList">
+<li class="blockList">
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockListLast">
+<h4>assetRoot</h4>
+<pre>java.io.File assetRoot</pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a name="com.centurylink.mdw.file.VersionProperties">
+<!--   -->
+</a>
+<h3>Class <a href="com/centurylink/mdw/file/VersionProperties.html" title="class in com.centurylink.mdw.file">com.centurylink.mdw.file.VersionProperties</a> extends java.util.Properties implements Serializable</h3>
+<ul class="blockList">
+<li class="blockList">
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockListLast">
+<h4>propFile</h4>
+<pre>java.io.File propFile</pre>
+</li>
+</ul>
+</li>
+</ul>
 </li>
 </ul>
 </li>
@@ -508,22 +485,6 @@
 <li class="blockList">
 <h2 title="Package">Package&nbsp;com.centurylink.mdw.image</h2>
 <ul class="blockList">
-<li class="blockList"><a name="com.centurylink.mdw.image.Implementors">
-<!--   -->
-</a>
-<h3>Class <a href="com/centurylink/mdw/image/Implementors.html" title="class in com.centurylink.mdw.image">com.centurylink.mdw.image.Implementors</a> extends java.util.LinkedHashMap&lt;java.lang.String,<a href="com/centurylink/mdw/model/workflow/ActivityImplementor.html" title="class in com.centurylink.mdw.model.workflow">ActivityImplementor</a>&gt; implements Serializable</h3>
-<ul class="blockList">
-<li class="blockList">
-<h3>Serialized Fields</h3>
-<ul class="blockList">
-<li class="blockListLast">
-<h4>assetRoot</h4>
-<pre>java.io.File assetRoot</pre>
-</li>
-</ul>
-</li>
-</ul>
-</li>
 <li class="blockList"><a name="com.centurylink.mdw.image.ProcessCanvas">
 <!--   -->
 </a>
@@ -617,6 +578,11 @@
 <li class="blockList">
 <h2 title="Package">Package&nbsp;com.centurylink.mdw.model</h2>
 <ul class="blockList">
+<li class="blockList"><a name="com.centurylink.mdw.model.Attributes">
+<!--   -->
+</a>
+<h3>Class <a href="com/centurylink/mdw/model/Attributes.html" title="class in com.centurylink.mdw.model">com.centurylink.mdw.model.Attributes</a> extends java.util.TreeMap&lt;java.lang.String,java.lang.String&gt; implements Serializable</h3>
+</li>
 <li class="blockList"><a name="com.centurylink.mdw.model.Comment">
 <!--   -->
 </a>
@@ -685,6 +651,16 @@
 </ul>
 </li>
 </ul>
+</li>
+</ul>
+</li>
+<li class="blockList">
+<h2 title="Package">Package&nbsp;com.centurylink.mdw.model.asset</h2>
+<ul class="blockList">
+<li class="blockList"><a name="com.centurylink.mdw.model.asset.AssetPath.BadPathException">
+<!--   -->
+</a>
+<h3>Class <a href="com/centurylink/mdw/model/asset/AssetPath.BadPathException.html" title="class in com.centurylink.mdw.model.asset">com.centurylink.mdw.model.asset.AssetPath.BadPathException</a> extends java.lang.RuntimeException implements Serializable</h3>
 </li>
 </ul>
 </li>
@@ -822,48 +798,6 @@
 <li class="blockListLast">
 <h4>messageDocumentId</h4>
 <pre>java.lang.Long messageDocumentId</pre>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="blockList"><a name="com.centurylink.mdw.model.event.ExternalEvent">
-<!--   -->
-</a>
-<h3>Class <a href="com/centurylink/mdw/model/event/ExternalEvent.html" title="class in com.centurylink.mdw.model.event">com.centurylink.mdw.model.event.ExternalEvent</a> extends java.lang.Object implements Serializable</h3>
-<ul class="blockList">
-<li class="blockList">
-<h3>Serialized Fields</h3>
-<ul class="blockList">
-<li class="blockList">
-<h4>id</h4>
-<pre>java.lang.Long id</pre>
-</li>
-<li class="blockList">
-<h4>eventName</h4>
-<pre>java.lang.String eventName</pre>
-</li>
-<li class="blockList">
-<h4>eventHandler</h4>
-<pre>java.lang.String eventHandler</pre>
-</li>
-<li class="blockList">
-<h4>xpath</h4>
-<pre><a href="com/centurylink/mdw/xml/XmlPath.html" title="class in com.centurylink.mdw.xml">XmlPath</a> xpath</pre>
-</li>
-<li class="blockList">
-<h4>eventMessagePattern</h4>
-<pre>java.lang.String eventMessagePattern</pre>
-</li>
-<li class="blockList">
-<h4>isContentRouting</h4>
-<pre>java.lang.Boolean isContentRouting</pre>
-</li>
-<li class="blockListLast">
-<h4>packageName</h4>
-<pre>java.lang.String packageName</pre>
-<div class="block">Currently this is only used for File-based and VCS-based persistence
- (esp. createExternalEvent()).</div>
 </li>
 </ul>
 </li>
@@ -1503,62 +1437,6 @@
 <li class="blockList">
 <h2 title="Package">Package&nbsp;com.centurylink.mdw.model.variable</h2>
 <ul class="blockList">
-<li class="blockList"><a name="com.centurylink.mdw.model.variable.Document">
-<!--   -->
-</a>
-<h3>Class <a href="com/centurylink/mdw/model/variable/Document.html" title="class in com.centurylink.mdw.model.variable">com.centurylink.mdw.model.variable.Document</a> extends java.lang.Object implements Serializable</h3>
-<ul class="blockList">
-<li class="blockList">
-<h3>Serialized Fields</h3>
-<ul class="blockList">
-<li class="blockList">
-<h4>documentId</h4>
-<pre>java.lang.Long documentId</pre>
-</li>
-<li class="blockList">
-<h4>createDate</h4>
-<pre>java.util.Date createDate</pre>
-</li>
-<li class="blockList">
-<h4>modifyDate</h4>
-<pre>java.util.Date modifyDate</pre>
-</li>
-<li class="blockList">
-<h4>documentType</h4>
-<pre>java.lang.String documentType</pre>
-</li>
-<li class="blockList">
-<h4>ownerType</h4>
-<pre>java.lang.String ownerType</pre>
-</li>
-<li class="blockList">
-<h4>ownerId</h4>
-<pre>java.lang.Long ownerId</pre>
-</li>
-<li class="blockList">
-<h4>statusCode</h4>
-<pre>java.lang.Integer statusCode</pre>
-</li>
-<li class="blockList">
-<h4>statusMessage</h4>
-<pre>java.lang.String statusMessage</pre>
-</li>
-<li class="blockList">
-<h4>path</h4>
-<pre>java.lang.String path</pre>
-</li>
-<li class="blockList">
-<h4>content</h4>
-<pre>java.lang.String content</pre>
-</li>
-<li class="blockListLast">
-<h4>object</h4>
-<pre>java.lang.Object object</pre>
-</li>
-</ul>
-</li>
-</ul>
-</li>
 <li class="blockList"><a name="com.centurylink.mdw.model.variable.DocumentReference">
 <!--   -->
 </a>
@@ -1588,134 +1466,24 @@
 <pre>java.lang.String name</pre>
 </li>
 <li class="blockList">
-<h4>value</h4>
-<pre>java.lang.String value</pre>
-</li>
-<li class="blockList">
 <h4>type</h4>
 <pre>java.lang.String type</pre>
 </li>
-<li class="blockList">
-<h4>instanceId</h4>
-<pre>java.lang.Long instanceId</pre>
-</li>
-<li class="blockList">
-<h4>variableId</h4>
-<pre>java.lang.Long variableId</pre>
-</li>
-<li class="blockListLast">
-<h4>processInstanceId</h4>
-<pre>java.lang.Long processInstanceId</pre>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="blockList"><a name="com.centurylink.mdw.model.variable.VariableType">
-<!--   -->
-</a>
-<h3>Class <a href="com/centurylink/mdw/model/variable/VariableType.html" title="class in com.centurylink.mdw.model.variable">com.centurylink.mdw.model.variable.VariableType</a> extends java.lang.Object implements Serializable</h3>
-<ul class="blockList">
-<li class="blockList">
-<h3>Serialized Fields</h3>
-<ul class="blockList">
-<li class="blockList">
-<h4>variableTypeId</h4>
-<pre>java.lang.Long variableTypeId</pre>
-</li>
-<li class="blockList">
-<h4>variableType</h4>
-<pre>java.lang.String variableType</pre>
-</li>
-<li class="blockList">
-<h4>translatorClass</h4>
-<pre>java.lang.String translatorClass</pre>
-</li>
-<li class="blockListLast">
-<h4>updateable</h4>
-<pre>boolean updateable</pre>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="blockList">
-<h2 title="Package">Package&nbsp;com.centurylink.mdw.model.workflow</h2>
-<ul class="blockList">
-<li class="blockList"><a name="com.centurylink.mdw.model.workflow.Package">
-<!--   -->
-</a>
-<h3>Class <a href="com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">com.centurylink.mdw.model.workflow.Package</a> extends java.lang.Object implements Serializable</h3>
-<ul class="blockList">
-<li class="blockList">
-<h3>Serialized Fields</h3>
-<ul class="blockList">
 <li class="blockList">
 <h4>id</h4>
 <pre>java.lang.Long id</pre>
 </li>
 <li class="blockList">
-<h4>name</h4>
-<pre>java.lang.String name</pre>
+<h4>variableId</h4>
+<pre>java.lang.Long variableId</pre>
 </li>
 <li class="blockList">
-<h4>metaContent</h4>
-<pre>java.lang.String metaContent</pre>
-</li>
-<li class="blockList">
-<h4>attributes</h4>
-<pre>java.util.List&lt;E&gt; attributes</pre>
-</li>
-<li class="blockList">
-<h4>implementors</h4>
-<pre>java.util.List&lt;E&gt; implementors</pre>
-</li>
-<li class="blockList">
-<h4>externalEvents</h4>
-<pre>java.util.List&lt;E&gt; externalEvents</pre>
-</li>
-<li class="blockList">
-<h4>variables</h4>
-<pre>java.util.List&lt;E&gt; variables</pre>
-</li>
-<li class="blockList">
-<h4>processes</h4>
-<pre>java.util.List&lt;E&gt; processes</pre>
-</li>
-<li class="blockList">
-<h4>assets</h4>
-<pre>java.util.List&lt;E&gt; assets</pre>
-</li>
-<li class="blockList">
-<h4>taskTemplates</h4>
-<pre>java.util.List&lt;E&gt; taskTemplates</pre>
-</li>
-<li class="blockList">
-<h4>schemaVersion</h4>
-<pre>java.lang.String schemaVersion</pre>
-</li>
-<li class="blockList">
-<h4>version</h4>
-<pre><a href="com/centurylink/mdw/model/system/MdwVersion.html" title="class in com.centurylink.mdw.model.system">MdwVersion</a> version</pre>
-</li>
-<li class="blockList">
-<h4>classloader</h4>
-<pre>java.lang.ClassLoader classloader</pre>
-</li>
-<li class="blockList">
-<h4>group</h4>
-<pre>java.lang.String group</pre>
-</li>
-<li class="blockList">
-<h4>archived</h4>
-<pre>boolean archived</pre>
-<div class="block">Only set for VCS assets.</div>
+<h4>processInstanceId</h4>
+<pre>java.lang.Long processInstanceId</pre>
 </li>
 <li class="blockListLast">
-<h4>cloudClassLoader</h4>
-<pre><a href="com/centurylink/mdw/cloud/CloudClassLoader.html" title="class in com.centurylink.mdw.cloud">CloudClassLoader</a> cloudClassLoader</pre>
+<h4>value</h4>
+<pre>java.lang.String value</pre>
 </li>
 </ul>
 </li>
@@ -1744,12 +1512,12 @@
 </ul>
 </li>
 <li class="blockList">
-<h2 title="Package">Package&nbsp;com.centurylink.mdw.provider</h2>
+<h2 title="Package">Package&nbsp;com.centurylink.mdw.request</h2>
 <ul class="blockList">
-<li class="blockList"><a name="com.centurylink.mdw.provider.ProviderException">
+<li class="blockList"><a name="com.centurylink.mdw.request.RequestHandlerException">
 <!--   -->
 </a>
-<h3>Class <a href="com/centurylink/mdw/provider/ProviderException.html" title="class in com.centurylink.mdw.provider">com.centurylink.mdw.provider.ProviderException</a> extends java.lang.RuntimeException implements Serializable</h3>
+<h3>Class <a href="com/centurylink/mdw/request/RequestHandlerException.html" title="class in com.centurylink.mdw.request">com.centurylink.mdw.request.RequestHandlerException</a> extends java.lang.Exception implements Serializable</h3>
 </li>
 </ul>
 </li>
@@ -1891,12 +1659,12 @@
 </ul>
 </li>
 <li class="blockList">
-<h2 title="Package">Package&nbsp;com.centurylink.mdw.tests.cloud</h2>
+<h2 title="Package">Package&nbsp;com.centurylink.mdw.tests.code</h2>
 <ul class="blockList">
-<li class="blockList"><a name="com.centurylink.mdw.tests.cloud.JaxbAsset">
+<li class="blockList"><a name="com.centurylink.mdw.tests.code.JaxbAsset">
 <!--   -->
 </a>
-<h3>Class <a href="com/centurylink/mdw/tests/cloud/JaxbAsset.html" title="class in com.centurylink.mdw.tests.cloud">com.centurylink.mdw.tests.cloud.JaxbAsset</a> extends java.lang.Object implements Serializable</h3>
+<h3>Class <a href="com/centurylink/mdw/tests/code/JaxbAsset.html" title="class in com.centurylink.mdw.tests.code">com.centurylink.mdw.tests.code.JaxbAsset</a> extends java.lang.Object implements Serializable</h3>
 <ul class="blockList">
 <li class="blockList">
 <h3>Serialized Fields</h3>
@@ -2002,6 +1770,39 @@
 </ul>
 </li>
 <li class="blockList">
+<h2 title="Package">Package&nbsp;com.centurylink.mdw.tests.variables</h2>
+<ul class="blockList">
+<li class="blockList"><a name="com.centurylink.mdw.tests.variables.Mountain">
+<!--   -->
+</a>
+<h3>Class <a href="com/centurylink/mdw/tests/variables/Mountain.html" title="class in com.centurylink.mdw.tests.variables">com.centurylink.mdw.tests.variables.Mountain</a> extends java.lang.Object implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>3L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList">
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>name</h4>
+<pre>java.lang.String name</pre>
+</li>
+<li class="blockList">
+<h4>elevation</h4>
+<pre>int elevation</pre>
+</li>
+<li class="blockListLast">
+<h4>country</h4>
+<pre>java.lang.String country</pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList">
 <h2 title="Package">Package&nbsp;com.centurylink.mdw.tests.workflow</h2>
 <ul class="blockList">
 <li class="blockList"><a name="com.centurylink.mdw.tests.workflow.TimerBean">
@@ -2057,34 +1858,7 @@
 <li class="blockList"><a name="com.centurylink.mdw.util.file.Packages">
 <!--   -->
 </a>
-<h3>Class <a href="com/centurylink/mdw/util/file/Packages.html" title="class in com.centurylink.mdw.util.file">com.centurylink.mdw.util.file.Packages</a> extends java.util.TreeMap&lt;java.lang.String,java.io.File&gt; implements Serializable</h3>
-<ul class="blockList">
-<li class="blockList">
-<h3>Serialized Fields</h3>
-<ul class="blockList">
-<li class="blockListLast">
-<h4>assetRoot</h4>
-<pre>java.io.File assetRoot</pre>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="blockList"><a name="com.centurylink.mdw.util.file.VersionProperties">
-<!--   -->
-</a>
-<h3>Class <a href="com/centurylink/mdw/util/file/VersionProperties.html" title="class in com.centurylink.mdw.util.file">com.centurylink.mdw.util.file.VersionProperties</a> extends java.util.Properties implements Serializable</h3>
-<ul class="blockList">
-<li class="blockList">
-<h3>Serialized Fields</h3>
-<ul class="blockList">
-<li class="blockListLast">
-<h4>propFile</h4>
-<pre>java.io.File propFile</pre>
-</li>
-</ul>
-</li>
-</ul>
+<h3>Class <a href="com/centurylink/mdw/util/file/Packages.html" title="class in com.centurylink.mdw.util.file">com.centurylink.mdw.util.file.Packages</a> extends <a href="com/centurylink/mdw/file/Packages.html" title="class in com.centurylink.mdw.file">Packages</a> implements Serializable</h3>
 </li>
 </ul>
 </li>
@@ -2112,10 +1886,12 @@
 <li class="blockList">
 <h4>_xmlBean</h4>
 <pre>org.apache.xmlbeans.XmlObject _xmlBean</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 </li>
 <li class="blockListLast">
 <h4>_validationError</h4>
 <pre>java.lang.String _validationError</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 </li>
 </ul>
 </li>

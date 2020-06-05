@@ -17,12 +17,6 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":9};
-var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
-var altColor = "altColor";
-var rowColor = "rowColor";
-var tableTab = "tableTab";
-var activeTableTab = "activeTableTab";
 </script>
 <noscript>
 <div>JavaScript is disabled on your browser.</div>
@@ -47,8 +41,8 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../../com/centurylink/mdw/util/file/MdwIgnore.html" title="class in com.centurylink.mdw.util.file"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../../../com/centurylink/mdw/util/file/VersionProperties.html" title="class in com.centurylink.mdw.util.file"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../../../com/centurylink/mdw/util/file/Grep.LineMatches.html" title="class in com.centurylink.mdw.util.file"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../../../../com/centurylink/mdw/util/file/WildcardFilenameFilter.html" title="class in com.centurylink.mdw.util.file"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../index.html?com/centurylink/mdw/util/file/Packages.html" target="_top">Frames</a></li>
@@ -73,15 +67,15 @@ var activeTableTab = "activeTableTab";
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li><a href="#nested.classes.inherited.from.class.java.util.AbstractMap">Nested</a>&nbsp;|&nbsp;</li>
-<li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#fields.inherited.from.class.com.centurylink.mdw.file.Packages">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
-<li><a href="#method.summary">Method</a></li>
+<li><a href="#methods.inherited.from.class.com.centurylink.mdw.file.Packages">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
-<li><a href="#method.detail">Method</a></li>
+<li>Method</li>
 </ul>
 </div>
 <a name="skip.navbar.top">
@@ -104,7 +98,12 @@ var activeTableTab = "activeTableTab";
 <li>java.util.TreeMap&lt;java.lang.String,java.io.File&gt;</li>
 <li>
 <ul class="inheritance">
+<li><a href="../../../../../com/centurylink/mdw/file/Packages.html" title="class in com.centurylink.mdw.file">com.centurylink.mdw.file.Packages</a></li>
+<li>
+<ul class="inheritance">
 <li>com.centurylink.mdw.util.file.Packages</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -120,9 +119,13 @@ var activeTableTab = "activeTableTab";
 <dd>java.io.Serializable, java.lang.Cloneable, java.util.Map&lt;java.lang.String,java.io.File&gt;, java.util.NavigableMap&lt;java.lang.String,java.io.File&gt;, java.util.SortedMap&lt;java.lang.String,java.io.File&gt;</dd>
 </dl>
 <hr>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
+<div class="block"><span class="deprecationComment">use <a href="../../../../../com/centurylink/mdw/file/Packages.html" title="class in com.centurylink.mdw.file"><code>Packages</code></a></span></div>
+</div>
 <br>
-<pre>public class <span class="typeNameLabel">Packages</span>
-extends java.util.TreeMap&lt;java.lang.String,java.io.File&gt;</pre>
+<pre>@Deprecated
+public class <span class="typeNameLabel">Packages</span>
+extends <a href="../../../../../com/centurylink/mdw/file/Packages.html" title="class in com.centurylink.mdw.file">Packages</a></pre>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../../../../../serialized-form.html#com.centurylink.mdw.util.file.Packages">Serialized Form</a></dd>
@@ -154,37 +157,13 @@ extends java.util.TreeMap&lt;java.lang.String,java.io.File&gt;</pre>
 <!--   -->
 </a>
 <h3>Field Summary</h3>
-<table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Field Summary table, listing fields, and an explanation">
-<caption><span>Fields</span><span class="tabEnd">&nbsp;</span></caption>
-<tr>
-<th class="colFirst" scope="col">Modifier and Type</th>
-<th class="colLast" scope="col">Field and Description</th>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static java.util.List&lt;java.lang.String&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/file/Packages.html#DEFAULT_BASE_PACKAGES">DEFAULT_BASE_PACKAGES</a></span></code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/file/Packages.html#MDW_BASE">MDW_BASE</a></span></code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/file/Packages.html#META_DIR">META_DIR</a></span></code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/file/Packages.html#PACKAGE_JSON">PACKAGE_JSON</a></span></code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/file/Packages.html#PACKAGE_YAML">PACKAGE_YAML</a></span></code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/file/Packages.html#VERSIONS">VERSIONS</a></span></code>&nbsp;</td>
-</tr>
-</table>
+<ul class="blockList">
+<li class="blockList"><a name="fields.inherited.from.class.com.centurylink.mdw.file.Packages">
+<!--   -->
+</a>
+<h3>Fields inherited from class&nbsp;com.centurylink.mdw.file.<a href="../../../../../com/centurylink/mdw/file/Packages.html" title="class in com.centurylink.mdw.file">Packages</a></h3>
+<code><a href="../../../../../com/centurylink/mdw/file/Packages.html#DEFAULT_BASE_PACKAGES">DEFAULT_BASE_PACKAGES</a>, <a href="../../../../../com/centurylink/mdw/file/Packages.html#MDW_BASE">MDW_BASE</a></code></li>
+</ul>
 </li>
 </ul>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
@@ -199,7 +178,9 @@ extends java.util.TreeMap&lt;java.lang.String,java.io.File&gt;</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/file/Packages.html#Packages-java.io.File-">Packages</a></span>(java.io.File&nbsp;assetRoot)</code>&nbsp;</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/file/Packages.html#Packages-java.io.File-">Packages</a></span>(java.io.File&nbsp;assetRoot)</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
+</td>
 </tr>
 </table>
 </li>
@@ -210,51 +191,13 @@ extends java.util.TreeMap&lt;java.lang.String,java.io.File&gt;</pre>
 <!--   -->
 </a>
 <h3>Method Summary</h3>
-<table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
-<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t1" class="tableTab"><span><a href="javascript:show(1);">Static Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
-<tr>
-<th class="colFirst" scope="col">Modifier and Type</th>
-<th class="colLast" scope="col">Method and Description</th>
-</tr>
-<tr id="i0" class="altColor">
-<td class="colFirst"><code>java.util.List&lt;java.io.File&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/file/Packages.html#getAssetFiles-java.lang.String-">getAssetFiles</a></span>(java.lang.String&nbsp;packageName)</code>&nbsp;</td>
-</tr>
-<tr id="i1" class="rowColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/file/Packages.html#getAssetPath-java.io.File-">getAssetPath</a></span>(java.io.File&nbsp;file)</code>&nbsp;</td>
-</tr>
-<tr id="i2" class="altColor">
-<td class="colFirst"><code>java.io.File</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/file/Packages.html#getAssetRoot--">getAssetRoot</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i3" class="rowColor">
-<td class="colFirst"><code>java.util.List&lt;java.io.File&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/file/Packages.html#getPackageDirs--">getPackageDirs</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i4" class="altColor">
-<td class="colFirst"><code>java.util.List&lt;java.lang.String&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/file/Packages.html#getPackageNames--">getPackageNames</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i5" class="rowColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/file/Packages.html#getRelativePath-java.io.File-java.io.File-">getRelativePath</a></span>(java.io.File&nbsp;from,
-               java.io.File&nbsp;to)</code>
-<div class="block">Returns 'to' file or dir path relative to 'from' dir.</div>
-</td>
-</tr>
-<tr id="i6" class="altColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/file/Packages.html#isAssetOutput-java.lang.String-">isAssetOutput</a></span>(java.lang.String&nbsp;path)</code>
-<div class="block">Whether a (relative) file path is the result of asset compilation
- (as determined based on asset package names).</div>
-</td>
-</tr>
-<tr id="i7" class="rowColor">
-<td class="colFirst"><code>static boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/file/Packages.html#isMdwPackage-java.lang.String-">isMdwPackage</a></span>(java.lang.String&nbsp;packageName)</code>&nbsp;</td>
-</tr>
-</table>
+<ul class="blockList">
+<li class="blockList"><a name="methods.inherited.from.class.com.centurylink.mdw.file.Packages">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;com.centurylink.mdw.file.<a href="../../../../../com/centurylink/mdw/file/Packages.html" title="class in com.centurylink.mdw.file">Packages</a></h3>
+<code><a href="../../../../../com/centurylink/mdw/file/Packages.html#getAssetFiles-java.lang.String-">getAssetFiles</a>, <a href="../../../../../com/centurylink/mdw/file/Packages.html#getAssetRoot--">getAssetRoot</a>, <a href="../../../../../com/centurylink/mdw/file/Packages.html#getPackageDirs--">getPackageDirs</a>, <a href="../../../../../com/centurylink/mdw/file/Packages.html#getPackageNames--">getPackageNames</a>, <a href="../../../../../com/centurylink/mdw/file/Packages.html#isAssetOutput-java.lang.String-">isAssetOutput</a>, <a href="../../../../../com/centurylink/mdw/file/Packages.html#isMdwPackage-java.lang.String-">isMdwPackage</a></code></li>
+</ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.util.TreeMap">
 <!--   -->
@@ -291,88 +234,6 @@ extends java.util.TreeMap&lt;java.lang.String,java.io.File&gt;</pre>
 <div class="details">
 <ul class="blockList">
 <li class="blockList">
-<!-- ============ FIELD DETAIL =========== -->
-<ul class="blockList">
-<li class="blockList"><a name="field.detail">
-<!--   -->
-</a>
-<h3>Field Detail</h3>
-<a name="META_DIR">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>META_DIR</h4>
-<pre>public static final&nbsp;java.lang.String META_DIR</pre>
-<dl>
-<dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="../../../../../constant-values.html#com.centurylink.mdw.util.file.Packages.META_DIR">Constant Field Values</a></dd>
-</dl>
-</li>
-</ul>
-<a name="PACKAGE_YAML">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>PACKAGE_YAML</h4>
-<pre>public static final&nbsp;java.lang.String PACKAGE_YAML</pre>
-<dl>
-<dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="../../../../../constant-values.html#com.centurylink.mdw.util.file.Packages.PACKAGE_YAML">Constant Field Values</a></dd>
-</dl>
-</li>
-</ul>
-<a name="PACKAGE_JSON">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>PACKAGE_JSON</h4>
-<pre>public static final&nbsp;java.lang.String PACKAGE_JSON</pre>
-<dl>
-<dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="../../../../../constant-values.html#com.centurylink.mdw.util.file.Packages.PACKAGE_JSON">Constant Field Values</a></dd>
-</dl>
-</li>
-</ul>
-<a name="VERSIONS">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>VERSIONS</h4>
-<pre>public static final&nbsp;java.lang.String VERSIONS</pre>
-<dl>
-<dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="../../../../../constant-values.html#com.centurylink.mdw.util.file.Packages.VERSIONS">Constant Field Values</a></dd>
-</dl>
-</li>
-</ul>
-<a name="MDW_BASE">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>MDW_BASE</h4>
-<pre>public static final&nbsp;java.lang.String MDW_BASE</pre>
-<dl>
-<dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="../../../../../constant-values.html#com.centurylink.mdw.util.file.Packages.MDW_BASE">Constant Field Values</a></dd>
-</dl>
-</li>
-</ul>
-<a name="DEFAULT_BASE_PACKAGES">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>DEFAULT_BASE_PACKAGES</h4>
-<pre>public static final&nbsp;java.util.List&lt;java.lang.String&gt; DEFAULT_BASE_PACKAGES</pre>
-</li>
-</ul>
-</li>
-</ul>
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 <ul class="blockList">
 <li class="blockList"><a name="constructor.detail">
@@ -385,103 +246,10 @@ extends java.util.TreeMap&lt;java.lang.String,java.io.File&gt;</pre>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>Packages</h4>
-<pre>public&nbsp;Packages(java.io.File&nbsp;assetRoot)
-         throws java.io.IOException</pre>
-<dl>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd>
-</dl>
-</li>
-</ul>
-</li>
-</ul>
-<!-- ============ METHOD DETAIL ========== -->
-<ul class="blockList">
-<li class="blockList"><a name="method.detail">
-<!--   -->
-</a>
-<h3>Method Detail</h3>
-<a name="isMdwPackage-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>isMdwPackage</h4>
-<pre>public static&nbsp;boolean&nbsp;isMdwPackage(java.lang.String&nbsp;packageName)</pre>
-</li>
-</ul>
-<a name="getAssetRoot--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getAssetRoot</h4>
-<pre>public&nbsp;java.io.File&nbsp;getAssetRoot()</pre>
-</li>
-</ul>
-<a name="getPackageDirs--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getPackageDirs</h4>
-<pre>public&nbsp;java.util.List&lt;java.io.File&gt;&nbsp;getPackageDirs()</pre>
-</li>
-</ul>
-<a name="getPackageNames--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getPackageNames</h4>
-<pre>public&nbsp;java.util.List&lt;java.lang.String&gt;&nbsp;getPackageNames()</pre>
-</li>
-</ul>
-<a name="getAssetFiles-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getAssetFiles</h4>
-<pre>public&nbsp;java.util.List&lt;java.io.File&gt;&nbsp;getAssetFiles(java.lang.String&nbsp;packageName)
-                                           throws java.io.IOException</pre>
-<dl>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd>
-</dl>
-</li>
-</ul>
-<a name="isAssetOutput-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>isAssetOutput</h4>
-<pre>public&nbsp;boolean&nbsp;isAssetOutput(java.lang.String&nbsp;path)</pre>
-<div class="block">Whether a (relative) file path is the result of asset compilation
- (as determined based on asset package names).</div>
-</li>
-</ul>
-<a name="getRelativePath-java.io.File-java.io.File-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getRelativePath</h4>
-<pre>public&nbsp;java.lang.String&nbsp;getRelativePath(java.io.File&nbsp;from,
-                                        java.io.File&nbsp;to)</pre>
-<div class="block">Returns 'to' file or dir path relative to 'from' dir.
- Result always uses forward slashes and has no trailing slash.</div>
-</li>
-</ul>
-<a name="getAssetPath-java.io.File-">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>getAssetPath</h4>
-<pre>public&nbsp;java.lang.String&nbsp;getAssetPath(java.io.File&nbsp;file)
-                              throws java.io.IOException</pre>
+<pre>@Deprecated
+public&nbsp;Packages(java.io.File&nbsp;assetRoot)
+                     throws java.io.IOException</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd>
@@ -515,8 +283,8 @@ extends java.util.TreeMap&lt;java.lang.String,java.io.File&gt;</pre>
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../../com/centurylink/mdw/util/file/MdwIgnore.html" title="class in com.centurylink.mdw.util.file"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../../../com/centurylink/mdw/util/file/VersionProperties.html" title="class in com.centurylink.mdw.util.file"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../../../com/centurylink/mdw/util/file/Grep.LineMatches.html" title="class in com.centurylink.mdw.util.file"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../../../../com/centurylink/mdw/util/file/WildcardFilenameFilter.html" title="class in com.centurylink.mdw.util.file"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../index.html?com/centurylink/mdw/util/file/Packages.html" target="_top">Frames</a></li>
@@ -541,15 +309,15 @@ extends java.util.TreeMap&lt;java.lang.String,java.io.File&gt;</pre>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li><a href="#nested.classes.inherited.from.class.java.util.AbstractMap">Nested</a>&nbsp;|&nbsp;</li>
-<li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#fields.inherited.from.class.com.centurylink.mdw.file.Packages">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
-<li><a href="#method.summary">Method</a></li>
+<li><a href="#methods.inherited.from.class.com.centurylink.mdw.file.Packages">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
-<li><a href="#method.detail">Method</a></li>
+<li>Method</li>
 </ul>
 </div>
 <a name="skip.navbar.bottom">

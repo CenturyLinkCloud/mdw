@@ -198,8 +198,9 @@ extends <a href="../../../../com/centurylink/mdw/export/ExportHelper.html" title
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/html/HtmlExportHelper.html#getAttributeValueHtml-com.centurylink.mdw.model.workflow.Activity-com.centurylink.mdw.model.attribute.Attribute-">getAttributeValueHtml</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/Activity.html" title="class in com.centurylink.mdw.model.workflow">Activity</a>&nbsp;activity,
-                     <a href="../../../../com/centurylink/mdw/model/attribute/Attribute.html" title="class in com.centurylink.mdw.model.attribute">Attribute</a>&nbsp;attribute)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/html/HtmlExportHelper.html#getAttributeValueHtml-com.centurylink.mdw.model.workflow.Activity-com.centurylink.mdw.model.Attributes-java.lang.String-">getAttributeValueHtml</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/Activity.html" title="class in com.centurylink.mdw.model.workflow">Activity</a>&nbsp;activity,
+                     <a href="../../../../com/centurylink/mdw/model/Attributes.html" title="class in com.centurylink.mdw.model">Attributes</a>&nbsp;attributes,
+                     java.lang.String&nbsp;attributeName)</code>&nbsp;</td>
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
@@ -238,7 +239,7 @@ extends <a href="../../../../com/centurylink/mdw/export/ExportHelper.html" title
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;com.centurylink.mdw.export.<a href="../../../../com/centurylink/mdw/export/ExportHelper.html" title="class in com.centurylink.mdw.export">ExportHelper</a></h3>
-<code><a href="../../../../com/centurylink/mdw/export/ExportHelper.html#getAttributeLabel-com.centurylink.mdw.model.workflow.Activity-com.centurylink.mdw.model.attribute.Attribute-">getAttributeLabel</a>, <a href="../../../../com/centurylink/mdw/export/ExportHelper.html#getImplementor-com.centurylink.mdw.model.workflow.Activity-">getImplementor</a>, <a href="../../../../com/centurylink/mdw/export/ExportHelper.html#getTable-com.centurylink.mdw.model.workflow.Activity-com.centurylink.mdw.model.attribute.Attribute-">getTable</a>, <a href="../../../../com/centurylink/mdw/export/ExportHelper.html#getWidget-com.centurylink.mdw.model.workflow.Activity-java.lang.String-">getWidget</a>, <a href="../../../../com/centurylink/mdw/export/ExportHelper.html#isCode-com.centurylink.mdw.model.workflow.Activity-com.centurylink.mdw.model.attribute.Attribute-">isCode</a>, <a href="../../../../com/centurylink/mdw/export/ExportHelper.html#isEmpty-java.util.List-">isEmpty</a>, <a href="../../../../com/centurylink/mdw/export/ExportHelper.html#isExcludeAttribute-java.lang.String-java.lang.String-">isExcludeAttribute</a>, <a href="../../../../com/centurylink/mdw/export/ExportHelper.html#isTabular-com.centurylink.mdw.model.workflow.Activity-com.centurylink.mdw.model.attribute.Attribute-">isTabular</a></code></li>
+<code><a href="../../../../com/centurylink/mdw/export/ExportHelper.html#getAttributeLabel-com.centurylink.mdw.model.workflow.Activity-java.lang.String-">getAttributeLabel</a>, <a href="../../../../com/centurylink/mdw/export/ExportHelper.html#getImplementor-com.centurylink.mdw.model.workflow.Activity-">getImplementor</a>, <a href="../../../../com/centurylink/mdw/export/ExportHelper.html#getTable-com.centurylink.mdw.model.workflow.Activity-com.centurylink.mdw.model.Attributes-java.lang.String-">getTable</a>, <a href="../../../../com/centurylink/mdw/export/ExportHelper.html#getWidget-com.centurylink.mdw.model.workflow.Activity-java.lang.String-">getWidget</a>, <a href="../../../../com/centurylink/mdw/export/ExportHelper.html#isCode-com.centurylink.mdw.model.workflow.Activity-java.lang.String-">isCode</a>, <a href="../../../../com/centurylink/mdw/export/ExportHelper.html#isEmpty-com.centurylink.mdw.model.Attributes-">isEmpty</a>, <a href="../../../../com/centurylink/mdw/export/ExportHelper.html#isExcludeAttribute-java.lang.String-java.lang.String-">isExcludeAttribute</a>, <a href="../../../../com/centurylink/mdw/export/ExportHelper.html#isTabular-com.centurylink.mdw.model.workflow.Activity-java.lang.String-">isTabular</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -368,14 +369,15 @@ extends <a href="../../../../com/centurylink/mdw/export/ExportHelper.html" title
 </dl>
 </li>
 </ul>
-<a name="getAttributeValueHtml-com.centurylink.mdw.model.workflow.Activity-com.centurylink.mdw.model.attribute.Attribute-">
+<a name="getAttributeValueHtml-com.centurylink.mdw.model.workflow.Activity-com.centurylink.mdw.model.Attributes-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getAttributeValueHtml</h4>
 <pre>protected&nbsp;java.lang.String&nbsp;getAttributeValueHtml(<a href="../../../../com/centurylink/mdw/model/workflow/Activity.html" title="class in com.centurylink.mdw.model.workflow">Activity</a>&nbsp;activity,
-                                                 <a href="../../../../com/centurylink/mdw/model/attribute/Attribute.html" title="class in com.centurylink.mdw.model.attribute">Attribute</a>&nbsp;attribute)
+                                                 <a href="../../../../com/centurylink/mdw/model/Attributes.html" title="class in com.centurylink.mdw.model">Attributes</a>&nbsp;attributes,
+                                                 java.lang.String&nbsp;attributeName)
                                           throws java.io.IOException</pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>

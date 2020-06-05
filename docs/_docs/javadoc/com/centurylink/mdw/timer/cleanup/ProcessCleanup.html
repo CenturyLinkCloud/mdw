@@ -98,17 +98,7 @@ var activeTableTab = "activeTableTab";
 <li>java.lang.Object</li>
 <li>
 <ul class="inheritance">
-<li><a href="../../../../../com/centurylink/mdw/model/monitor/LoadBalancedScheduledJob.html" title="class in com.centurylink.mdw.model.monitor">com.centurylink.mdw.model.monitor.LoadBalancedScheduledJob</a></li>
-<li>
-<ul class="inheritance">
-<li><a href="../../../../../com/centurylink/mdw/services/workflow/RoundRobinScheduledJob.html" title="class in com.centurylink.mdw.services.workflow">com.centurylink.mdw.services.workflow.RoundRobinScheduledJob</a></li>
-<li>
-<ul class="inheritance">
 <li>com.centurylink.mdw.timer.cleanup.ProcessCleanup</li>
-</ul>
-</li>
-</ul>
-</li>
 </ul>
 </li>
 </ul>
@@ -124,7 +114,8 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>@Deprecated
 public class <span class="typeNameLabel">ProcessCleanup</span>
-extends <a href="../../../../../com/centurylink/mdw/services/workflow/RoundRobinScheduledJob.html" title="class in com.centurylink.mdw.services.workflow">RoundRobinScheduledJob</a></pre>
+extends java.lang.Object
+implements <a href="../../../../../com/centurylink/mdw/model/monitor/ScheduledJob.html" title="interface in com.centurylink.mdw.model.monitor">ScheduledJob</a></pre>
 <div class="block">This script cleans up old database entries from tables that are older than a specified time
  Make sure appropriate db package is imported and Cleanup-Runtime.sql is there.
  Add following to mdw.yaml
@@ -187,20 +178,6 @@ timer.task:
 </tr>
 </table>
 <ul class="blockList">
-<li class="blockList"><a name="methods.inherited.from.class.com.centurylink.mdw.services.workflow.RoundRobinScheduledJob">
-<!--   -->
-</a>
-<h3>Methods inherited from class&nbsp;com.centurylink.mdw.services.workflow.<a href="../../../../../com/centurylink/mdw/services/workflow/RoundRobinScheduledJob.html" title="class in com.centurylink.mdw.services.workflow">RoundRobinScheduledJob</a></h3>
-<code><a href="../../../../../com/centurylink/mdw/services/workflow/RoundRobinScheduledJob.html#runOnLoadBalancedInstance-com.centurylink.mdw.util.CallURL-">runOnLoadBalancedInstance</a></code></li>
-</ul>
-<ul class="blockList">
-<li class="blockList"><a name="methods.inherited.from.class.com.centurylink.mdw.model.monitor.LoadBalancedScheduledJob">
-<!--   -->
-</a>
-<h3>Methods inherited from class&nbsp;com.centurylink.mdw.model.monitor.<a href="../../../../../com/centurylink/mdw/model/monitor/LoadBalancedScheduledJob.html" title="class in com.centurylink.mdw.model.monitor">LoadBalancedScheduledJob</a></h3>
-<code><a href="../../../../../com/centurylink/mdw/model/monitor/LoadBalancedScheduledJob.html#runOnDifferentManagedServer-com.centurylink.mdw.util.CallURL-java.lang.String-">runOnDifferentManagedServer</a></code></li>
-</ul>
-<ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
 <!--   -->
 </a>
@@ -256,6 +233,10 @@ timer.task:
 <pre>public&nbsp;void&nbsp;run(<a href="../../../../../com/centurylink/mdw/util/CallURL.html" title="class in com.centurylink.mdw.util">CallURL</a>&nbsp;args)</pre>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <div class="block">Method that gets invoked periodically by the container</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../../../../com/centurylink/mdw/model/monitor/ScheduledJob.html#run-com.centurylink.mdw.util.CallURL-">run</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/model/monitor/ScheduledJob.html" title="interface in com.centurylink.mdw.model.monitor">ScheduledJob</a></code></dd>
+</dl>
 </li>
 </ul>
 </li>

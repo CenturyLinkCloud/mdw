@@ -177,8 +177,8 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/export/ExportHelper.html#getAttributeLabel-com.centurylink.mdw.model.workflow.Activity-com.centurylink.mdw.model.attribute.Attribute-">getAttributeLabel</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/Activity.html" title="class in com.centurylink.mdw.model.workflow">Activity</a>&nbsp;activity,
-                 <a href="../../../../com/centurylink/mdw/model/attribute/Attribute.html" title="class in com.centurylink.mdw.model.attribute">Attribute</a>&nbsp;attribute)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/export/ExportHelper.html#getAttributeLabel-com.centurylink.mdw.model.workflow.Activity-java.lang.String-">getAttributeLabel</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/Activity.html" title="class in com.centurylink.mdw.model.workflow">Activity</a>&nbsp;activity,
+                 java.lang.String&nbsp;name)</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>protected <a href="../../../../com/centurylink/mdw/model/workflow/ActivityImplementor.html" title="class in com.centurylink.mdw.model.workflow">ActivityImplementor</a></code></td>
@@ -186,8 +186,9 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>protected <a href="../../../../com/centurylink/mdw/export/Table.html" title="class in com.centurylink.mdw.export">Table</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/export/ExportHelper.html#getTable-com.centurylink.mdw.model.workflow.Activity-com.centurylink.mdw.model.attribute.Attribute-">getTable</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/Activity.html" title="class in com.centurylink.mdw.model.workflow">Activity</a>&nbsp;activity,
-        <a href="../../../../com/centurylink/mdw/model/attribute/Attribute.html" title="class in com.centurylink.mdw.model.attribute">Attribute</a>&nbsp;attribute)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/export/ExportHelper.html#getTable-com.centurylink.mdw.model.workflow.Activity-com.centurylink.mdw.model.Attributes-java.lang.String-">getTable</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/Activity.html" title="class in com.centurylink.mdw.model.workflow">Activity</a>&nbsp;activity,
+        <a href="../../../../com/centurylink/mdw/model/Attributes.html" title="class in com.centurylink.mdw.model">Attributes</a>&nbsp;attributes,
+        java.lang.String&nbsp;attributeName)</code>&nbsp;</td>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>protected <a href="../../../../com/centurylink/mdw/model/asset/Pagelet.Widget.html" title="class in com.centurylink.mdw.model.asset">Pagelet.Widget</a></code></td>
@@ -196,12 +197,12 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>protected boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/export/ExportHelper.html#isCode-com.centurylink.mdw.model.workflow.Activity-com.centurylink.mdw.model.attribute.Attribute-">isCode</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/Activity.html" title="class in com.centurylink.mdw.model.workflow">Activity</a>&nbsp;activity,
-      <a href="../../../../com/centurylink/mdw/model/attribute/Attribute.html" title="class in com.centurylink.mdw.model.attribute">Attribute</a>&nbsp;attribute)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/export/ExportHelper.html#isCode-com.centurylink.mdw.model.workflow.Activity-java.lang.String-">isCode</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/Activity.html" title="class in com.centurylink.mdw.model.workflow">Activity</a>&nbsp;activity,
+      java.lang.String&nbsp;attributeName)</code>&nbsp;</td>
 </tr>
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/export/ExportHelper.html#isEmpty-java.util.List-">isEmpty</a></span>(java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/attribute/Attribute.html" title="class in com.centurylink.mdw.model.attribute">Attribute</a>&gt;&nbsp;attributes)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/export/ExportHelper.html#isEmpty-com.centurylink.mdw.model.Attributes-">isEmpty</a></span>(<a href="../../../../com/centurylink/mdw/model/Attributes.html" title="class in com.centurylink.mdw.model">Attributes</a>&nbsp;attributes)</code>
 <div class="block">Empty except excluded attributes.</div>
 </td>
 </tr>
@@ -212,8 +213,8 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i7" class="rowColor">
 <td class="colFirst"><code>protected boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/export/ExportHelper.html#isTabular-com.centurylink.mdw.model.workflow.Activity-com.centurylink.mdw.model.attribute.Attribute-">isTabular</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/Activity.html" title="class in com.centurylink.mdw.model.workflow">Activity</a>&nbsp;activity,
-         <a href="../../../../com/centurylink/mdw/model/attribute/Attribute.html" title="class in com.centurylink.mdw.model.attribute">Attribute</a>&nbsp;attribute)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/export/ExportHelper.html#isTabular-com.centurylink.mdw.model.workflow.Activity-java.lang.String-">isTabular</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/Activity.html" title="class in com.centurylink.mdw.model.workflow">Activity</a>&nbsp;activity,
+         java.lang.String&nbsp;attributeName)</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -299,13 +300,13 @@ extends java.lang.Object</pre>
                                   java.lang.String&nbsp;value)</pre>
 </li>
 </ul>
-<a name="isEmpty-java.util.List-">
+<a name="isEmpty-com.centurylink.mdw.model.Attributes-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>isEmpty</h4>
-<pre>public&nbsp;boolean&nbsp;isEmpty(java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/attribute/Attribute.html" title="class in com.centurylink.mdw.model.attribute">Attribute</a>&gt;&nbsp;attributes)</pre>
+<pre>public&nbsp;boolean&nbsp;isEmpty(<a href="../../../../com/centurylink/mdw/model/Attributes.html" title="class in com.centurylink.mdw.model">Attributes</a>&nbsp;attributes)</pre>
 <div class="block">Empty except excluded attributes.</div>
 </li>
 </ul>
@@ -338,14 +339,14 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a name="getAttributeLabel-com.centurylink.mdw.model.workflow.Activity-com.centurylink.mdw.model.attribute.Attribute-">
+<a name="getAttributeLabel-com.centurylink.mdw.model.workflow.Activity-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getAttributeLabel</h4>
 <pre>protected&nbsp;java.lang.String&nbsp;getAttributeLabel(<a href="../../../../com/centurylink/mdw/model/workflow/Activity.html" title="class in com.centurylink.mdw.model.workflow">Activity</a>&nbsp;activity,
-                                             <a href="../../../../com/centurylink/mdw/model/attribute/Attribute.html" title="class in com.centurylink.mdw.model.attribute">Attribute</a>&nbsp;attribute)
+                                             java.lang.String&nbsp;name)
                                       throws java.io.IOException</pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
@@ -353,14 +354,15 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a name="getTable-com.centurylink.mdw.model.workflow.Activity-com.centurylink.mdw.model.attribute.Attribute-">
+<a name="getTable-com.centurylink.mdw.model.workflow.Activity-com.centurylink.mdw.model.Attributes-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getTable</h4>
 <pre>protected&nbsp;<a href="../../../../com/centurylink/mdw/export/Table.html" title="class in com.centurylink.mdw.export">Table</a>&nbsp;getTable(<a href="../../../../com/centurylink/mdw/model/workflow/Activity.html" title="class in com.centurylink.mdw.model.workflow">Activity</a>&nbsp;activity,
-                         <a href="../../../../com/centurylink/mdw/model/attribute/Attribute.html" title="class in com.centurylink.mdw.model.attribute">Attribute</a>&nbsp;attribute)
+                         <a href="../../../../com/centurylink/mdw/model/Attributes.html" title="class in com.centurylink.mdw.model">Attributes</a>&nbsp;attributes,
+                         java.lang.String&nbsp;attributeName)
                   throws java.io.IOException</pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
@@ -368,14 +370,14 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a name="isTabular-com.centurylink.mdw.model.workflow.Activity-com.centurylink.mdw.model.attribute.Attribute-">
+<a name="isTabular-com.centurylink.mdw.model.workflow.Activity-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>isTabular</h4>
 <pre>protected&nbsp;boolean&nbsp;isTabular(<a href="../../../../com/centurylink/mdw/model/workflow/Activity.html" title="class in com.centurylink.mdw.model.workflow">Activity</a>&nbsp;activity,
-                            <a href="../../../../com/centurylink/mdw/model/attribute/Attribute.html" title="class in com.centurylink.mdw.model.attribute">Attribute</a>&nbsp;attribute)
+                            java.lang.String&nbsp;attributeName)
                      throws java.io.IOException</pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
@@ -383,14 +385,14 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a name="isCode-com.centurylink.mdw.model.workflow.Activity-com.centurylink.mdw.model.attribute.Attribute-">
+<a name="isCode-com.centurylink.mdw.model.workflow.Activity-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>isCode</h4>
 <pre>protected&nbsp;boolean&nbsp;isCode(<a href="../../../../com/centurylink/mdw/model/workflow/Activity.html" title="class in com.centurylink.mdw.model.workflow">Activity</a>&nbsp;activity,
-                         <a href="../../../../com/centurylink/mdw/model/attribute/Attribute.html" title="class in com.centurylink.mdw.model.attribute">Attribute</a>&nbsp;attribute)
+                         java.lang.String&nbsp;attributeName)
                   throws java.io.IOException</pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>

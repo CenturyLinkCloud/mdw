@@ -168,7 +168,7 @@ extends java.lang.Object</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessEngineDriver.html#getMainProcessInstanceId--">getMainProcessInstanceId</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/request/Response.html" title="class in com.centurylink.mdw.model.request">Response</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessEngineDriver.html#invokeService-java.lang.Long-java.lang.String-java.lang.Long-java.lang.String-java.lang.String-java.util.Map-java.lang.String-int-java.lang.String-java.lang.Long-java.util.Map-">invokeService</a></span>(java.lang.Long&nbsp;processId,
              java.lang.String&nbsp;ownerType,
              java.lang.Long&nbsp;ownerId,
@@ -176,7 +176,7 @@ extends java.lang.Object</pre>
              java.lang.String&nbsp;masterRequest,
              java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;parameters,
              java.lang.String&nbsp;responseVarName,
-             int&nbsp;performance_level,
+             int&nbsp;performanceLevel,
              java.lang.String&nbsp;secondaryOwnerType,
              java.lang.Long&nbsp;secondaryOwnerId,
              java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;headers)</code>
@@ -184,7 +184,7 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr id="i2" class="altColor">
-<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/request/Response.html" title="class in com.centurylink.mdw.model.request">Response</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessEngineDriver.html#invokeService-java.lang.Long-java.lang.String-java.lang.Long-java.lang.String-java.lang.String-java.util.Map-java.lang.String-java.util.Map-">invokeService</a></span>(java.lang.Long&nbsp;processId,
              java.lang.String&nbsp;ownerType,
              java.lang.Long&nbsp;ownerId,
@@ -199,10 +199,10 @@ extends java.lang.Object</pre>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>java.util.Map&lt;java.lang.String,java.lang.String&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessEngineDriver.html#invokeServiceAsSubprocess-java.lang.Long-java.lang.Long-java.lang.String-java.util.Map-int-">invokeServiceAsSubprocess</a></span>(java.lang.Long&nbsp;processId,
-                         java.lang.Long&nbsp;parentProcInstId,
+                         java.lang.Long&nbsp;parentInstanceId,
                          java.lang.String&nbsp;masterRequestId,
                          java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;parameters,
-                         int&nbsp;performance_level)</code>
+                         int&nbsp;performanceLevel)</code>
 <div class="block">Called internally by invoke subprocess activities to call service processes as
  subprocesses of regular processes.</div>
 </td>
@@ -315,15 +315,15 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>invokeService</h4>
-<pre>public&nbsp;java.lang.String&nbsp;invokeService(java.lang.Long&nbsp;processId,
-                                      java.lang.String&nbsp;ownerType,
-                                      java.lang.Long&nbsp;ownerId,
-                                      java.lang.String&nbsp;masterRequestId,
-                                      java.lang.String&nbsp;masterRequest,
-                                      java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;parameters,
-                                      java.lang.String&nbsp;responseVarName,
-                                      java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;headers)
-                               throws java.lang.Exception</pre>
+<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/request/Response.html" title="class in com.centurylink.mdw.model.request">Response</a>&nbsp;invokeService(java.lang.Long&nbsp;processId,
+                              java.lang.String&nbsp;ownerType,
+                              java.lang.Long&nbsp;ownerId,
+                              java.lang.String&nbsp;masterRequestId,
+                              java.lang.String&nbsp;masterRequest,
+                              java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;parameters,
+                              java.lang.String&nbsp;responseVarName,
+                              java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;headers)
+                       throws java.lang.Exception</pre>
 <div class="block">Invoke a real-time service process.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
@@ -339,18 +339,19 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>invokeService</h4>
-<pre>public&nbsp;java.lang.String&nbsp;invokeService(java.lang.Long&nbsp;processId,
-                                      java.lang.String&nbsp;ownerType,
-                                      java.lang.Long&nbsp;ownerId,
-                                      java.lang.String&nbsp;masterRequestId,
-                                      java.lang.String&nbsp;masterRequest,
-                                      java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;parameters,
-                                      java.lang.String&nbsp;responseVarName,
-                                      int&nbsp;performance_level,
-                                      java.lang.String&nbsp;secondaryOwnerType,
-                                      java.lang.Long&nbsp;secondaryOwnerId,
-                                      java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;headers)
-                               throws java.lang.Exception</pre>
+<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/request/Response.html" title="class in com.centurylink.mdw.model.request">Response</a>&nbsp;invokeService(java.lang.Long&nbsp;processId,
+                              java.lang.String&nbsp;ownerType,
+                              java.lang.Long&nbsp;ownerId,
+                              java.lang.String&nbsp;masterRequestId,
+                              java.lang.String&nbsp;masterRequest,
+                              java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;parameters,
+                              java.lang.String&nbsp;responseVarName,
+                              int&nbsp;performanceLevel,
+                              java.lang.String&nbsp;secondaryOwnerType,
+                              java.lang.Long&nbsp;secondaryOwnerId,
+                              java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;headers)
+                       throws <a href="../../../../../com/centurylink/mdw/services/ProcessException.html" title="class in com.centurylink.mdw.services">ProcessException</a>,
+                              <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
 <div class="block">Invoke a service (synchronous) process. The method cannot be used
  if the process is not a service process.
  Performance level:
@@ -370,14 +371,15 @@ extends java.lang.Object</pre>
 <dd><code>responseVarName</code> - the name of the variable where the response is to be obtained.
          If you leave this null, the response will be taken from "response"
          if one is defined, and null otherwise</dd>
-<dd><code>performance_level</code> - the performance level to be used to run the process.
+<dd><code>performanceLevel</code> - the performance level to be used to run the process.
          When a 0 is passed in, the default performance level for service processes will be used,
          unless the performance level attribute is configured for the process.</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>response message, which is obtained from the variable named ie responseVarName
       of the process.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.lang.Exception</code></dd>
+<dd><code><a href="../../../../../com/centurylink/mdw/services/ProcessException.html" title="class in com.centurylink.mdw.services">ProcessException</a></code></dd>
+<dd><code><a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
 </dl>
 </li>
 </ul>
@@ -388,10 +390,10 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>invokeServiceAsSubprocess</h4>
 <pre>public&nbsp;java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;invokeServiceAsSubprocess(java.lang.Long&nbsp;processId,
-                                                                                  java.lang.Long&nbsp;parentProcInstId,
+                                                                                  java.lang.Long&nbsp;parentInstanceId,
                                                                                   java.lang.String&nbsp;masterRequestId,
                                                                                   java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;parameters,
-                                                                                  int&nbsp;performance_level)
+                                                                                  int&nbsp;performanceLevel)
                                                                            throws java.lang.Exception</pre>
 <div class="block">Called internally by invoke subprocess activities to call service processes as
  subprocesses of regular processes.</div>
@@ -424,7 +426,8 @@ extends java.lang.Object</pre>
                                    java.lang.Long&nbsp;ownerId,
                                    java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;vars,
                                    java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;headers)
-                            throws java.lang.Exception</pre>
+                            throws <a href="../../../../../com/centurylink/mdw/services/ProcessException.html" title="class in com.centurylink.mdw.services">ProcessException</a>,
+                                   <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
 <div class="block">Start a process.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -437,7 +440,8 @@ extends java.lang.Object</pre>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the process instance ID</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.lang.Exception</code></dd>
+<dd><code><a href="../../../../../com/centurylink/mdw/services/ProcessException.html" title="class in com.centurylink.mdw.services">ProcessException</a></code></dd>
+<dd><code><a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
 </dl>
 </li>
 </ul>
@@ -455,7 +459,8 @@ extends java.lang.Object</pre>
                                    java.lang.String&nbsp;secondaryOwnerType,
                                    java.lang.Long&nbsp;secondaryOwnerId,
                                    java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;headers)
-                            throws java.lang.Exception</pre>
+                            throws <a href="../../../../../com/centurylink/mdw/services/ProcessException.html" title="class in com.centurylink.mdw.services">ProcessException</a>,
+                                   <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
 <div class="block">Starting a regular process.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -467,7 +472,8 @@ extends java.lang.Object</pre>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>Process instance ID</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.lang.Exception</code></dd>
+<dd><code><a href="../../../../../com/centurylink/mdw/services/ProcessException.html" title="class in com.centurylink.mdw.services">ProcessException</a></code></dd>
+<dd><code><a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
 </dl>
 </li>
 </ul>

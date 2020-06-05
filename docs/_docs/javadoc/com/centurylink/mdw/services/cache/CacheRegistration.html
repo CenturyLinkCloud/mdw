@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":9,"i1":10,"i2":9,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10};
+var methods = {"i0":9,"i1":10,"i2":9,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -48,7 +48,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li>Prev&nbsp;Class</li>
-<li>Next&nbsp;Class</li>
+<li><a href="../../../../../com/centurylink/mdw/services/cache/CacheRegistry.html" title="class in com.centurylink.mdw.services.cache"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../index.html?com/centurylink/mdw/services/cache/CacheRegistration.html" target="_top">Frames</a></li>
@@ -178,24 +178,15 @@ implements <a href="../../../../../com/centurylink/mdw/startup/StartupService.ht
 </tr>
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/cache/CacheRegistration.html#refreshCache-java.lang.String-">refreshCache</a></span>(java.lang.String&nbsp;cacheName)</code>&nbsp;</td>
-</tr>
-<tr id="i6" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/cache/CacheRegistration.html#refreshCache-java.lang.String-java.util.List-">refreshCache</a></span>(java.lang.String&nbsp;cacheName,
-            java.util.List&lt;java.lang.String&gt;&nbsp;excludedFormats)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/cache/CacheRegistration.html#refreshCache-java.lang.String-">refreshCache</a></span>(java.lang.String&nbsp;cacheName)</code>
 <div class="block">Refreshes a particular cache by name.</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/cache/CacheRegistration.html#refreshCaches--">refreshCaches</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/cache/CacheRegistration.html#refreshCaches-java.util.List-">refreshCaches</a></span>(java.util.List&lt;java.lang.String&gt;&nbsp;excludedFormats)</code>&nbsp;</td>
-</tr>
-<tr id="i9" class="rowColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/cache/CacheRegistration.html#registerCache-java.lang.String-com.centurylink.mdw.cache.CacheService-">registerCache</a></span>(java.lang.String&nbsp;name,
              <a href="../../../../../com/centurylink/mdw/cache/CacheService.html" title="interface in com.centurylink.mdw.cache">CacheService</a>&nbsp;cache)</code>&nbsp;</td>
@@ -267,8 +258,6 @@ implements <a href="../../../../../com/centurylink/mdw/startup/StartupService.ht
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../../../../com/centurylink/mdw/startup/StartupService.html#onStartup--">onStartup</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/startup/StartupService.html" title="interface in com.centurylink.mdw.startup">StartupService</a></code></dd>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../../com/centurylink/mdw/startup/StartupException.html" title="class in com.centurylink.mdw.startup">StartupException</a></code></dd>
 </dl>
 </li>
 </ul>
@@ -300,29 +289,6 @@ implements <a href="../../../../../com/centurylink/mdw/startup/StartupService.ht
 </dl>
 </li>
 </ul>
-<a name="refreshCaches-java.util.List-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>refreshCaches</h4>
-<pre>public&nbsp;void&nbsp;refreshCaches(java.util.List&lt;java.lang.String&gt;&nbsp;excludedFormats)
-                   throws <a href="../../../../../com/centurylink/mdw/startup/StartupException.html" title="class in com.centurylink.mdw.startup">StartupException</a></pre>
-<dl>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../../com/centurylink/mdw/startup/StartupException.html" title="class in com.centurylink.mdw.startup">StartupException</a></code></dd>
-</dl>
-</li>
-</ul>
-<a name="refreshCache-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>refreshCache</h4>
-<pre>public&nbsp;void&nbsp;refreshCache(java.lang.String&nbsp;cacheName)</pre>
-</li>
-</ul>
 <a name="getCache-java.lang.String-">
 <!--   -->
 </a>
@@ -332,14 +298,13 @@ implements <a href="../../../../../com/centurylink/mdw/startup/StartupService.ht
 <pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/cache/CacheService.html" title="interface in com.centurylink.mdw.cache">CacheService</a>&nbsp;getCache(java.lang.String&nbsp;name)</pre>
 </li>
 </ul>
-<a name="refreshCache-java.lang.String-java.util.List-">
+<a name="refreshCache-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>refreshCache</h4>
-<pre>public&nbsp;void&nbsp;refreshCache(java.lang.String&nbsp;cacheName,
-                         java.util.List&lt;java.lang.String&gt;&nbsp;excludedFormats)</pre>
+<pre>public&nbsp;void&nbsp;refreshCache(java.lang.String&nbsp;cacheName)</pre>
 <div class="block">Refreshes a particular cache by name.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -395,7 +360,7 @@ implements <a href="../../../../../com/centurylink/mdw/startup/StartupService.ht
 <div class="subNav">
 <ul class="navList">
 <li>Prev&nbsp;Class</li>
-<li>Next&nbsp;Class</li>
+<li><a href="../../../../../com/centurylink/mdw/services/cache/CacheRegistry.html" title="class in com.centurylink.mdw.services.cache"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../index.html?com/centurylink/mdw/services/cache/CacheRegistration.html" target="_top">Frames</a></li>

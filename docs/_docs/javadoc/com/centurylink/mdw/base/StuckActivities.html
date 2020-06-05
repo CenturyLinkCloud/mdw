@@ -98,17 +98,7 @@ var activeTableTab = "activeTableTab";
 <li>java.lang.Object</li>
 <li>
 <ul class="inheritance">
-<li><a href="../../../../com/centurylink/mdw/model/monitor/LoadBalancedScheduledJob.html" title="class in com.centurylink.mdw.model.monitor">com.centurylink.mdw.model.monitor.LoadBalancedScheduledJob</a></li>
-<li>
-<ul class="inheritance">
-<li><a href="../../../../com/centurylink/mdw/services/workflow/RoundRobinScheduledJob.html" title="class in com.centurylink.mdw.services.workflow">com.centurylink.mdw.services.workflow.RoundRobinScheduledJob</a></li>
-<li>
-<ul class="inheritance">
 <li>com.centurylink.mdw.base.StuckActivities</li>
-</ul>
-</li>
-</ul>
-</li>
 </ul>
 </li>
 </ul>
@@ -127,7 +117,7 @@ var activeTableTab = "activeTableTab";
               <a href="../../../../com/centurylink/mdw/annotations/ScheduledJob.html#defaultEnabled--">defaultEnabled</a>=false,
               <a href="../../../../com/centurylink/mdw/annotations/ScheduledJob.html#isExclusive--">isExclusive</a>=true)
 public class <span class="typeNameLabel">StuckActivities</span>
-extends <a href="../../../../com/centurylink/mdw/services/workflow/RoundRobinScheduledJob.html" title="class in com.centurylink.mdw.services.workflow">RoundRobinScheduledJob</a>
+extends java.lang.Object
 implements <a href="../../../../com/centurylink/mdw/model/monitor/ScheduledJob.html" title="interface in com.centurylink.mdw.model.monitor">ScheduledJob</a></pre>
 <div class="block">This script fixes stuck activities by failing them and then retrying them
  A stuck activity means it's "In Progress" status and older than {ActivityAgeInMinutes}
@@ -185,20 +175,6 @@ timer.task:
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/base/StuckActivities.html#run-com.centurylink.mdw.util.CallURL-">run</a></span>(<a href="../../../../com/centurylink/mdw/util/CallURL.html" title="class in com.centurylink.mdw.util">CallURL</a>&nbsp;args)</code>&nbsp;</td>
 </tr>
 </table>
-<ul class="blockList">
-<li class="blockList"><a name="methods.inherited.from.class.com.centurylink.mdw.services.workflow.RoundRobinScheduledJob">
-<!--   -->
-</a>
-<h3>Methods inherited from class&nbsp;com.centurylink.mdw.services.workflow.<a href="../../../../com/centurylink/mdw/services/workflow/RoundRobinScheduledJob.html" title="class in com.centurylink.mdw.services.workflow">RoundRobinScheduledJob</a></h3>
-<code><a href="../../../../com/centurylink/mdw/services/workflow/RoundRobinScheduledJob.html#runOnLoadBalancedInstance-com.centurylink.mdw.util.CallURL-">runOnLoadBalancedInstance</a></code></li>
-</ul>
-<ul class="blockList">
-<li class="blockList"><a name="methods.inherited.from.class.com.centurylink.mdw.model.monitor.LoadBalancedScheduledJob">
-<!--   -->
-</a>
-<h3>Methods inherited from class&nbsp;com.centurylink.mdw.model.monitor.<a href="../../../../com/centurylink/mdw/model/monitor/LoadBalancedScheduledJob.html" title="class in com.centurylink.mdw.model.monitor">LoadBalancedScheduledJob</a></h3>
-<code><a href="../../../../com/centurylink/mdw/model/monitor/LoadBalancedScheduledJob.html#runOnDifferentManagedServer-com.centurylink.mdw.util.CallURL-java.lang.String-">runOnDifferentManagedServer</a></code></li>
-</ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
 <!--   -->

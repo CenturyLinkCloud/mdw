@@ -269,7 +269,12 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getTemplate</h4>
-<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/task/TaskTemplate.html" title="class in com.centurylink.mdw.model.task">TaskTemplate</a>&nbsp;getTemplate()</pre>
+<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/task/TaskTemplate.html" title="class in com.centurylink.mdw.model.task">TaskTemplate</a>&nbsp;getTemplate()
+                         throws java.io.IOException</pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd>
+</dl>
 </li>
 </ul>
 <a name="notifyTaskAction-java.lang.String-java.lang.Integer-java.lang.Integer-">
@@ -282,11 +287,13 @@ extends java.lang.Object</pre>
                              java.lang.Integer&nbsp;previousStatus,
                              java.lang.Integer&nbsp;previousState)
                       throws <a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a>,
-                             <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
+                             <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a>,
+                             java.io.IOException</pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
 <dd><code><a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
+<dd><code>java.io.IOException</code></dd>
 </dl>
 </li>
 </ul>
@@ -297,10 +304,12 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getTaskInstanceUrl</h4>
 <pre>public&nbsp;java.lang.String&nbsp;getTaskInstanceUrl()
-                                    throws <a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
+                                    throws <a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a>,
+                                           java.io.IOException</pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
+<dd><code>java.io.IOException</code></dd>
 </dl>
 </li>
 </ul>
@@ -311,10 +320,12 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getContext</h4>
 <pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/task/TaskRuntimeContext.html" title="class in com.centurylink.mdw.model.task">TaskRuntimeContext</a>&nbsp;getContext()
-                              throws <a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
+                              throws <a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a>,
+                                     java.io.IOException</pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
+<dd><code>java.io.IOException</code></dd>
 </dl>
 </li>
 </ul>
@@ -325,11 +336,11 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getAutoAssignStrategy</h4>
 <pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/observer/task/AutoAssignStrategy.html" title="interface in com.centurylink.mdw.observer.task">AutoAssignStrategy</a>&nbsp;getAutoAssignStrategy()
-                                         throws <a href="../../../../../com/centurylink/mdw/common/StrategyException.html" title="class in com.centurylink.mdw.common">StrategyException</a>,
+                                         throws java.io.IOException,
                                                 <a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../../com/centurylink/mdw/common/StrategyException.html" title="class in com.centurylink.mdw.common">StrategyException</a></code></dd>
+<dd><code>java.io.IOException</code></dd>
 <dd><code><a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
 </dl>
 </li>

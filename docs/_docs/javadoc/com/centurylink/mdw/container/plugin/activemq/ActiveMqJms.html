@@ -120,21 +120,6 @@ implements <a href="../../../../../../com/centurylink/mdw/container/JmsProvider.
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
-<!-- =========== FIELD SUMMARY =========== -->
-<ul class="blockList">
-<li class="blockList"><a name="field.summary">
-<!--   -->
-</a>
-<h3>Field Summary</h3>
-<ul class="blockList">
-<li class="blockList"><a name="fields.inherited.from.class.com.centurylink.mdw.container.JmsProvider">
-<!--   -->
-</a>
-<h3>Fields inherited from interface&nbsp;com.centurylink.mdw.container.<a href="../../../../../../com/centurylink/mdw/container/JmsProvider.html" title="interface in com.centurylink.mdw.container">JmsProvider</a></h3>
-<code><a href="../../../../../../com/centurylink/mdw/container/JmsProvider.html#ACTIVEMQ">ACTIVEMQ</a>, <a href="../../../../../../com/centurylink/mdw/container/JmsProvider.html#NONE">NONE</a></code></li>
-</ul>
-</li>
-</ul>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 <ul class="blockList">
 <li class="blockList"><a name="constructor.summary">
@@ -170,13 +155,13 @@ implements <a href="../../../../../../com/centurylink/mdw/container/JmsProvider.
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>javax.jms.Queue</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/container/plugin/activemq/ActiveMqJms.html#getQueue-javax.jms.Session-com.centurylink.mdw.container.NamingProvider-java.lang.String-">getQueue</a></span>(javax.jms.Session&nbsp;session,
-        <a href="../../../../../../com/centurylink/mdw/container/NamingProvider.html" title="interface in com.centurylink.mdw.container">NamingProvider</a>&nbsp;namingProvider,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/container/plugin/activemq/ActiveMqJms.html#getQueue-javax.jms.Session-com.centurylink.mdw.container.ContextProvider-java.lang.String-">getQueue</a></span>(javax.jms.Session&nbsp;session,
+        <a href="../../../../../../com/centurylink/mdw/container/ContextProvider.html" title="interface in com.centurylink.mdw.container">ContextProvider</a>&nbsp;contextProvider,
         java.lang.String&nbsp;name)</code>&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>javax.jms.QueueConnectionFactory</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/container/plugin/activemq/ActiveMqJms.html#getQueueConnectionFactory-com.centurylink.mdw.container.NamingProvider-java.lang.String-">getQueueConnectionFactory</a></span>(<a href="../../../../../../com/centurylink/mdw/container/NamingProvider.html" title="interface in com.centurylink.mdw.container">NamingProvider</a>&nbsp;namingProvider,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/container/plugin/activemq/ActiveMqJms.html#getQueueConnectionFactory-com.centurylink.mdw.container.ContextProvider-java.lang.String-">getQueueConnectionFactory</a></span>(<a href="../../../../../../com/centurylink/mdw/container/ContextProvider.html" title="interface in com.centurylink.mdw.container">ContextProvider</a>&nbsp;contextProvider,
                          java.lang.String&nbsp;name)</code>&nbsp;</td>
 </tr>
 <tr id="i3" class="rowColor">
@@ -185,7 +170,7 @@ implements <a href="../../../../../../com/centurylink/mdw/container/JmsProvider.
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>javax.jms.TopicConnectionFactory</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/container/plugin/activemq/ActiveMqJms.html#getTopicConnectionFactory-com.centurylink.mdw.container.NamingProvider-java.lang.String-">getTopicConnectionFactory</a></span>(<a href="../../../../../../com/centurylink/mdw/container/NamingProvider.html" title="interface in com.centurylink.mdw.container">NamingProvider</a>&nbsp;namingProvider,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/container/plugin/activemq/ActiveMqJms.html#getTopicConnectionFactory-com.centurylink.mdw.container.ContextProvider-java.lang.String-">getTopicConnectionFactory</a></span>(<a href="../../../../../../com/centurylink/mdw/container/ContextProvider.html" title="interface in com.centurylink.mdw.container">ContextProvider</a>&nbsp;contextProvider,
                          java.lang.String&nbsp;name)</code>&nbsp;</td>
 </tr>
 <tr id="i5" class="rowColor">
@@ -255,38 +240,38 @@ implements <a href="../../../../../../com/centurylink/mdw/container/JmsProvider.
 </dl>
 </li>
 </ul>
-<a name="getQueueConnectionFactory-com.centurylink.mdw.container.NamingProvider-java.lang.String-">
+<a name="getQueueConnectionFactory-com.centurylink.mdw.container.ContextProvider-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getQueueConnectionFactory</h4>
-<pre>public&nbsp;javax.jms.QueueConnectionFactory&nbsp;getQueueConnectionFactory(<a href="../../../../../../com/centurylink/mdw/container/NamingProvider.html" title="interface in com.centurylink.mdw.container">NamingProvider</a>&nbsp;namingProvider,
+<pre>public&nbsp;javax.jms.QueueConnectionFactory&nbsp;getQueueConnectionFactory(<a href="../../../../../../com/centurylink/mdw/container/ContextProvider.html" title="interface in com.centurylink.mdw.container">ContextProvider</a>&nbsp;contextProvider,
                                                                   java.lang.String&nbsp;name)
                                                            throws javax.jms.JMSException,
                                                                   javax.naming.NamingException</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../../com/centurylink/mdw/container/JmsProvider.html#getQueueConnectionFactory-com.centurylink.mdw.container.NamingProvider-java.lang.String-">getQueueConnectionFactory</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../com/centurylink/mdw/container/JmsProvider.html" title="interface in com.centurylink.mdw.container">JmsProvider</a></code></dd>
+<dd><code><a href="../../../../../../com/centurylink/mdw/container/JmsProvider.html#getQueueConnectionFactory-com.centurylink.mdw.container.ContextProvider-java.lang.String-">getQueueConnectionFactory</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../com/centurylink/mdw/container/JmsProvider.html" title="interface in com.centurylink.mdw.container">JmsProvider</a></code></dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>javax.jms.JMSException</code></dd>
 <dd><code>javax.naming.NamingException</code></dd>
 </dl>
 </li>
 </ul>
-<a name="getTopicConnectionFactory-com.centurylink.mdw.container.NamingProvider-java.lang.String-">
+<a name="getTopicConnectionFactory-com.centurylink.mdw.container.ContextProvider-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getTopicConnectionFactory</h4>
-<pre>public&nbsp;javax.jms.TopicConnectionFactory&nbsp;getTopicConnectionFactory(<a href="../../../../../../com/centurylink/mdw/container/NamingProvider.html" title="interface in com.centurylink.mdw.container">NamingProvider</a>&nbsp;namingProvider,
+<pre>public&nbsp;javax.jms.TopicConnectionFactory&nbsp;getTopicConnectionFactory(<a href="../../../../../../com/centurylink/mdw/container/ContextProvider.html" title="interface in com.centurylink.mdw.container">ContextProvider</a>&nbsp;contextProvider,
                                                                   java.lang.String&nbsp;name)
                                                            throws javax.jms.JMSException,
                                                                   javax.naming.NamingException</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../../com/centurylink/mdw/container/JmsProvider.html#getTopicConnectionFactory-com.centurylink.mdw.container.NamingProvider-java.lang.String-">getTopicConnectionFactory</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../com/centurylink/mdw/container/JmsProvider.html" title="interface in com.centurylink.mdw.container">JmsProvider</a></code></dd>
+<dd><code><a href="../../../../../../com/centurylink/mdw/container/JmsProvider.html#getTopicConnectionFactory-com.centurylink.mdw.container.ContextProvider-java.lang.String-">getTopicConnectionFactory</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../com/centurylink/mdw/container/JmsProvider.html" title="interface in com.centurylink.mdw.container">JmsProvider</a></code></dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>javax.jms.JMSException</code></dd>
 <dd><code>javax.naming.NamingException</code></dd>
@@ -302,19 +287,19 @@ implements <a href="../../../../../../com/centurylink/mdw/container/JmsProvider.
 <pre>public&nbsp;javax.jms.Topic&nbsp;getTopic(java.lang.String&nbsp;name)</pre>
 </li>
 </ul>
-<a name="getQueue-javax.jms.Session-com.centurylink.mdw.container.NamingProvider-java.lang.String-">
+<a name="getQueue-javax.jms.Session-com.centurylink.mdw.container.ContextProvider-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getQueue</h4>
 <pre>public&nbsp;javax.jms.Queue&nbsp;getQueue(javax.jms.Session&nbsp;session,
-                                <a href="../../../../../../com/centurylink/mdw/container/NamingProvider.html" title="interface in com.centurylink.mdw.container">NamingProvider</a>&nbsp;namingProvider,
+                                <a href="../../../../../../com/centurylink/mdw/container/ContextProvider.html" title="interface in com.centurylink.mdw.container">ContextProvider</a>&nbsp;contextProvider,
                                 java.lang.String&nbsp;name)
                          throws javax.jms.JMSException</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../../com/centurylink/mdw/container/JmsProvider.html#getQueue-javax.jms.Session-com.centurylink.mdw.container.NamingProvider-java.lang.String-">getQueue</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../com/centurylink/mdw/container/JmsProvider.html" title="interface in com.centurylink.mdw.container">JmsProvider</a></code></dd>
+<dd><code><a href="../../../../../../com/centurylink/mdw/container/JmsProvider.html#getQueue-javax.jms.Session-com.centurylink.mdw.container.ContextProvider-java.lang.String-">getQueue</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../com/centurylink/mdw/container/JmsProvider.html" title="interface in com.centurylink.mdw.container">JmsProvider</a></code></dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>javax.jms.JMSException</code></dd>
 </dl>

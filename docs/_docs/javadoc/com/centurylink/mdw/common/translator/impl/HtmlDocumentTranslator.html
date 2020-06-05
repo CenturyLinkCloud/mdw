@@ -67,7 +67,7 @@
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li><a href="#fields.inherited.from.class.com.centurylink.mdw.translator.VariableTranslator">Field</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#methods.inherited.from.class.com.centurylink.mdw.common.translator.impl.StringDocumentTranslator">Method</a></li>
 </ul>
@@ -92,7 +92,7 @@
 <li>java.lang.Object</li>
 <li>
 <ul class="inheritance">
-<li><a href="../../../../../../com/centurylink/mdw/translator/VariableTranslator.html" title="class in com.centurylink.mdw.translator">com.centurylink.mdw.translator.VariableTranslator</a></li>
+<li><a href="../../../../../../com/centurylink/mdw/common/translator/impl/BaseTranslator.html" title="class in com.centurylink.mdw.common.translator.impl">com.centurylink.mdw.common.translator.impl.BaseTranslator</a></li>
 <li>
 <ul class="inheritance">
 <li><a href="../../../../../../com/centurylink/mdw/translator/DocumentReferenceTranslator.html" title="class in com.centurylink.mdw.translator">com.centurylink.mdw.translator.DocumentReferenceTranslator</a></li>
@@ -135,18 +135,18 @@ extends <a href="../../../../../../com/centurylink/mdw/common/translator/impl/St
 </a>
 <h3>Field Summary</h3>
 <ul class="blockList">
-<li class="blockList"><a name="fields.inherited.from.class.com.centurylink.mdw.translator.VariableTranslator">
-<!--   -->
-</a>
-<h3>Fields inherited from class&nbsp;com.centurylink.mdw.translator.<a href="../../../../../../com/centurylink/mdw/translator/VariableTranslator.html" title="class in com.centurylink.mdw.translator">VariableTranslator</a></h3>
-<code><a href="../../../../../../com/centurylink/mdw/translator/VariableTranslator.html#ARRAY_DELIMETER">ARRAY_DELIMETER</a>, <a href="../../../../../../com/centurylink/mdw/translator/VariableTranslator.html#EMPTY_STRING">EMPTY_STRING</a></code></li>
-</ul>
-<ul class="blockList">
 <li class="blockList"><a name="fields.inherited.from.class.com.centurylink.mdw.translator.JsonTranslator">
 <!--   -->
 </a>
 <h3>Fields inherited from interface&nbsp;com.centurylink.mdw.translator.<a href="../../../../../../com/centurylink/mdw/translator/JsonTranslator.html" title="interface in com.centurylink.mdw.translator">JsonTranslator</a></h3>
 <code><a href="../../../../../../com/centurylink/mdw/translator/JsonTranslator.html#JSONABLE_TYPE">JSONABLE_TYPE</a></code></li>
+</ul>
+<ul class="blockList">
+<li class="blockList"><a name="fields.inherited.from.class.com.centurylink.mdw.variable.VariableTranslator">
+<!--   -->
+</a>
+<h3>Fields inherited from interface&nbsp;com.centurylink.mdw.variable.<a href="../../../../../../com/centurylink/mdw/variable/VariableTranslator.html" title="interface in com.centurylink.mdw.variable">VariableTranslator</a></h3>
+<code><a href="../../../../../../com/centurylink/mdw/variable/VariableTranslator.html#EMPTY_STRING">EMPTY_STRING</a></code></li>
 </ul>
 </li>
 </ul>
@@ -178,21 +178,21 @@ extends <a href="../../../../../../com/centurylink/mdw/common/translator/impl/St
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;com.centurylink.mdw.common.translator.impl.<a href="../../../../../../com/centurylink/mdw/common/translator/impl/StringDocumentTranslator.html" title="class in com.centurylink.mdw.common.translator.impl">StringDocumentTranslator</a></h3>
-<code><a href="../../../../../../com/centurylink/mdw/common/translator/impl/StringDocumentTranslator.html#fromJson-org.json.JSONObject-">fromJson</a>, <a href="../../../../../../com/centurylink/mdw/common/translator/impl/StringDocumentTranslator.html#realToObject-java.lang.String-">realToObject</a>, <a href="../../../../../../com/centurylink/mdw/common/translator/impl/StringDocumentTranslator.html#realToString-java.lang.Object-">realToString</a>, <a href="../../../../../../com/centurylink/mdw/common/translator/impl/StringDocumentTranslator.html#toJson-java.lang.Object-">toJson</a></code></li>
+<code><a href="../../../../../../com/centurylink/mdw/common/translator/impl/StringDocumentTranslator.html#fromJson-org.json.JSONObject-">fromJson</a>, <a href="../../../../../../com/centurylink/mdw/common/translator/impl/StringDocumentTranslator.html#toJson-java.lang.Object-">toJson</a>, <a href="../../../../../../com/centurylink/mdw/common/translator/impl/StringDocumentTranslator.html#toObject-java.lang.String-java.lang.String-">toObject</a>, <a href="../../../../../../com/centurylink/mdw/common/translator/impl/StringDocumentTranslator.html#toString-java.lang.Object-java.lang.String-">toString</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.com.centurylink.mdw.translator.DocumentReferenceTranslator">
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;com.centurylink.mdw.translator.<a href="../../../../../../com/centurylink/mdw/translator/DocumentReferenceTranslator.html" title="class in com.centurylink.mdw.translator">DocumentReferenceTranslator</a></h3>
-<code><a href="../../../../../../com/centurylink/mdw/translator/DocumentReferenceTranslator.html#fromDomNode-org.w3c.dom.Node-boolean-">fromDomNode</a>, <a href="../../../../../../com/centurylink/mdw/translator/DocumentReferenceTranslator.html#realToObject-java.lang.String-boolean-">realToObject</a>, <a href="../../../../../../com/centurylink/mdw/translator/DocumentReferenceTranslator.html#realToString-java.lang.Object-boolean-">realToString</a>, <a href="../../../../../../com/centurylink/mdw/translator/DocumentReferenceTranslator.html#toDomDocument-java.lang.Object-boolean-">toDomDocument</a>, <a href="../../../../../../com/centurylink/mdw/translator/DocumentReferenceTranslator.html#toObject-java.lang.String-">toObject</a>, <a href="../../../../../../com/centurylink/mdw/translator/DocumentReferenceTranslator.html#toString-java.lang.Object-">toString</a></code></li>
+<code><a href="../../../../../../com/centurylink/mdw/translator/DocumentReferenceTranslator.html#toObject-java.lang.String-">toObject</a>, <a href="../../../../../../com/centurylink/mdw/translator/DocumentReferenceTranslator.html#toString-java.lang.Object-">toString</a></code></li>
 </ul>
 <ul class="blockList">
-<li class="blockList"><a name="methods.inherited.from.class.com.centurylink.mdw.translator.VariableTranslator">
+<li class="blockList"><a name="methods.inherited.from.class.com.centurylink.mdw.common.translator.impl.BaseTranslator">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;com.centurylink.mdw.translator.<a href="../../../../../../com/centurylink/mdw/translator/VariableTranslator.html" title="class in com.centurylink.mdw.translator">VariableTranslator</a></h3>
-<code><a href="../../../../../../com/centurylink/mdw/translator/VariableTranslator.html#getPackage--">getPackage</a>, <a href="../../../../../../com/centurylink/mdw/translator/VariableTranslator.html#getTranslator-com.centurylink.mdw.model.workflow.Package-java.lang.String-">getTranslator</a>, <a href="../../../../../../com/centurylink/mdw/translator/VariableTranslator.html#getTranslator-java.lang.String-">getTranslator</a>, <a href="../../../../../../com/centurylink/mdw/translator/VariableTranslator.html#isDocumentReferenceVariable-com.centurylink.mdw.model.workflow.Package-java.lang.String-">isDocumentReferenceVariable</a>, <a href="../../../../../../com/centurylink/mdw/translator/VariableTranslator.html#isXmlDocumentTranslator-com.centurylink.mdw.model.workflow.Package-java.lang.String-">isXmlDocumentTranslator</a>, <a href="../../../../../../com/centurylink/mdw/translator/VariableTranslator.html#realToObject-com.centurylink.mdw.model.workflow.Package-java.lang.String-java.lang.String-">realToObject</a>, <a href="../../../../../../com/centurylink/mdw/translator/VariableTranslator.html#realToString-com.centurylink.mdw.model.workflow.Package-java.lang.String-java.lang.Object-">realToString</a>, <a href="../../../../../../com/centurylink/mdw/translator/VariableTranslator.html#setPackage-com.centurylink.mdw.model.workflow.Package-">setPackage</a>, <a href="../../../../../../com/centurylink/mdw/translator/VariableTranslator.html#toObject-java.lang.String-java.lang.String-">toObject</a>, <a href="../../../../../../com/centurylink/mdw/translator/VariableTranslator.html#toString-com.centurylink.mdw.model.workflow.Package-java.lang.String-java.lang.Object-">toString</a>, <a href="../../../../../../com/centurylink/mdw/translator/VariableTranslator.html#toString-java.lang.String-java.lang.Object-">toString</a></code></li>
+<h3>Methods inherited from class&nbsp;com.centurylink.mdw.common.translator.impl.<a href="../../../../../../com/centurylink/mdw/common/translator/impl/BaseTranslator.html" title="class in com.centurylink.mdw.common.translator.impl">BaseTranslator</a></h3>
+<code><a href="../../../../../../com/centurylink/mdw/common/translator/impl/BaseTranslator.html#getPackage--">getPackage</a>, <a href="../../../../../../com/centurylink/mdw/common/translator/impl/BaseTranslator.html#setPackage-com.centurylink.mdw.model.workflow.Package-">setPackage</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -207,6 +207,13 @@ extends <a href="../../../../../../com/centurylink/mdw/common/translator/impl/St
 </a>
 <h3>Methods inherited from interface&nbsp;com.centurylink.mdw.translator.<a href="../../../../../../com/centurylink/mdw/translator/JsonTranslator.html" title="interface in com.centurylink.mdw.translator">JsonTranslator</a></h3>
 <code><a href="../../../../../../com/centurylink/mdw/translator/JsonTranslator.html#createJsonable-org.json.JSONObject-">createJsonable</a>, <a href="../../../../../../com/centurylink/mdw/translator/JsonTranslator.html#getPackage--">getPackage</a></code></li>
+</ul>
+<ul class="blockList">
+<li class="blockList"><a name="methods.inherited.from.class.com.centurylink.mdw.variable.VariableTranslator">
+<!--   -->
+</a>
+<h3>Methods inherited from interface&nbsp;com.centurylink.mdw.variable.<a href="../../../../../../com/centurylink/mdw/variable/VariableTranslator.html" title="interface in com.centurylink.mdw.variable">VariableTranslator</a></h3>
+<code><a href="../../../../../../com/centurylink/mdw/variable/VariableTranslator.html#isDocumentReferenceVariable--">isDocumentReferenceVariable</a></code></li>
 </ul>
 </li>
 </ul>
@@ -284,7 +291,7 @@ extends <a href="../../../../../../com/centurylink/mdw/common/translator/impl/St
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li><a href="#fields.inherited.from.class.com.centurylink.mdw.translator.VariableTranslator">Field</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#methods.inherited.from.class.com.centurylink.mdw.common.translator.impl.StringDocumentTranslator">Method</a></li>
 </ul>

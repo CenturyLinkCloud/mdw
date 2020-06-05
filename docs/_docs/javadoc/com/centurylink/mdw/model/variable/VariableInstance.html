@@ -17,8 +17,8 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10};
-var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":42,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10};
+var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"],32:["t6","Deprecated Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
@@ -156,7 +156,7 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 </a>
 <h3>Method Summary</h3>
 <table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
-<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t6" class="tableTab"><span><a href="javascript:show(32);">Deprecated Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colLast" scope="col">Method and Description</th>
@@ -167,7 +167,7 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>java.lang.Object</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html#getData--">getData</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html#getData-com.centurylink.mdw.model.workflow.Package-">getData</a></span>(<a href="../../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;pkg)</code>&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>java.lang.Long</code></td>
@@ -175,73 +175,75 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>java.lang.Long</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html#getInstanceId--">getInstanceId</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html#getId--">getId</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i4" class="altColor">
+<td class="colFirst"><code>java.lang.Long</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html#getInstanceId--">getInstanceId</a></span>()</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
+</td>
+</tr>
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>org.json.JSONObject</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html#getJson--">getJson</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html#getJsonName--">getJsonName</a></span>()</code>
 <div class="block">May be overridden to name the JSON object returned from <a href="../../../../../com/centurylink/mdw/model/Jsonable.html#getJson--"><code>Jsonable.getJson()</code></a>.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html#getName--">getName</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>java.lang.Long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html#getProcessInstanceId--">getProcessInstanceId</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html#getStringValue--">getStringValue</a></span>()</code>&nbsp;</td>
-</tr>
 <tr id="i9" class="rowColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html#getStringValue-com.centurylink.mdw.model.workflow.Package-">getStringValue</a></span>(<a href="../../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;pkg)</code>&nbsp;</td>
+</tr>
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html#getType--">getType</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>java.lang.Long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html#getVariableId--">getVariableId</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i11" class="rowColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html#isDocument--">isDocument</a></span>()</code>&nbsp;</td>
-</tr>
 <tr id="i12" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html#setData-java.lang.Object-">setData</a></span>(java.lang.Object&nbsp;data)</code>&nbsp;</td>
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html#isDocument-com.centurylink.mdw.model.workflow.Package-">isDocument</a></span>(<a href="../../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;pkg)</code>&nbsp;</td>
 </tr>
 <tr id="i13" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html#setInstanceId-java.lang.Long-">setInstanceId</a></span>(java.lang.Long&nbsp;instanceId)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html#setData-java.lang.Object-">setData</a></span>(java.lang.Object&nbsp;data)</code>&nbsp;</td>
 </tr>
 <tr id="i14" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html#setName-java.lang.String-">setName</a></span>(java.lang.String&nbsp;name)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html#setId-java.lang.Long-">setId</a></span>(java.lang.Long&nbsp;id)</code>&nbsp;</td>
 </tr>
 <tr id="i15" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html#setProcessInstanceId-java.lang.Long-">setProcessInstanceId</a></span>(java.lang.Long&nbsp;processInstanceId)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html#setName-java.lang.String-">setName</a></span>(java.lang.String&nbsp;name)</code>&nbsp;</td>
 </tr>
 <tr id="i16" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html#setStringValue-java.lang.String-">setStringValue</a></span>(java.lang.String&nbsp;value)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html#setProcessInstanceId-java.lang.Long-">setProcessInstanceId</a></span>(java.lang.Long&nbsp;processInstanceId)</code>&nbsp;</td>
 </tr>
 <tr id="i17" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html#setType-java.lang.String-">setType</a></span>(java.lang.String&nbsp;type)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html#setStringValue-java.lang.String-">setStringValue</a></span>(java.lang.String&nbsp;value)</code>&nbsp;</td>
 </tr>
 <tr id="i18" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html#setVariableId-java.lang.Long-">setVariableId</a></span>(java.lang.Long&nbsp;variableId)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html#setType-java.lang.String-">setType</a></span>(java.lang.String&nbsp;type)</code>&nbsp;</td>
 </tr>
 <tr id="i19" class="rowColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html#toString--">toString</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html#setVariableId-java.lang.Long-">setVariableId</a></span>(java.lang.Long&nbsp;variableId)</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -249,7 +251,7 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, wait, wait, wait</code></li>
+<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.com.centurylink.mdw.model.Jsonable">
@@ -338,40 +340,13 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <pre>public&nbsp;java.lang.String&nbsp;getName()</pre>
 </li>
 </ul>
-<a name="setStringValue-java.lang.String-">
+<a name="getType--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>setStringValue</h4>
-<pre>public&nbsp;void&nbsp;setStringValue(java.lang.String&nbsp;value)</pre>
-</li>
-</ul>
-<a name="getStringValue--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getStringValue</h4>
-<pre>public&nbsp;java.lang.String&nbsp;getStringValue()</pre>
-</li>
-</ul>
-<a name="setData-java.lang.Object-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setData</h4>
-<pre>public&nbsp;void&nbsp;setData(java.lang.Object&nbsp;data)</pre>
-</li>
-</ul>
-<a name="getData--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getData</h4>
-<pre>public&nbsp;java.lang.Object&nbsp;getData()</pre>
+<h4>getType</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getType()</pre>
 </li>
 </ul>
 <a name="setType-java.lang.String-">
@@ -383,22 +358,22 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <pre>public&nbsp;void&nbsp;setType(java.lang.String&nbsp;type)</pre>
 </li>
 </ul>
-<a name="getType--">
+<a name="getId--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getType</h4>
-<pre>public&nbsp;java.lang.String&nbsp;getType()</pre>
+<h4>getId</h4>
+<pre>public&nbsp;java.lang.Long&nbsp;getId()</pre>
 </li>
 </ul>
-<a name="setInstanceId-java.lang.Long-">
+<a name="setId-java.lang.Long-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>setInstanceId</h4>
-<pre>public&nbsp;void&nbsp;setInstanceId(java.lang.Long&nbsp;instanceId)</pre>
+<h4>setId</h4>
+<pre>public&nbsp;void&nbsp;setId(java.lang.Long&nbsp;id)</pre>
 </li>
 </ul>
 <a name="getInstanceId--">
@@ -407,16 +382,9 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <ul class="blockList">
 <li class="blockList">
 <h4>getInstanceId</h4>
-<pre>public&nbsp;java.lang.Long&nbsp;getInstanceId()</pre>
-</li>
-</ul>
-<a name="setVariableId-java.lang.Long-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setVariableId</h4>
-<pre>public&nbsp;void&nbsp;setVariableId(java.lang.Long&nbsp;variableId)</pre>
+<pre>@Deprecated
+public&nbsp;java.lang.Long&nbsp;getInstanceId()</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 </li>
 </ul>
 <a name="getVariableId--">
@@ -428,13 +396,13 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <pre>public&nbsp;java.lang.Long&nbsp;getVariableId()</pre>
 </li>
 </ul>
-<a name="getProcessInstanceId--">
+<a name="setVariableId-java.lang.Long-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getProcessInstanceId</h4>
-<pre>public&nbsp;java.lang.Long&nbsp;getProcessInstanceId()</pre>
+<h4>setVariableId</h4>
+<pre>public&nbsp;void&nbsp;setVariableId(java.lang.Long&nbsp;variableId)</pre>
 </li>
 </ul>
 <a name="setProcessInstanceId-java.lang.Long-">
@@ -446,17 +414,67 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <pre>public&nbsp;void&nbsp;setProcessInstanceId(java.lang.Long&nbsp;processInstanceId)</pre>
 </li>
 </ul>
-<a name="toString--">
+<a name="getProcessInstanceId--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>toString</h4>
-<pre>public&nbsp;java.lang.String&nbsp;toString()</pre>
-<dl>
-<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code>toString</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
-</dl>
+<h4>getProcessInstanceId</h4>
+<pre>public&nbsp;java.lang.Long&nbsp;getProcessInstanceId()</pre>
+</li>
+</ul>
+<a name="getStringValue-com.centurylink.mdw.model.workflow.Package-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getStringValue</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getStringValue(<a href="../../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;pkg)</pre>
+</li>
+</ul>
+<a name="setStringValue-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setStringValue</h4>
+<pre>public&nbsp;void&nbsp;setStringValue(java.lang.String&nbsp;value)</pre>
+</li>
+</ul>
+<a name="getData-com.centurylink.mdw.model.workflow.Package-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getData</h4>
+<pre>public&nbsp;java.lang.Object&nbsp;getData(<a href="../../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;pkg)</pre>
+</li>
+</ul>
+<a name="setData-java.lang.Object-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setData</h4>
+<pre>public&nbsp;void&nbsp;setData(java.lang.Object&nbsp;data)</pre>
+</li>
+</ul>
+<a name="isDocument-com.centurylink.mdw.model.workflow.Package-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isDocument</h4>
+<pre>public&nbsp;boolean&nbsp;isDocument(<a href="../../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;pkg)</pre>
+</li>
+</ul>
+<a name="getDocumentId--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getDocumentId</h4>
+<pre>public&nbsp;java.lang.Long&nbsp;getDocumentId()</pre>
 </li>
 </ul>
 <a name="compareTo-com.centurylink.mdw.model.variable.VariableInstance-">
@@ -470,24 +488,6 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code>compareTo</code>&nbsp;in interface&nbsp;<code>java.lang.Comparable&lt;<a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html" title="class in com.centurylink.mdw.model.variable">VariableInstance</a>&gt;</code></dd>
 </dl>
-</li>
-</ul>
-<a name="isDocument--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>isDocument</h4>
-<pre>public&nbsp;boolean&nbsp;isDocument()</pre>
-</li>
-</ul>
-<a name="getDocumentId--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getDocumentId</h4>
-<pre>public&nbsp;java.lang.Long&nbsp;getDocumentId()</pre>
 </li>
 </ul>
 <a name="getJsonName--">

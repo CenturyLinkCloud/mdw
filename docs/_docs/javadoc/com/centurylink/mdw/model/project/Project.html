@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":18,"i1":6,"i2":6,"i3":6,"i4":6,"i5":18,"i6":18,"i7":18};
+var methods = {"i0":18,"i1":6,"i2":6,"i3":6,"i4":6,"i5":18,"i6":18,"i7":18,"i8":18};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],16:["t5","Default Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -124,7 +124,9 @@ var activeTableTab = "activeTableTab";
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>default java.util.Map&lt;java.lang.String,<a href="../../../../../com/centurylink/mdw/model/workflow/ActivityImplementor.html" title="class in com.centurylink.mdw.model.workflow">ActivityImplementor</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/project/Project.html#getActivityImplementors--">getActivityImplementors</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/project/Project.html#getActivityImplementors--">getActivityImplementors</a></span>()</code>
+<div class="block">Map of implClass to implementor.</div>
+</td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>java.io.File</code></td>
@@ -143,14 +145,20 @@ var activeTableTab = "activeTableTab";
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/project/Project.html#getMdwVersion--">getMdwVersion</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i5" class="rowColor">
+<td class="colFirst"><code>default java.util.Map&lt;java.lang.String,<a href="../../../../../com/centurylink/mdw/model/variable/VariableType.html" title="class in com.centurylink.mdw.model.variable">VariableType</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/project/Project.html#getVariableTypes--">getVariableTypes</a></span>()</code>
+<div class="block">Map of typeName to variable type.</div>
+</td>
+</tr>
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>default java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/project/Project.html#readData-java.lang.String-">readData</a></span>(java.lang.String&nbsp;name)</code>&nbsp;</td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>default java.util.List&lt;java.lang.String&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/project/Project.html#readDataList-java.lang.String-">readDataList</a></span>(java.lang.String&nbsp;name)</code>&nbsp;</td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>default java.util.SortedMap&lt;java.lang.String,java.lang.String&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/project/Project.html#readDataMap-java.lang.String-">readDataMap</a></span>(java.lang.String&nbsp;name)</code>&nbsp;</td>
 </tr>
@@ -265,11 +273,27 @@ var activeTableTab = "activeTableTab";
 <a name="getActivityImplementors--">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getActivityImplementors</h4>
 <pre>default&nbsp;java.util.Map&lt;java.lang.String,<a href="../../../../../com/centurylink/mdw/model/workflow/ActivityImplementor.html" title="class in com.centurylink.mdw.model.workflow">ActivityImplementor</a>&gt;&nbsp;getActivityImplementors()
                                                                              throws java.io.IOException</pre>
+<div class="block">Map of implClass to implementor.</div>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd>
+</dl>
+</li>
+</ul>
+<a name="getVariableTypes--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getVariableTypes</h4>
+<pre>default&nbsp;java.util.Map&lt;java.lang.String,<a href="../../../../../com/centurylink/mdw/model/variable/VariableType.html" title="class in com.centurylink.mdw.model.variable">VariableType</a>&gt;&nbsp;getVariableTypes()
+                                                               throws java.io.IOException</pre>
+<div class="block">Map of typeName to variable type.</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd>

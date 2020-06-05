@@ -17,8 +17,8 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":6,"i1":6,"i2":18,"i3":6,"i4":18,"i5":18,"i6":6,"i7":6,"i8":6,"i9":6,"i10":6,"i11":18,"i12":6,"i13":6,"i14":6,"i15":6,"i16":6,"i17":6,"i18":6,"i19":6,"i20":6,"i21":6,"i22":6,"i23":6,"i24":6,"i25":6,"i26":18,"i27":6,"i28":6,"i29":6,"i30":18,"i31":6};
-var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],16:["t5","Default Methods"]};
+var methods = {"i0":6,"i1":6,"i2":18,"i3":38,"i4":18,"i5":18,"i6":18,"i7":18,"i8":38,"i9":6,"i10":6,"i11":6,"i12":6,"i13":18,"i14":38,"i15":6,"i16":6,"i17":6,"i18":6,"i19":6,"i20":6,"i21":6,"i22":6,"i23":38,"i24":38,"i25":38,"i26":6,"i27":6,"i28":18,"i29":38,"i30":6,"i31":6,"i32":18,"i33":38};
+var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],16:["t5","Default Methods"],32:["t6","Deprecated Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
@@ -136,7 +136,7 @@ var activeTableTab = "activeTableTab";
 </a>
 <h3>Method Summary</h3>
 <table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
-<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t3" class="tableTab"><span><a href="javascript:show(4);">Abstract Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t5" class="tableTab"><span><a href="javascript:show(16);">Default Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t3" class="tableTab"><span><a href="javascript:show(4);">Abstract Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t5" class="tableTab"><span><a href="javascript:show(16);">Default Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t6" class="tableTab"><span><a href="javascript:show(32);">Deprecated Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colLast" scope="col">Method and Description</th>
@@ -158,7 +158,9 @@ var activeTableTab = "activeTableTab";
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#debugException-java.lang.String-java.lang.Throwable-">debugException</a></span>(java.lang.String&nbsp;msg,
-              java.lang.Throwable&nbsp;t)</code>&nbsp;</td>
+              java.lang.Throwable&nbsp;t)</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
+</td>
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>default void</code></td>
@@ -166,126 +168,151 @@ var activeTableTab = "activeTableTab";
 </tr>
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code>default void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#error-java.lang.String-java.lang.String-">error</a></span>(java.lang.String&nbsp;tag,
+     java.lang.String&nbsp;message)</code>&nbsp;</td>
+</tr>
+<tr id="i6" class="altColor">
+<td class="colFirst"><code>default void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#error-java.lang.String-java.lang.String-java.lang.Throwable-">error</a></span>(java.lang.String&nbsp;tag,
+     java.lang.String&nbsp;message,
+     java.lang.Throwable&nbsp;e)</code>&nbsp;</td>
+</tr>
+<tr id="i7" class="rowColor">
+<td class="colFirst"><code>default void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#error-java.lang.String-java.lang.Throwable-">error</a></span>(java.lang.String&nbsp;msg,
      java.lang.Throwable&nbsp;t)</code>&nbsp;</td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#exception-java.lang.String-java.lang.String-java.lang.Throwable-">exception</a></span>(java.lang.String&nbsp;tag,
          java.lang.String&nbsp;message,
-         java.lang.Throwable&nbsp;e)</code>&nbsp;</td>
+         java.lang.Throwable&nbsp;e)</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
+</td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#getDefaultHost--">getDefaultHost</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#getDefaultPort--">getDefaultPort</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#info-java.lang.String-">info</a></span>(java.lang.String&nbsp;msg)</code>&nbsp;</td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#info-java.lang.String-java.lang.String-">info</a></span>(java.lang.String&nbsp;tag,
     java.lang.String&nbsp;message)</code>&nbsp;</td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>default void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#info-java.lang.String-java.lang.Throwable-">info</a></span>(java.lang.String&nbsp;msg,
     java.lang.Throwable&nbsp;t)</code>&nbsp;</td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#infoException-java.lang.String-java.lang.Throwable-">infoException</a></span>(java.lang.String&nbsp;msg,
-             java.lang.Throwable&nbsp;t)</code>&nbsp;</td>
-</tr>
-<tr id="i13" class="rowColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#isDebugEnabled--">isDebugEnabled</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i14" class="altColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#isEnabledFor-com.centurylink.mdw.util.log.StandardLogger.LogLevel-">isEnabledFor</a></span>(<a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.LogLevel.html" title="enum in com.centurylink.mdw.util.log">StandardLogger.LogLevel</a>&nbsp;level)</code>&nbsp;</td>
+             java.lang.Throwable&nbsp;t)</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
+</td>
 </tr>
 <tr id="i15" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#isInfoEnabled--">isInfoEnabled</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#isDebugEnabled--">isDebugEnabled</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i16" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#isMdwDebugEnabled--">isMdwDebugEnabled</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#isEnabledFor-com.centurylink.mdw.util.log.StandardLogger.LogLevel-">isEnabledFor</a></span>(<a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.LogLevel.html" title="enum in com.centurylink.mdw.util.log">StandardLogger.LogLevel</a>&nbsp;level)</code>&nbsp;</td>
 </tr>
 <tr id="i17" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#isTraceEnabled--">isTraceEnabled</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#isInfoEnabled--">isInfoEnabled</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i18" class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#isMdwDebugEnabled--">isMdwDebugEnabled</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i19" class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#isTraceEnabled--">isTraceEnabled</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#log-com.centurylink.mdw.util.log.StandardLogger.LogLevel-java.lang.String-">log</a></span>(<a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.LogLevel.html" title="enum in com.centurylink.mdw.util.log">StandardLogger.LogLevel</a>&nbsp;level,
    java.lang.String&nbsp;message)</code>&nbsp;</td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#mdwDebug-java.lang.String-">mdwDebug</a></span>(java.lang.String&nbsp;msg)</code>&nbsp;</td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#refreshWatcher--">refreshWatcher</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i21" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#severe-java.lang.String-">severe</a></span>(java.lang.String&nbsp;msg)</code>&nbsp;</td>
-</tr>
-<tr id="i22" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#severe-java.lang.String-java.lang.String-">severe</a></span>(java.lang.String&nbsp;tag,
-      java.lang.String&nbsp;message)</code>&nbsp;</td>
-</tr>
 <tr id="i23" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#severeException-java.lang.String-java.lang.Throwable-">severeException</a></span>(java.lang.String&nbsp;msg,
-               java.lang.Throwable&nbsp;t)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#severe-java.lang.String-">severe</a></span>(java.lang.String&nbsp;msg)</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
+</td>
 </tr>
 <tr id="i24" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#trace-java.lang.String-">trace</a></span>(java.lang.String&nbsp;msg)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#severe-java.lang.String-java.lang.String-">severe</a></span>(java.lang.String&nbsp;tag,
+      java.lang.String&nbsp;message)</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
+</td>
 </tr>
 <tr id="i25" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#severeException-java.lang.String-java.lang.Throwable-">severeException</a></span>(java.lang.String&nbsp;msg,
+               java.lang.Throwable&nbsp;t)</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
+</td>
+</tr>
+<tr id="i26" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#trace-java.lang.String-">trace</a></span>(java.lang.String&nbsp;msg)</code>&nbsp;</td>
+</tr>
+<tr id="i27" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#trace-java.lang.String-java.lang.String-">trace</a></span>(java.lang.String&nbsp;tag,
      java.lang.String&nbsp;message)</code>&nbsp;</td>
 </tr>
-<tr id="i26" class="altColor">
+<tr id="i28" class="altColor">
 <td class="colFirst"><code>default void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#trace-java.lang.String-java.lang.Throwable-">trace</a></span>(java.lang.String&nbsp;msg,
      java.lang.Throwable&nbsp;t)</code>&nbsp;</td>
 </tr>
-<tr id="i27" class="rowColor">
+<tr id="i29" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#traceException-java.lang.String-java.lang.Throwable-">traceException</a></span>(java.lang.String&nbsp;msg,
-              java.lang.Throwable&nbsp;t)</code>&nbsp;</td>
+              java.lang.Throwable&nbsp;t)</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
+</td>
 </tr>
-<tr id="i28" class="altColor">
+<tr id="i30" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#warn-java.lang.String-">warn</a></span>(java.lang.String&nbsp;msg)</code>&nbsp;</td>
 </tr>
-<tr id="i29" class="rowColor">
+<tr id="i31" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#warn-java.lang.String-java.lang.String-">warn</a></span>(java.lang.String&nbsp;tag,
     java.lang.String&nbsp;message)</code>&nbsp;</td>
 </tr>
-<tr id="i30" class="altColor">
+<tr id="i32" class="altColor">
 <td class="colFirst"><code>default void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#warn-java.lang.String-java.lang.Throwable-">warn</a></span>(java.lang.String&nbsp;msg,
     java.lang.Throwable&nbsp;t)</code>&nbsp;</td>
 </tr>
-<tr id="i31" class="rowColor">
+<tr id="i33" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#warnException-java.lang.String-java.lang.Throwable-">warnException</a></span>(java.lang.String&nbsp;msg,
-             java.lang.Throwable&nbsp;t)</code>&nbsp;</td>
+             java.lang.Throwable&nbsp;t)</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
+</td>
 </tr>
 </table>
 </li>
@@ -335,7 +362,9 @@ var activeTableTab = "activeTableTab";
 <ul class="blockList">
 <li class="blockList">
 <h4>severe</h4>
-<pre>void&nbsp;severe(java.lang.String&nbsp;msg)</pre>
+<pre>@Deprecated
+void&nbsp;severe(java.lang.String&nbsp;msg)</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 </li>
 </ul>
 <a name="debug-java.lang.String-">
@@ -381,8 +410,10 @@ var activeTableTab = "activeTableTab";
 <ul class="blockList">
 <li class="blockList">
 <h4>infoException</h4>
-<pre>void&nbsp;infoException(java.lang.String&nbsp;msg,
-                   java.lang.Throwable&nbsp;t)</pre>
+<pre>@Deprecated
+void&nbsp;infoException(java.lang.String&nbsp;msg,
+                               java.lang.Throwable&nbsp;t)</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 </li>
 </ul>
 <a name="warn-java.lang.String-java.lang.Throwable-">
@@ -401,8 +432,10 @@ var activeTableTab = "activeTableTab";
 <ul class="blockList">
 <li class="blockList">
 <h4>warnException</h4>
-<pre>void&nbsp;warnException(java.lang.String&nbsp;msg,
-                   java.lang.Throwable&nbsp;t)</pre>
+<pre>@Deprecated
+void&nbsp;warnException(java.lang.String&nbsp;msg,
+                               java.lang.Throwable&nbsp;t)</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 </li>
 </ul>
 <a name="error-java.lang.String-java.lang.Throwable-">
@@ -421,8 +454,10 @@ var activeTableTab = "activeTableTab";
 <ul class="blockList">
 <li class="blockList">
 <h4>severeException</h4>
-<pre>void&nbsp;severeException(java.lang.String&nbsp;msg,
-                     java.lang.Throwable&nbsp;t)</pre>
+<pre>@Deprecated
+void&nbsp;severeException(java.lang.String&nbsp;msg,
+                                 java.lang.Throwable&nbsp;t)</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 </li>
 </ul>
 <a name="debug-java.lang.String-java.lang.Throwable-">
@@ -441,8 +476,10 @@ var activeTableTab = "activeTableTab";
 <ul class="blockList">
 <li class="blockList">
 <h4>debugException</h4>
-<pre>void&nbsp;debugException(java.lang.String&nbsp;msg,
-                    java.lang.Throwable&nbsp;t)</pre>
+<pre>@Deprecated
+void&nbsp;debugException(java.lang.String&nbsp;msg,
+                                java.lang.Throwable&nbsp;t)</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 </li>
 </ul>
 <a name="trace-java.lang.String-java.lang.Throwable-">
@@ -461,8 +498,10 @@ var activeTableTab = "activeTableTab";
 <ul class="blockList">
 <li class="blockList">
 <h4>traceException</h4>
-<pre>void&nbsp;traceException(java.lang.String&nbsp;msg,
-                    java.lang.Throwable&nbsp;t)</pre>
+<pre>@Deprecated
+void&nbsp;traceException(java.lang.String&nbsp;msg,
+                                java.lang.Throwable&nbsp;t)</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 </li>
 </ul>
 <a name="isInfoEnabled--">
@@ -546,9 +585,22 @@ var activeTableTab = "activeTableTab";
 <ul class="blockList">
 <li class="blockList">
 <h4>exception</h4>
-<pre>void&nbsp;exception(java.lang.String&nbsp;tag,
-               java.lang.String&nbsp;message,
-               java.lang.Throwable&nbsp;e)</pre>
+<pre>@Deprecated
+void&nbsp;exception(java.lang.String&nbsp;tag,
+                           java.lang.String&nbsp;message,
+                           java.lang.Throwable&nbsp;e)</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
+</li>
+</ul>
+<a name="error-java.lang.String-java.lang.String-java.lang.Throwable-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>error</h4>
+<pre>default&nbsp;void&nbsp;error(java.lang.String&nbsp;tag,
+                   java.lang.String&nbsp;message,
+                   java.lang.Throwable&nbsp;e)</pre>
 </li>
 </ul>
 <a name="severe-java.lang.String-java.lang.String-">
@@ -557,8 +609,20 @@ var activeTableTab = "activeTableTab";
 <ul class="blockList">
 <li class="blockList">
 <h4>severe</h4>
-<pre>void&nbsp;severe(java.lang.String&nbsp;tag,
-            java.lang.String&nbsp;message)</pre>
+<pre>@Deprecated
+void&nbsp;severe(java.lang.String&nbsp;tag,
+                        java.lang.String&nbsp;message)</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
+</li>
+</ul>
+<a name="error-java.lang.String-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>error</h4>
+<pre>default&nbsp;void&nbsp;error(java.lang.String&nbsp;tag,
+                   java.lang.String&nbsp;message)</pre>
 </li>
 </ul>
 <a name="debug-java.lang.String-java.lang.String-">

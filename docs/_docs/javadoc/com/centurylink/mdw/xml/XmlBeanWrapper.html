@@ -17,8 +17,8 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10};
-var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
+var methods = {"i0":42,"i1":42,"i2":42,"i3":42,"i4":42,"i5":42,"i6":42,"i7":42,"i8":42,"i9":42,"i10":42,"i11":42};
+var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"],32:["t6","Deprecated Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
@@ -114,8 +114,10 @@ var activeTableTab = "activeTableTab";
 <dd><a href="../../../../com/centurylink/mdw/common/service/types/ActionRequestMessage.html" title="class in com.centurylink.mdw.common.service.types">ActionRequestMessage</a></dd>
 </dl>
 <hr>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span></div>
 <br>
-<pre>public abstract class <span class="typeNameLabel">XmlBeanWrapper</span>
+<pre>@Deprecated
+public abstract class <span class="typeNameLabel">XmlBeanWrapper</span>
 extends java.lang.Object
 implements java.io.Serializable</pre>
 <dl>
@@ -143,16 +145,20 @@ implements java.io.Serializable</pre>
 <tr class="altColor">
 <td class="colFirst"><code>protected </code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/xml/XmlBeanWrapper.html#XmlBeanWrapper--">XmlBeanWrapper</a></span>()</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <div class="block">Subclasses can instantiate without an XmlBean.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>&nbsp;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/xml/XmlBeanWrapper.html#XmlBeanWrapper-java.lang.String-">XmlBeanWrapper</a></span>(java.lang.String&nbsp;xml)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/xml/XmlBeanWrapper.html#XmlBeanWrapper-java.lang.String-">XmlBeanWrapper</a></span>(java.lang.String&nbsp;xml)</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
+&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>&nbsp;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/xml/XmlBeanWrapper.html#XmlBeanWrapper-org.apache.xmlbeans.XmlObject-">XmlBeanWrapper</a></span>(org.apache.xmlbeans.XmlObject&nbsp;xmlBean)</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <div class="block">Public constructor requires an XmlBean.</div>
 </td>
 </tr>
@@ -166,58 +172,81 @@ implements java.io.Serializable</pre>
 </a>
 <h3>Method Summary</h3>
 <table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
-<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t6" class="tableTab"><span><a href="javascript:show(32);">Deprecated Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/xml/XmlBeanWrapper.html#fromXml-java.lang.String-">fromXml</a></span>(java.lang.String&nbsp;xml)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/xml/XmlBeanWrapper.html#fromXml-java.lang.String-">fromXml</a></span>(java.lang.String&nbsp;xml)</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
+&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>org.json.JSONObject</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/xml/XmlBeanWrapper.html#getJson--">getJson</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/xml/XmlBeanWrapper.html#getJson--">getJson</a></span>()</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
+&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/xml/XmlBeanWrapper.html#getValidationError--">getValidationError</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/xml/XmlBeanWrapper.html#getValidationError--">getValidationError</a></span>()</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
+&nbsp;</td>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/xml/XmlBeanWrapper.html#getXml--">getXml</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/xml/XmlBeanWrapper.html#getXml--">getXml</a></span>()</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
+&nbsp;</td>
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>org.apache.xmlbeans.XmlObject</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/xml/XmlBeanWrapper.html#getXmlBean--">getXmlBean</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/xml/XmlBeanWrapper.html#getXmlBean--">getXmlBean</a></span>()</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
+&nbsp;</td>
 </tr>
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code>org.apache.xmlbeans.XmlOptions</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/xml/XmlBeanWrapper.html#getXmlLoadOptions--">getXmlLoadOptions</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/xml/XmlBeanWrapper.html#getXmlLoadOptions--">getXmlLoadOptions</a></span>()</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
+&nbsp;</td>
 </tr>
 <tr id="i6" class="altColor">
 <td class="colFirst"><code>org.apache.xmlbeans.XmlOptions</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/xml/XmlBeanWrapper.html#getXmlSaveOptions--">getXmlSaveOptions</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/xml/XmlBeanWrapper.html#getXmlSaveOptions--">getXmlSaveOptions</a></span>()</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
+&nbsp;</td>
 </tr>
 <tr id="i7" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/xml/XmlBeanWrapper.html#setXmlBean-org.apache.xmlbeans.XmlObject-">setXmlBean</a></span>(org.apache.xmlbeans.XmlObject&nbsp;xmlBean)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/xml/XmlBeanWrapper.html#setXmlBean-org.apache.xmlbeans.XmlObject-">setXmlBean</a></span>(org.apache.xmlbeans.XmlObject&nbsp;xmlBean)</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
+&nbsp;</td>
 </tr>
 <tr id="i8" class="altColor">
 <td class="colFirst"><code>org.w3c.dom.Document</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/xml/XmlBeanWrapper.html#toDomDocument--">toDomDocument</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/xml/XmlBeanWrapper.html#toDomDocument--">toDomDocument</a></span>()</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
+&nbsp;</td>
 </tr>
 <tr id="i9" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/xml/XmlBeanWrapper.html#toString--">toString</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/xml/XmlBeanWrapper.html#toString--">toString</a></span>()</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
+&nbsp;</td>
 </tr>
 <tr id="i10" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/xml/XmlBeanWrapper.html#transform-java.lang.String-">transform</a></span>(java.lang.String&nbsp;xslt)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/xml/XmlBeanWrapper.html#transform-java.lang.String-">transform</a></span>(java.lang.String&nbsp;xslt)</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
+&nbsp;</td>
 </tr>
 <tr id="i11" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/xml/XmlBeanWrapper.html#validate--">validate</a></span>()</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <div class="block">Performs validation on the XmlBean, populating the error message if failed.</div>
 </td>
 </tr>
@@ -250,6 +279,7 @@ implements java.io.Serializable</pre>
 <li class="blockList">
 <h4>XmlBeanWrapper</h4>
 <pre>public&nbsp;XmlBeanWrapper(org.apache.xmlbeans.XmlObject&nbsp;xmlBean)</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <div class="block">Public constructor requires an XmlBean.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -265,6 +295,7 @@ implements java.io.Serializable</pre>
 <h4>XmlBeanWrapper</h4>
 <pre>public&nbsp;XmlBeanWrapper(java.lang.String&nbsp;xml)
                throws org.apache.xmlbeans.XmlException</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>org.apache.xmlbeans.XmlException</code></dd>
@@ -278,6 +309,7 @@ implements java.io.Serializable</pre>
 <li class="blockList">
 <h4>XmlBeanWrapper</h4>
 <pre>protected&nbsp;XmlBeanWrapper()</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <div class="block">Subclasses can instantiate without an XmlBean.</div>
 </li>
 </ul>
@@ -296,6 +328,7 @@ implements java.io.Serializable</pre>
 <li class="blockList">
 <h4>getXmlBean</h4>
 <pre>public&nbsp;org.apache.xmlbeans.XmlObject&nbsp;getXmlBean()</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>XmlBean</dd>
@@ -309,6 +342,7 @@ implements java.io.Serializable</pre>
 <li class="blockList">
 <h4>getValidationError</h4>
 <pre>public&nbsp;java.lang.String&nbsp;getValidationError()</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 </li>
 </ul>
 <a name="setXmlBean-org.apache.xmlbeans.XmlObject-">
@@ -318,6 +352,7 @@ implements java.io.Serializable</pre>
 <li class="blockList">
 <h4>setXmlBean</h4>
 <pre>public&nbsp;void&nbsp;setXmlBean(org.apache.xmlbeans.XmlObject&nbsp;xmlBean)</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>xmlBean</code> - </dd>
@@ -332,6 +367,7 @@ implements java.io.Serializable</pre>
 <h4>getXmlLoadOptions</h4>
 <pre>public&nbsp;org.apache.xmlbeans.XmlOptions&nbsp;getXmlLoadOptions()
                                                  throws org.apache.xmlbeans.XmlException</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>org.apache.xmlbeans.XmlException</code></dd>
@@ -345,6 +381,7 @@ implements java.io.Serializable</pre>
 <li class="blockList">
 <h4>getXmlSaveOptions</h4>
 <pre>public&nbsp;org.apache.xmlbeans.XmlOptions&nbsp;getXmlSaveOptions()</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 </li>
 </ul>
 <a name="getXml--">
@@ -354,6 +391,7 @@ implements java.io.Serializable</pre>
 <li class="blockList">
 <h4>getXml</h4>
 <pre>public&nbsp;java.lang.String&nbsp;getXml()</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 </li>
 </ul>
 <a name="toString--">
@@ -363,6 +401,7 @@ implements java.io.Serializable</pre>
 <li class="blockList">
 <h4>toString</h4>
 <pre>public&nbsp;java.lang.String&nbsp;toString()</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code>toString</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
@@ -377,6 +416,7 @@ implements java.io.Serializable</pre>
 <h4>fromXml</h4>
 <pre>public&nbsp;void&nbsp;fromXml(java.lang.String&nbsp;xml)
              throws org.apache.xmlbeans.XmlException</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>org.apache.xmlbeans.XmlException</code></dd>
@@ -390,6 +430,7 @@ implements java.io.Serializable</pre>
 <li class="blockList">
 <h4>validate</h4>
 <pre>public&nbsp;boolean&nbsp;validate()</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <div class="block">Performs validation on the XmlBean, populating the error message if failed.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
@@ -405,6 +446,7 @@ implements java.io.Serializable</pre>
 <h4>transform</h4>
 <pre>public&nbsp;java.lang.String&nbsp;transform(java.lang.String&nbsp;xslt)
                            throws javax.xml.transform.TransformerException</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>javax.xml.transform.TransformerException</code></dd>
@@ -418,6 +460,7 @@ implements java.io.Serializable</pre>
 <li class="blockList">
 <h4>toDomDocument</h4>
 <pre>public&nbsp;org.w3c.dom.Document&nbsp;toDomDocument()</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 </li>
 </ul>
 <a name="getJson--">
@@ -428,6 +471,7 @@ implements java.io.Serializable</pre>
 <h4>getJson</h4>
 <pre>public&nbsp;org.json.JSONObject&nbsp;getJson()
                             throws org.json.JSONException</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>org.json.JSONException</code></dd>

@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10,"i39":10,"i40":10,"i41":10,"i42":10,"i43":10,"i44":10,"i45":10,"i46":10,"i47":10,"i48":10,"i49":10,"i50":10,"i51":10,"i52":10,"i53":10,"i54":10,"i55":10,"i56":10,"i57":10,"i58":10,"i59":10,"i60":10,"i61":10,"i62":10,"i63":10,"i64":10,"i65":10,"i66":10,"i67":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10,"i39":10,"i40":10,"i41":10,"i42":10,"i43":10,"i44":10,"i45":10,"i46":10,"i47":10,"i48":10,"i49":10,"i50":10,"i51":10,"i52":10,"i53":10,"i54":10,"i55":10,"i56":10,"i57":10,"i58":10,"i59":10,"i60":10,"i61":10,"i62":10,"i63":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -157,7 +157,7 @@ implements <a href="../../../../../com/centurylink/mdw/dataaccess/RetryableTrans
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#addDocumentToCache-com.centurylink.mdw.model.variable.Document-">addDocumentToCache</a></span>(<a href="../../../../../com/centurylink/mdw/model/variable/Document.html" title="class in com.centurylink.mdw.model.variable">Document</a>&nbsp;docvo)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#addDocumentToCache-com.centurylink.mdw.model.variable.Document-">addDocumentToCache</a></span>(<a href="../../../../../com/centurylink/mdw/model/variable/Document.html" title="class in com.centurylink.mdw.model.variable">Document</a>&nbsp;doc)</code>&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>void</code></td>
@@ -171,7 +171,7 @@ implements <a href="../../../../../com/centurylink/mdw/dataaccess/RetryableTrans
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#canRetryTransaction-java.lang.Throwable-">canRetryTransaction</a></span>(java.lang.Throwable&nbsp;e)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#canRetryTransaction-java.lang.Throwable-">canRetryTransaction</a></span>(java.lang.Throwable&nbsp;th)</code>&nbsp;</td>
 </tr>
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code>int</code></td>
@@ -181,52 +181,55 @@ implements <a href="../../../../../com/centurylink/mdw/dataaccess/RetryableTrans
 <tr id="i6" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/variable/DocumentReference.html" title="class in com.centurylink.mdw.model.variable">DocumentReference</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#createActivityExceptionDocument-com.centurylink.mdw.model.workflow.ProcessInstance-com.centurylink.mdw.model.workflow.ActivityInstance-com.centurylink.mdw.services.process.BaseActivity-java.lang.Throwable-">createActivityExceptionDocument</a></span>(<a href="../../../../../com/centurylink/mdw/model/workflow/ProcessInstance.html" title="class in com.centurylink.mdw.model.workflow">ProcessInstance</a>&nbsp;processInst,
-                               <a href="../../../../../com/centurylink/mdw/model/workflow/ActivityInstance.html" title="class in com.centurylink.mdw.model.workflow">ActivityInstance</a>&nbsp;actInstVO,
+                               <a href="../../../../../com/centurylink/mdw/model/workflow/ActivityInstance.html" title="class in com.centurylink.mdw.model.workflow">ActivityInstance</a>&nbsp;actInst,
                                <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html" title="class in com.centurylink.mdw.services.process">BaseActivity</a>&nbsp;activityImpl,
                                java.lang.Throwable&nbsp;cause)</code>&nbsp;</td>
 </tr>
 <tr id="i7" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/variable/DocumentReference.html" title="class in com.centurylink.mdw.model.variable">DocumentReference</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#createDocument-java.lang.String-java.lang.String-java.lang.Long-java.lang.Integer-java.lang.String-java.lang.Object-">createDocument</a></span>(java.lang.String&nbsp;type,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#createDocument-java.lang.String-java.lang.String-java.lang.Long-java.lang.Integer-java.lang.String-java.lang.Object-com.centurylink.mdw.model.workflow.Package-">createDocument</a></span>(java.lang.String&nbsp;variableType,
               java.lang.String&nbsp;ownerType,
               java.lang.Long&nbsp;ownerId,
               java.lang.Integer&nbsp;statusCode,
               java.lang.String&nbsp;statusMessage,
-              java.lang.Object&nbsp;doc)</code>&nbsp;</td>
+              java.lang.Object&nbsp;docObj,
+              <a href="../../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;pkg)</code>&nbsp;</td>
 </tr>
 <tr id="i8" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/variable/DocumentReference.html" title="class in com.centurylink.mdw.model.variable">DocumentReference</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#createDocument-java.lang.String-java.lang.String-java.lang.Long-java.lang.Integer-java.lang.String-java.lang.String-java.lang.Object-">createDocument</a></span>(java.lang.String&nbsp;type,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#createDocument-java.lang.String-java.lang.String-java.lang.Long-java.lang.Integer-java.lang.String-java.lang.String-java.lang.Object-com.centurylink.mdw.model.workflow.Package-">createDocument</a></span>(java.lang.String&nbsp;variableType,
               java.lang.String&nbsp;ownerType,
               java.lang.Long&nbsp;ownerId,
               java.lang.Integer&nbsp;statusCode,
               java.lang.String&nbsp;statusMessage,
               java.lang.String&nbsp;path,
-              java.lang.Object&nbsp;doc)</code>&nbsp;</td>
+              java.lang.Object&nbsp;docObj,
+              <a href="../../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;pkg)</code>&nbsp;</td>
 </tr>
 <tr id="i9" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/variable/DocumentReference.html" title="class in com.centurylink.mdw.model.variable">DocumentReference</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#createDocument-java.lang.String-java.lang.String-java.lang.Long-java.lang.Object-">createDocument</a></span>(java.lang.String&nbsp;type,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#createDocument-java.lang.String-java.lang.String-java.lang.Long-java.lang.Object-com.centurylink.mdw.model.workflow.Package-">createDocument</a></span>(java.lang.String&nbsp;variableType,
               java.lang.String&nbsp;ownerType,
               java.lang.Long&nbsp;ownerId,
-              java.lang.Object&nbsp;doc)</code>&nbsp;</td>
+              java.lang.Object&nbsp;docObj,
+              <a href="../../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;pkg)</code>&nbsp;</td>
 </tr>
 <tr id="i10" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/event/EventWaitInstance.html" title="class in com.centurylink.mdw.model.event">EventWaitInstance</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#createEventWaitInstance-java.lang.Long-java.lang.Long-java.lang.String-java.lang.String-boolean-boolean-">createEventWaitInstance</a></span>(java.lang.Long&nbsp;procInstId,
                        java.lang.Long&nbsp;actInstId,
-                       java.lang.String&nbsp;pEventName,
+                       java.lang.String&nbsp;eventName,
                        java.lang.String&nbsp;compCode,
-                       boolean&nbsp;pRecurring,
+                       boolean&nbsp;recurring,
                        boolean&nbsp;notifyIfArrived)</code>&nbsp;</td>
 </tr>
 <tr id="i11" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/event/EventWaitInstance.html" title="class in com.centurylink.mdw.model.event">EventWaitInstance</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#createEventWaitInstance-java.lang.Long-java.lang.Long-java.lang.String-java.lang.String-boolean-boolean-boolean-">createEventWaitInstance</a></span>(java.lang.Long&nbsp;procInstId,
                        java.lang.Long&nbsp;actInstId,
-                       java.lang.String&nbsp;pEventName,
+                       java.lang.String&nbsp;eventName,
                        java.lang.String&nbsp;compCode,
-                       boolean&nbsp;pRecurring,
+                       boolean&nbsp;recurring,
                        boolean&nbsp;notifyIfArrived,
                        boolean&nbsp;reregister)</code>&nbsp;</td>
 </tr>
@@ -234,9 +237,9 @@ implements <a href="../../../../../com/centurylink/mdw/dataaccess/RetryableTrans
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/event/EventWaitInstance.html" title="class in com.centurylink.mdw.model.event">EventWaitInstance</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#createEventWaitInstances-java.lang.Long-java.lang.Long-java.lang.String:A-java.lang.String:A-boolean:A-boolean-boolean-">createEventWaitInstances</a></span>(java.lang.Long&nbsp;procInstId,
                         java.lang.Long&nbsp;actInstId,
-                        java.lang.String[]&nbsp;pEventNames,
-                        java.lang.String[]&nbsp;pWakeUpEventTypes,
-                        boolean[]&nbsp;pEventOccurances,
+                        java.lang.String[]&nbsp;eventNames,
+                        java.lang.String[]&nbsp;wakeUpEventTypes,
+                        boolean[]&nbsp;eventOccurances,
                         boolean&nbsp;notifyIfArrived,
                         boolean&nbsp;reregister)</code>&nbsp;</td>
 </tr>
@@ -256,38 +259,31 @@ implements <a href="../../../../../com/centurylink/mdw/dataaccess/RetryableTrans
                      java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;parameters)</code>&nbsp;</td>
 </tr>
 <tr id="i15" class="rowColor">
-<td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/workflow/TransitionInstance.html" title="class in com.centurylink.mdw.model.workflow">TransitionInstance</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#createTransitionInstance-com.centurylink.mdw.model.workflow.Transition-java.lang.Long-">createTransitionInstance</a></span>(<a href="../../../../../com/centurylink/mdw/model/workflow/Transition.html" title="class in com.centurylink.mdw.model.workflow">Transition</a>&nbsp;transition,
-                        java.lang.Long&nbsp;pProcessInstId)</code>
-<div class="block">Creates a new instance of the WorkTransationInstance entity</div>
-</td>
-</tr>
-<tr id="i16" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#createTransitionInstances-com.centurylink.mdw.model.workflow.ProcessInstance-java.util.List-java.lang.Long-">createTransitionInstances</a></span>(<a href="../../../../../com/centurylink/mdw/model/workflow/ProcessInstance.html" title="class in com.centurylink.mdw.model.workflow">ProcessInstance</a>&nbsp;processInstanceVO,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#createTransitionInstances-com.centurylink.mdw.model.workflow.ProcessInstance-java.util.List-java.lang.Long-">createTransitionInstances</a></span>(<a href="../../../../../com/centurylink/mdw/model/workflow/ProcessInstance.html" title="class in com.centurylink.mdw.model.workflow">ProcessInstance</a>&nbsp;processInstance,
                          java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/workflow/Transition.html" title="class in com.centurylink.mdw.model.workflow">Transition</a>&gt;&nbsp;transitions,
                          java.lang.Long&nbsp;fromActivityInstanceId)</code>&nbsp;</td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html" title="class in com.centurylink.mdw.model.variable">VariableInstance</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#createVariableInstance-com.centurylink.mdw.model.workflow.ProcessInstance-java.lang.String-java.lang.Object-">createVariableInstance</a></span>(<a href="../../../../../com/centurylink/mdw/model/workflow/ProcessInstance.html" title="class in com.centurylink.mdw.model.workflow">ProcessInstance</a>&nbsp;pi,
-                      java.lang.String&nbsp;varname,
+                      java.lang.String&nbsp;varName,
                       java.lang.Object&nbsp;value)</code>&nbsp;</td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#deleteInternalEvent-java.lang.String-">deleteInternalEvent</a></span>(java.lang.String&nbsp;eventName)</code>&nbsp;</td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#determineCompletedTransitions-java.lang.Long-java.util.List-">determineCompletedTransitions</a></span>(java.lang.Long&nbsp;pProcInstId,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#determineCompletedTransitions-java.lang.Long-java.util.List-">determineCompletedTransitions</a></span>(java.lang.Long&nbsp;processInstanceId,
                              java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/workflow/Transition.html" title="class in com.centurylink.mdw.model.workflow">Transition</a>&gt;&nbsp;transitions)</code>&nbsp;</td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#executeActivityInstance-com.centurylink.mdw.services.process.BaseActivity-">executeActivityInstance</a></span>(<a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html" title="class in com.centurylink.mdw.services.process">BaseActivity</a>&nbsp;activity)</code>&nbsp;</td>
 </tr>
-<tr id="i21" class="rowColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#failActivityInstance-com.centurylink.mdw.model.event.InternalEvent-com.centurylink.mdw.model.workflow.ProcessInstance-java.lang.Long-java.lang.Long-com.centurylink.mdw.services.process.BaseActivity-java.lang.Throwable-">failActivityInstance</a></span>(<a href="../../../../../com/centurylink/mdw/model/event/InternalEvent.html" title="class in com.centurylink.mdw.model.event">InternalEvent</a>&nbsp;event,
                     <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessInstance.html" title="class in com.centurylink.mdw.model.workflow">ProcessInstance</a>&nbsp;processInst,
@@ -296,7 +292,7 @@ implements <a href="../../../../../com/centurylink/mdw/dataaccess/RetryableTrans
                     <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html" title="class in com.centurylink.mdw.services.process">BaseActivity</a>&nbsp;activity,
                     java.lang.Throwable&nbsp;cause)</code>&nbsp;</td>
 </tr>
-<tr id="i22" class="altColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/services/process/CompletionCode.html" title="class in com.centurylink.mdw.services.process">CompletionCode</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#finishActivityInstance-com.centurylink.mdw.services.process.BaseActivity-com.centurylink.mdw.model.workflow.ProcessInstance-com.centurylink.mdw.model.workflow.ActivityInstance-com.centurylink.mdw.model.event.InternalEvent-boolean-">finishActivityInstance</a></span>(<a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html" title="class in com.centurylink.mdw.services.process">BaseActivity</a>&nbsp;activity,
                       <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessInstance.html" title="class in com.centurylink.mdw.model.workflow">ProcessInstance</a>&nbsp;pi,
@@ -304,239 +300,224 @@ implements <a href="../../../../../com/centurylink/mdw/dataaccess/RetryableTrans
                       <a href="../../../../../com/centurylink/mdw/model/event/InternalEvent.html" title="class in com.centurylink.mdw.model.event">InternalEvent</a>&nbsp;event,
                       boolean&nbsp;bypassWait)</code>&nbsp;</td>
 </tr>
-<tr id="i23" class="rowColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityInstance.html" title="class in com.centurylink.mdw.model.workflow">ActivityInstance</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#getActivityInstance-java.lang.Long-">getActivityInstance</a></span>(java.lang.Long&nbsp;pActivityInstId)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#getActivityInstance-java.lang.Long-">getActivityInstance</a></span>(java.lang.Long&nbsp;actInstId)</code>&nbsp;</td>
 </tr>
-<tr id="i24" class="altColor">
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/dataaccess/DatabaseAccess.html" title="class in com.centurylink.mdw.dataaccess">DatabaseAccess</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#getDatabaseAccess--">getDatabaseAccess</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i25" class="rowColor">
+<tr id="i24" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/variable/Document.html" title="class in com.centurylink.mdw.model.variable">Document</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#getDocument-com.centurylink.mdw.model.variable.DocumentReference-boolean-">getDocument</a></span>(<a href="../../../../../com/centurylink/mdw/model/variable/DocumentReference.html" title="class in com.centurylink.mdw.model.variable">DocumentReference</a>&nbsp;docref,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#getDocument-com.centurylink.mdw.model.variable.DocumentReference-boolean-">getDocument</a></span>(<a href="../../../../../com/centurylink/mdw/model/variable/DocumentReference.html" title="class in com.centurylink.mdw.model.variable">DocumentReference</a>&nbsp;docRef,
            boolean&nbsp;forUpdate)</code>&nbsp;</td>
 </tr>
-<tr id="i26" class="altColor">
+<tr id="i25" class="rowColor">
 <td class="colFirst"><code>java.util.Map&lt;java.lang.String,java.lang.String&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#getOutPutParameters-java.lang.Long-java.lang.Long-">getOutPutParameters</a></span>(java.lang.Long&nbsp;procInstId,
                    java.lang.Long&nbsp;procId)</code>&nbsp;</td>
 </tr>
-<tr id="i27" class="rowColor">
+<tr id="i26" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#getPerformanceLevel--">getPerformanceLevel</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i28" class="altColor">
+<tr id="i27" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/workflow/ProcessInstance.html" title="class in com.centurylink.mdw.model.workflow">ProcessInstance</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#getProcessInstance-java.lang.Long-">getProcessInstance</a></span>(java.lang.Long&nbsp;procInstId)</code>&nbsp;</td>
 </tr>
-<tr id="i29" class="rowColor">
+<tr id="i28" class="altColor">
 <td class="colFirst"><code>java.lang.Long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#getRequestCompletionTime-java.lang.String-java.lang.Long-">getRequestCompletionTime</a></span>(java.lang.String&nbsp;ownerType,
                         java.lang.Long&nbsp;ownerId)</code>&nbsp;</td>
 </tr>
-<tr id="i30" class="altColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#getSynchronousProcessResponse-java.lang.Long-java.lang.String-">getSynchronousProcessResponse</a></span>(java.lang.Long&nbsp;procInstId,
-                             java.lang.String&nbsp;varname)</code>&nbsp;</td>
+<tr id="i29" class="rowColor">
+<td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/request/Response.html" title="class in com.centurylink.mdw.model.request">Response</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#getSynchronousProcessResponse-java.lang.Long-java.lang.String-com.centurylink.mdw.model.workflow.Package-">getSynchronousProcessResponse</a></span>(java.lang.Long&nbsp;procInstId,
+                             java.lang.String&nbsp;varName,
+                             <a href="../../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;pkg)</code>&nbsp;</td>
 </tr>
-<tr id="i31" class="rowColor">
+<tr id="i30" class="altColor">
 <td class="colFirst"><code>java.lang.Object</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#getTransactionRetrier--">getTransactionRetrier</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i32" class="altColor">
+<tr id="i31" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#getTransactionRetryCount--">getTransactionRetryCount</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i33" class="rowColor">
+<tr id="i32" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html" title="class in com.centurylink.mdw.model.variable">VariableInstance</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#getVariableInstance-java.lang.Long-java.lang.String-">getVariableInstance</a></span>(java.lang.Long&nbsp;procInstId,
-                   java.lang.String&nbsp;varname)</code>&nbsp;</td>
+                   java.lang.String&nbsp;varName)</code>&nbsp;</td>
 </tr>
-<tr id="i34" class="altColor">
+<tr id="i33" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#handleProcessFinish-com.centurylink.mdw.model.event.InternalEvent-">handleProcessFinish</a></span>(<a href="../../../../../com/centurylink/mdw/model/event/InternalEvent.html" title="class in com.centurylink.mdw.model.event">InternalEvent</a>&nbsp;event)</code>&nbsp;</td>
 </tr>
-<tr id="i35" class="rowColor">
+<tr id="i34" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#holdActivityInstance-com.centurylink.mdw.model.workflow.ActivityInstance-java.lang.Long-">holdActivityInstance</a></span>(<a href="../../../../../com/centurylink/mdw/model/workflow/ActivityInstance.html" title="class in com.centurylink.mdw.model.workflow">ActivityInstance</a>&nbsp;actInst,
                     java.lang.Long&nbsp;procId)</code>&nbsp;</td>
 </tr>
-<tr id="i36" class="altColor">
+<tr id="i35" class="rowColor">
 <td class="colFirst"><code>java.lang.Object</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#initTransactionRetry-com.centurylink.mdw.util.TransactionWrapper-">initTransactionRetry</a></span>(<a href="../../../../../com/centurylink/mdw/util/TransactionWrapper.html" title="class in com.centurylink.mdw.util">TransactionWrapper</a>&nbsp;transaction)</code>&nbsp;</td>
 </tr>
-<tr id="i37" class="rowColor">
+<tr id="i36" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#isInMemory--">isInMemory</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i38" class="altColor">
+<tr id="i37" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#isInService--">isInService</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i39" class="rowColor">
+<tr id="i38" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/variable/Document.html" title="class in com.centurylink.mdw.model.variable">Document</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#loadDocument-com.centurylink.mdw.model.variable.DocumentReference-boolean-">loadDocument</a></span>(<a href="../../../../../com/centurylink/mdw/model/variable/DocumentReference.html" title="class in com.centurylink.mdw.model.variable">DocumentReference</a>&nbsp;docref,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#loadDocument-com.centurylink.mdw.model.variable.DocumentReference-boolean-">loadDocument</a></span>(<a href="../../../../../com/centurylink/mdw/model/variable/DocumentReference.html" title="class in com.centurylink.mdw.model.variable">DocumentReference</a>&nbsp;docRef,
             boolean&nbsp;forUpdate)</code>
 <div class="block">Always goes to the database.</div>
 </td>
 </tr>
-<tr id="i40" class="altColor">
+<tr id="i39" class="rowColor">
 <td class="colFirst"><code>java.lang.Integer</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#lockActivityInstance-java.lang.Long-">lockActivityInstance</a></span>(java.lang.Long&nbsp;actInstId)</code>
 <div class="block">This method must be called within the same transaction scope (namely engine is already started</div>
 </td>
 </tr>
-<tr id="i41" class="rowColor">
+<tr id="i40" class="altColor">
 <td class="colFirst"><code>java.lang.Integer</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#lockProcessInstance-java.lang.Long-">lockProcessInstance</a></span>(java.lang.Long&nbsp;procInstId)</code>
 <div class="block">this method must be called within the same transaction scope (namely engine is already started</div>
 </td>
 </tr>
-<tr id="i42" class="altColor">
+<tr id="i41" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#notifyMonitors-com.centurylink.mdw.model.workflow.ProcessInstance-com.centurylink.mdw.model.workflow.WorkStatus.InternalLogMessage-">notifyMonitors</a></span>(<a href="../../../../../com/centurylink/mdw/model/workflow/ProcessInstance.html" title="class in com.centurylink.mdw.model.workflow">ProcessInstance</a>&nbsp;processInstance,
               <a href="../../../../../com/centurylink/mdw/model/workflow/WorkStatus.InternalLogMessage.html" title="enum in com.centurylink.mdw.model.workflow">WorkStatus.InternalLogMessage</a>&nbsp;logMessage)</code>
 <div class="block">Notify registered ProcessMonitors.</div>
 </td>
 </tr>
-<tr id="i43" class="rowColor">
+<tr id="i42" class="altColor">
 <td class="colFirst"><code>java.lang.Integer</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#notifyProcess-java.lang.String-java.lang.Long-java.lang.String-int-">notifyProcess</a></span>(java.lang.String&nbsp;eventName,
              java.lang.Long&nbsp;docId,
              java.lang.String&nbsp;message,
              int&nbsp;delay)</code>&nbsp;</td>
 </tr>
-<tr id="i44" class="altColor">
+<tr id="i43" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/services/process/ActivityRuntime.html" title="class in com.centurylink.mdw.services.process">ActivityRuntime</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#prepareActivityInstance-com.centurylink.mdw.model.event.InternalEvent-com.centurylink.mdw.model.workflow.ProcessInstance-">prepareActivityInstance</a></span>(<a href="../../../../../com/centurylink/mdw/model/event/InternalEvent.html" title="class in com.centurylink.mdw.model.event">InternalEvent</a>&nbsp;event,
                        <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessInstance.html" title="class in com.centurylink.mdw.model.workflow">ProcessInstance</a>&nbsp;procInst)</code>&nbsp;</td>
 </tr>
-<tr id="i45" class="rowColor">
+<tr id="i44" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#removeEventWaitForActivityInstance-java.lang.Long-java.lang.String-">removeEventWaitForActivityInstance</a></span>(java.lang.Long&nbsp;activityInstanceId,
                                   java.lang.String&nbsp;reason)</code>&nbsp;</td>
 </tr>
-<tr id="i46" class="altColor">
+<tr id="i45" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#resumeActivityException-com.centurylink.mdw.model.workflow.ProcessInstance-java.lang.Long-com.centurylink.mdw.services.process.BaseActivity-java.lang.Throwable-">resumeActivityException</a></span>(<a href="../../../../../com/centurylink/mdw/model/workflow/ProcessInstance.html" title="class in com.centurylink.mdw.model.workflow">ProcessInstance</a>&nbsp;procInst,
                        java.lang.Long&nbsp;actInstId,
                        <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html" title="class in com.centurylink.mdw.services.process">BaseActivity</a>&nbsp;activity,
                        java.lang.Throwable&nbsp;cause)</code>&nbsp;</td>
 </tr>
-<tr id="i47" class="rowColor">
+<tr id="i46" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#resumeActivityExecute-com.centurylink.mdw.services.process.ActivityRuntime-com.centurylink.mdw.model.event.InternalEvent-boolean-">resumeActivityExecute</a></span>(<a href="../../../../../com/centurylink/mdw/services/process/ActivityRuntime.html" title="class in com.centurylink.mdw.services.process">ActivityRuntime</a>&nbsp;ar,
                      <a href="../../../../../com/centurylink/mdw/model/event/InternalEvent.html" title="class in com.centurylink.mdw.model.event">InternalEvent</a>&nbsp;event,
                      boolean&nbsp;resumeOnHold)</code>&nbsp;</td>
 </tr>
-<tr id="i48" class="altColor">
+<tr id="i47" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#resumeActivityFinish-com.centurylink.mdw.services.process.ActivityRuntime-boolean-com.centurylink.mdw.model.event.InternalEvent-boolean-">resumeActivityFinish</a></span>(<a href="../../../../../com/centurylink/mdw/services/process/ActivityRuntime.html" title="class in com.centurylink.mdw.services.process">ActivityRuntime</a>&nbsp;ar,
                     boolean&nbsp;finished,
                     <a href="../../../../../com/centurylink/mdw/model/event/InternalEvent.html" title="class in com.centurylink.mdw.model.event">InternalEvent</a>&nbsp;event,
                     boolean&nbsp;resumeOnHold)</code>&nbsp;</td>
 </tr>
-<tr id="i49" class="rowColor">
+<tr id="i48" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/services/process/ActivityRuntime.html" title="class in com.centurylink.mdw.services.process">ActivityRuntime</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#resumeActivityPrepare-com.centurylink.mdw.model.workflow.ProcessInstance-com.centurylink.mdw.model.event.InternalEvent-boolean-">resumeActivityPrepare</a></span>(<a href="../../../../../com/centurylink/mdw/model/workflow/ProcessInstance.html" title="class in com.centurylink.mdw.model.workflow">ProcessInstance</a>&nbsp;procInst,
                      <a href="../../../../../com/centurylink/mdw/model/event/InternalEvent.html" title="class in com.centurylink.mdw.model.event">InternalEvent</a>&nbsp;event,
                      boolean&nbsp;resumeOnHold)</code>&nbsp;</td>
 </tr>
-<tr id="i50" class="altColor">
+<tr id="i49" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#rollbackTransaction--">rollbackTransaction</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i51" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#runInRetryableTransaction-java.lang.Runnable-">runInRetryableTransaction</a></span>(java.lang.Runnable&nbsp;runnable)</code>
-<div class="block">For running your own code inside a retryable transaction.</div>
-</td>
-</tr>
-<tr id="i52" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#runInTransaction-java.lang.Runnable-">runInTransaction</a></span>(java.lang.Runnable&nbsp;runnable)</code>
-<div class="block">For running your own code inside a transaction.</div>
-</td>
-</tr>
-<tr id="i53" class="rowColor">
+<tr id="i50" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#sendDelayedInternalEvent-com.centurylink.mdw.model.event.InternalEvent-int-java.lang.String-boolean-">sendDelayedInternalEvent</a></span>(<a href="../../../../../com/centurylink/mdw/model/event/InternalEvent.html" title="class in com.centurylink.mdw.model.event">InternalEvent</a>&nbsp;event,
                         int&nbsp;delaySeconds,
                         java.lang.String&nbsp;msgid,
                         boolean&nbsp;isUpdate)</code>&nbsp;</td>
 </tr>
-<tr id="i54" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#sendInternalEvent-com.centurylink.mdw.model.event.InternalEvent-">sendInternalEvent</a></span>(<a href="../../../../../com/centurylink/mdw/model/event/InternalEvent.html" title="class in com.centurylink.mdw.model.event">InternalEvent</a>&nbsp;event)</code>&nbsp;</td>
-</tr>
-<tr id="i55" class="rowColor">
+<tr id="i51" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#setActivityInstanceStatus-com.centurylink.mdw.model.workflow.ActivityInstance-java.lang.Integer-java.lang.String-">setActivityInstanceStatus</a></span>(<a href="../../../../../com/centurylink/mdw/model/workflow/ActivityInstance.html" title="class in com.centurylink.mdw.model.workflow">ActivityInstance</a>&nbsp;actInst,
                          java.lang.Integer&nbsp;status,
-                         java.lang.String&nbsp;status_message)</code>&nbsp;</td>
+                         java.lang.String&nbsp;message)</code>&nbsp;</td>
 </tr>
-<tr id="i56" class="altColor">
+<tr id="i52" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#setElapsedTime-java.lang.String-java.lang.Long-java.lang.Long-">setElapsedTime</a></span>(java.lang.String&nbsp;ownerType,
               java.lang.Long&nbsp;instanceId,
               java.lang.Long&nbsp;elapsedTime)</code>&nbsp;</td>
 </tr>
-<tr id="i57" class="rowColor">
+<tr id="i53" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#setProcessInstanceCompletionCode-java.lang.Long-java.lang.String-">setProcessInstanceCompletionCode</a></span>(java.lang.Long&nbsp;procInstId,
                                 java.lang.String&nbsp;completionCode)</code>&nbsp;</td>
 </tr>
-<tr id="i58" class="altColor">
+<tr id="i54" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#setProcessInstanceStartTime-java.lang.Long-">setProcessInstanceStartTime</a></span>(java.lang.Long&nbsp;processInstanceId)</code>&nbsp;</td>
 </tr>
-<tr id="i59" class="rowColor">
+<tr id="i55" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#setTransactionRetryCount-int-">setTransactionRetryCount</a></span>(int&nbsp;count)</code>&nbsp;</td>
 </tr>
-<tr id="i60" class="altColor">
+<tr id="i56" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#startProcessInstance-com.centurylink.mdw.model.workflow.ProcessInstance-int-">startProcessInstance</a></span>(<a href="../../../../../com/centurylink/mdw/model/workflow/ProcessInstance.html" title="class in com.centurylink.mdw.model.workflow">ProcessInstance</a>&nbsp;processInst,
                     int&nbsp;delay)</code>&nbsp;</td>
 </tr>
-<tr id="i61" class="rowColor">
+<tr id="i57" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/util/TransactionWrapper.html" title="class in com.centurylink.mdw.util">TransactionWrapper</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#startTransaction--">startTransaction</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i62" class="altColor">
+<tr id="i58" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#stopTransaction-com.centurylink.mdw.util.TransactionWrapper-">stopTransaction</a></span>(<a href="../../../../../com/centurylink/mdw/util/TransactionWrapper.html" title="class in com.centurylink.mdw.util">TransactionWrapper</a>&nbsp;transaction)</code>&nbsp;</td>
 </tr>
-<tr id="i63" class="rowColor">
+<tr id="i59" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#updateActivityInstanceEndTime-java.lang.Long-java.util.Date-">updateActivityInstanceEndTime</a></span>(java.lang.Long&nbsp;actInstId,
                              java.util.Date&nbsp;endtime)</code>&nbsp;</td>
 </tr>
-<tr id="i64" class="altColor">
+<tr id="i60" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#updateDocumentContent-com.centurylink.mdw.model.variable.DocumentReference-java.lang.Object-java.lang.String-com.centurylink.mdw.model.workflow.Package-">updateDocumentContent</a></span>(<a href="../../../../../com/centurylink/mdw/model/variable/DocumentReference.html" title="class in com.centurylink.mdw.model.variable">DocumentReference</a>&nbsp;docref,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#updateDocumentContent-com.centurylink.mdw.model.variable.DocumentReference-java.lang.Object-com.centurylink.mdw.model.workflow.Package-">updateDocumentContent</a></span>(<a href="../../../../../com/centurylink/mdw/model/variable/DocumentReference.html" title="class in com.centurylink.mdw.model.variable">DocumentReference</a>&nbsp;docRef,
                      java.lang.Object&nbsp;doc,
-                     java.lang.String&nbsp;type,
                      <a href="../../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;pkg)</code>&nbsp;</td>
 </tr>
-<tr id="i65" class="rowColor">
+<tr id="i61" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#updateDocumentInfo-com.centurylink.mdw.model.variable.DocumentReference-java.lang.String-java.lang.String-java.lang.Long-java.lang.Integer-java.lang.String-">updateDocumentInfo</a></span>(<a href="../../../../../com/centurylink/mdw/model/variable/DocumentReference.html" title="class in com.centurylink.mdw.model.variable">DocumentReference</a>&nbsp;docref,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#updateDocumentInfo-com.centurylink.mdw.model.variable.DocumentReference-java.lang.String-java.lang.String-java.lang.Long-java.lang.Integer-java.lang.String-">updateDocumentInfo</a></span>(<a href="../../../../../com/centurylink/mdw/model/variable/DocumentReference.html" title="class in com.centurylink.mdw.model.variable">DocumentReference</a>&nbsp;docRef,
                   java.lang.String&nbsp;documentType,
                   java.lang.String&nbsp;ownerType,
                   java.lang.Long&nbsp;ownerId,
                   java.lang.Integer&nbsp;statusCode,
                   java.lang.String&nbsp;statusMessage)</code>&nbsp;</td>
 </tr>
-<tr id="i66" class="altColor">
+<tr id="i62" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#updateProcessInstanceStatus-java.lang.Long-java.lang.Integer-">updateProcessInstanceStatus</a></span>(java.lang.Long&nbsp;pProcInstId,
                            java.lang.Integer&nbsp;status)</code>&nbsp;</td>
 </tr>
-<tr id="i67" class="rowColor">
+<tr id="i63" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#updateVariableInstance-com.centurylink.mdw.model.variable.VariableInstance-">updateVariableInstance</a></span>(<a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html" title="class in com.centurylink.mdw.model.variable">VariableInstance</a>&nbsp;var)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessExecutor.html#updateVariableInstance-com.centurylink.mdw.model.variable.VariableInstance-com.centurylink.mdw.model.workflow.Package-">updateVariableInstance</a></span>(<a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html" title="class in com.centurylink.mdw.model.variable">VariableInstance</a>&nbsp;variableInstance,
+                      <a href="../../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;pkg)</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -718,7 +699,7 @@ implements <a href="../../../../../com/centurylink/mdw/dataaccess/RetryableTrans
 <ul class="blockList">
 <li class="blockList">
 <h4>getActivityInstance</h4>
-<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/workflow/ActivityInstance.html" title="class in com.centurylink.mdw.model.workflow">ActivityInstance</a>&nbsp;getActivityInstance(java.lang.Long&nbsp;pActivityInstId)
+<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/workflow/ActivityInstance.html" title="class in com.centurylink.mdw.model.workflow">ActivityInstance</a>&nbsp;getActivityInstance(java.lang.Long&nbsp;actInstId)
                                      throws <a href="../../../../../com/centurylink/mdw/services/ProcessException.html" title="class in com.centurylink.mdw.services">ProcessException</a>,
                                             <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
 <dl>
@@ -763,7 +744,7 @@ implements <a href="../../../../../com/centurylink/mdw/dataaccess/RetryableTrans
 <li class="blockList">
 <h4>createActivityExceptionDocument</h4>
 <pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/variable/DocumentReference.html" title="class in com.centurylink.mdw.model.variable">DocumentReference</a>&nbsp;createActivityExceptionDocument(<a href="../../../../../com/centurylink/mdw/model/workflow/ProcessInstance.html" title="class in com.centurylink.mdw.model.workflow">ProcessInstance</a>&nbsp;processInst,
-                                                         <a href="../../../../../com/centurylink/mdw/model/workflow/ActivityInstance.html" title="class in com.centurylink.mdw.model.workflow">ActivityInstance</a>&nbsp;actInstVO,
+                                                         <a href="../../../../../com/centurylink/mdw/model/workflow/ActivityInstance.html" title="class in com.centurylink.mdw.model.workflow">ActivityInstance</a>&nbsp;actInst,
                                                          <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html" title="class in com.centurylink.mdw.services.process">BaseActivity</a>&nbsp;activityImpl,
                                                          java.lang.Throwable&nbsp;cause)
                                                   throws <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
@@ -829,11 +810,9 @@ implements <a href="../../../../../com/centurylink/mdw/dataaccess/RetryableTrans
 <h4>holdActivityInstance</h4>
 <pre>public&nbsp;void&nbsp;holdActivityInstance(<a href="../../../../../com/centurylink/mdw/model/workflow/ActivityInstance.html" title="class in com.centurylink.mdw.model.workflow">ActivityInstance</a>&nbsp;actInst,
                                  java.lang.Long&nbsp;procId)
-                          throws <a href="../../../../../com/centurylink/mdw/services/ProcessException.html" title="class in com.centurylink.mdw.services">ProcessException</a>,
-                                 <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
+                          throws <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../../com/centurylink/mdw/services/ProcessException.html" title="class in com.centurylink.mdw.services">ProcessException</a></code></dd>
 <dd><code><a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
 </dl>
 </li>
@@ -850,15 +829,11 @@ implements <a href="../../../../../com/centurylink/mdw/dataaccess/RetryableTrans
                                              <a href="../../../../../com/centurylink/mdw/model/event/InternalEvent.html" title="class in com.centurylink.mdw.model.event">InternalEvent</a>&nbsp;event,
                                              boolean&nbsp;bypassWait)
                                       throws <a href="../../../../../com/centurylink/mdw/services/ProcessException.html" title="class in com.centurylink.mdw.services">ProcessException</a>,
-                                             <a href="../../../../../com/centurylink/mdw/activity/ActivityException.html" title="class in com.centurylink.mdw.activity">ActivityException</a>,
-                                             <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a>,
-                                             <a href="../../../../../com/centurylink/mdw/util/ServiceLocatorException.html" title="class in com.centurylink.mdw.util">ServiceLocatorException</a></pre>
+                                             <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../../com/centurylink/mdw/services/ProcessException.html" title="class in com.centurylink.mdw.services">ProcessException</a></code></dd>
-<dd><code><a href="../../../../../com/centurylink/mdw/activity/ActivityException.html" title="class in com.centurylink.mdw.activity">ActivityException</a></code></dd>
 <dd><code><a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
-<dd><code><a href="../../../../../com/centurylink/mdw/util/ServiceLocatorException.html" title="class in com.centurylink.mdw.util">ServiceLocatorException</a></code></dd>
 </dl>
 </li>
 </ul>
@@ -968,7 +943,7 @@ implements <a href="../../../../../com/centurylink/mdw/dataaccess/RetryableTrans
 <h4>setActivityInstanceStatus</h4>
 <pre>public&nbsp;void&nbsp;setActivityInstanceStatus(<a href="../../../../../com/centurylink/mdw/model/workflow/ActivityInstance.html" title="class in com.centurylink.mdw.model.workflow">ActivityInstance</a>&nbsp;actInst,
                                       java.lang.Integer&nbsp;status,
-                                      java.lang.String&nbsp;status_message)
+                                      java.lang.String&nbsp;message)
                                throws <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
@@ -1006,34 +981,13 @@ implements <a href="../../../../../com/centurylink/mdw/dataaccess/RetryableTrans
 </dl>
 </li>
 </ul>
-<a name="createTransitionInstance-com.centurylink.mdw.model.workflow.Transition-java.lang.Long-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>createTransitionInstance</h4>
-<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/workflow/TransitionInstance.html" title="class in com.centurylink.mdw.model.workflow">TransitionInstance</a>&nbsp;createTransitionInstance(<a href="../../../../../com/centurylink/mdw/model/workflow/Transition.html" title="class in com.centurylink.mdw.model.workflow">Transition</a>&nbsp;transition,
-                                                   java.lang.Long&nbsp;pProcessInstId)
-                                            throws <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
-<div class="block">Creates a new instance of the WorkTransationInstance entity</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>transition</code> - </dd>
-<dd><code>pProcessInstId</code> - </dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>WorkTransitionInstance object</dd>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
-</dl>
-</li>
-</ul>
 <a name="createTransitionInstances-com.centurylink.mdw.model.workflow.ProcessInstance-java.util.List-java.lang.Long-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>createTransitionInstances</h4>
-<pre>public&nbsp;void&nbsp;createTransitionInstances(<a href="../../../../../com/centurylink/mdw/model/workflow/ProcessInstance.html" title="class in com.centurylink.mdw.model.workflow">ProcessInstance</a>&nbsp;processInstanceVO,
+<pre>public&nbsp;void&nbsp;createTransitionInstances(<a href="../../../../../com/centurylink/mdw/model/workflow/ProcessInstance.html" title="class in com.centurylink.mdw.model.workflow">ProcessInstance</a>&nbsp;processInstance,
                                       java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/workflow/Transition.html" title="class in com.centurylink.mdw.model.workflow">Transition</a>&gt;&nbsp;transitions,
                                       java.lang.Long&nbsp;fromActivityInstanceId)
                                throws <a href="../../../../../com/centurylink/mdw/services/ProcessException.html" title="class in com.centurylink.mdw.services">ProcessException</a>,
@@ -1051,7 +1005,7 @@ implements <a href="../../../../../com/centurylink/mdw/dataaccess/RetryableTrans
 <ul class="blockList">
 <li class="blockList">
 <h4>determineCompletedTransitions</h4>
-<pre>public&nbsp;void&nbsp;determineCompletedTransitions(java.lang.Long&nbsp;pProcInstId,
+<pre>public&nbsp;void&nbsp;determineCompletedTransitions(java.lang.Long&nbsp;processInstanceId,
                                           java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/workflow/Transition.html" title="class in com.centurylink.mdw.model.workflow">Transition</a>&gt;&nbsp;transitions)
                                    throws <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
 <dl>
@@ -1066,7 +1020,7 @@ implements <a href="../../../../../com/centurylink/mdw/dataaccess/RetryableTrans
 <ul class="blockList">
 <li class="blockList">
 <h4>updateDocumentInfo</h4>
-<pre>public&nbsp;void&nbsp;updateDocumentInfo(<a href="../../../../../com/centurylink/mdw/model/variable/DocumentReference.html" title="class in com.centurylink.mdw.model.variable">DocumentReference</a>&nbsp;docref,
+<pre>public&nbsp;void&nbsp;updateDocumentInfo(<a href="../../../../../com/centurylink/mdw/model/variable/DocumentReference.html" title="class in com.centurylink.mdw.model.variable">DocumentReference</a>&nbsp;docRef,
                                java.lang.String&nbsp;documentType,
                                java.lang.String&nbsp;ownerType,
                                java.lang.Long&nbsp;ownerId,
@@ -1086,7 +1040,7 @@ implements <a href="../../../../../com/centurylink/mdw/dataaccess/RetryableTrans
 <li class="blockList">
 <h4>createVariableInstance</h4>
 <pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html" title="class in com.centurylink.mdw.model.variable">VariableInstance</a>&nbsp;createVariableInstance(<a href="../../../../../com/centurylink/mdw/model/workflow/ProcessInstance.html" title="class in com.centurylink.mdw.model.workflow">ProcessInstance</a>&nbsp;pi,
-                                               java.lang.String&nbsp;varname,
+                                               java.lang.String&nbsp;varName,
                                                java.lang.Object&nbsp;value)
                                         throws <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
 <dl>
@@ -1095,13 +1049,14 @@ implements <a href="../../../../../com/centurylink/mdw/dataaccess/RetryableTrans
 </dl>
 </li>
 </ul>
-<a name="updateVariableInstance-com.centurylink.mdw.model.variable.VariableInstance-">
+<a name="updateVariableInstance-com.centurylink.mdw.model.variable.VariableInstance-com.centurylink.mdw.model.workflow.Package-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>updateVariableInstance</h4>
-<pre>public&nbsp;void&nbsp;updateVariableInstance(<a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html" title="class in com.centurylink.mdw.model.variable">VariableInstance</a>&nbsp;var)
+<pre>public&nbsp;void&nbsp;updateVariableInstance(<a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html" title="class in com.centurylink.mdw.model.variable">VariableInstance</a>&nbsp;variableInstance,
+                                   <a href="../../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;pkg)
                             throws <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
@@ -1116,7 +1071,7 @@ implements <a href="../../../../../com/centurylink/mdw/dataaccess/RetryableTrans
 <li class="blockList">
 <h4>getVariableInstance</h4>
 <pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html" title="class in com.centurylink.mdw.model.variable">VariableInstance</a>&nbsp;getVariableInstance(java.lang.Long&nbsp;procInstId,
-                                            java.lang.String&nbsp;varname)
+                                            java.lang.String&nbsp;varName)
                                      throws <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
@@ -1130,7 +1085,7 @@ implements <a href="../../../../../com/centurylink/mdw/dataaccess/RetryableTrans
 <ul class="blockList">
 <li class="blockList">
 <h4>getDocument</h4>
-<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/variable/Document.html" title="class in com.centurylink.mdw.model.variable">Document</a>&nbsp;getDocument(<a href="../../../../../com/centurylink/mdw/model/variable/DocumentReference.html" title="class in com.centurylink.mdw.model.variable">DocumentReference</a>&nbsp;docref,
+<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/variable/Document.html" title="class in com.centurylink.mdw.model.variable">Document</a>&nbsp;getDocument(<a href="../../../../../com/centurylink/mdw/model/variable/DocumentReference.html" title="class in com.centurylink.mdw.model.variable">DocumentReference</a>&nbsp;docRef,
                             boolean&nbsp;forUpdate)
                      throws <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
 <dl>
@@ -1145,7 +1100,7 @@ implements <a href="../../../../../com/centurylink/mdw/dataaccess/RetryableTrans
 <ul class="blockList">
 <li class="blockList">
 <h4>loadDocument</h4>
-<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/variable/Document.html" title="class in com.centurylink.mdw.model.variable">Document</a>&nbsp;loadDocument(<a href="../../../../../com/centurylink/mdw/model/variable/DocumentReference.html" title="class in com.centurylink.mdw.model.variable">DocumentReference</a>&nbsp;docref,
+<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/variable/Document.html" title="class in com.centurylink.mdw.model.variable">Document</a>&nbsp;loadDocument(<a href="../../../../../com/centurylink/mdw/model/variable/DocumentReference.html" title="class in com.centurylink.mdw.model.variable">DocumentReference</a>&nbsp;docRef,
                              boolean&nbsp;forUpdate)
                       throws <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
 <div class="block">Always goes to the database.</div>
@@ -1155,16 +1110,17 @@ implements <a href="../../../../../com/centurylink/mdw/dataaccess/RetryableTrans
 </dl>
 </li>
 </ul>
-<a name="createDocument-java.lang.String-java.lang.String-java.lang.Long-java.lang.Object-">
+<a name="createDocument-java.lang.String-java.lang.String-java.lang.Long-java.lang.Object-com.centurylink.mdw.model.workflow.Package-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>createDocument</h4>
-<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/variable/DocumentReference.html" title="class in com.centurylink.mdw.model.variable">DocumentReference</a>&nbsp;createDocument(java.lang.String&nbsp;type,
+<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/variable/DocumentReference.html" title="class in com.centurylink.mdw.model.variable">DocumentReference</a>&nbsp;createDocument(java.lang.String&nbsp;variableType,
                                         java.lang.String&nbsp;ownerType,
                                         java.lang.Long&nbsp;ownerId,
-                                        java.lang.Object&nbsp;doc)
+                                        java.lang.Object&nbsp;docObj,
+                                        <a href="../../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;pkg)
                                  throws <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
@@ -1172,18 +1128,19 @@ implements <a href="../../../../../com/centurylink/mdw/dataaccess/RetryableTrans
 </dl>
 </li>
 </ul>
-<a name="createDocument-java.lang.String-java.lang.String-java.lang.Long-java.lang.Integer-java.lang.String-java.lang.Object-">
+<a name="createDocument-java.lang.String-java.lang.String-java.lang.Long-java.lang.Integer-java.lang.String-java.lang.Object-com.centurylink.mdw.model.workflow.Package-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>createDocument</h4>
-<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/variable/DocumentReference.html" title="class in com.centurylink.mdw.model.variable">DocumentReference</a>&nbsp;createDocument(java.lang.String&nbsp;type,
+<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/variable/DocumentReference.html" title="class in com.centurylink.mdw.model.variable">DocumentReference</a>&nbsp;createDocument(java.lang.String&nbsp;variableType,
                                         java.lang.String&nbsp;ownerType,
                                         java.lang.Long&nbsp;ownerId,
                                         java.lang.Integer&nbsp;statusCode,
                                         java.lang.String&nbsp;statusMessage,
-                                        java.lang.Object&nbsp;doc)
+                                        java.lang.Object&nbsp;docObj,
+                                        <a href="../../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;pkg)
                                  throws <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
@@ -1191,19 +1148,20 @@ implements <a href="../../../../../com/centurylink/mdw/dataaccess/RetryableTrans
 </dl>
 </li>
 </ul>
-<a name="createDocument-java.lang.String-java.lang.String-java.lang.Long-java.lang.Integer-java.lang.String-java.lang.String-java.lang.Object-">
+<a name="createDocument-java.lang.String-java.lang.String-java.lang.Long-java.lang.Integer-java.lang.String-java.lang.String-java.lang.Object-com.centurylink.mdw.model.workflow.Package-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>createDocument</h4>
-<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/variable/DocumentReference.html" title="class in com.centurylink.mdw.model.variable">DocumentReference</a>&nbsp;createDocument(java.lang.String&nbsp;type,
+<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/variable/DocumentReference.html" title="class in com.centurylink.mdw.model.variable">DocumentReference</a>&nbsp;createDocument(java.lang.String&nbsp;variableType,
                                         java.lang.String&nbsp;ownerType,
                                         java.lang.Long&nbsp;ownerId,
                                         java.lang.Integer&nbsp;statusCode,
                                         java.lang.String&nbsp;statusMessage,
                                         java.lang.String&nbsp;path,
-                                        java.lang.Object&nbsp;doc)
+                                        java.lang.Object&nbsp;docObj,
+                                        <a href="../../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;pkg)
                                  throws <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
@@ -1211,15 +1169,14 @@ implements <a href="../../../../../com/centurylink/mdw/dataaccess/RetryableTrans
 </dl>
 </li>
 </ul>
-<a name="updateDocumentContent-com.centurylink.mdw.model.variable.DocumentReference-java.lang.Object-java.lang.String-com.centurylink.mdw.model.workflow.Package-">
+<a name="updateDocumentContent-com.centurylink.mdw.model.variable.DocumentReference-java.lang.Object-com.centurylink.mdw.model.workflow.Package-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>updateDocumentContent</h4>
-<pre>public&nbsp;void&nbsp;updateDocumentContent(<a href="../../../../../com/centurylink/mdw/model/variable/DocumentReference.html" title="class in com.centurylink.mdw.model.variable">DocumentReference</a>&nbsp;docref,
+<pre>public&nbsp;void&nbsp;updateDocumentContent(<a href="../../../../../com/centurylink/mdw/model/variable/DocumentReference.html" title="class in com.centurylink.mdw.model.variable">DocumentReference</a>&nbsp;docRef,
                                   java.lang.Object&nbsp;doc,
-                                  java.lang.String&nbsp;type,
                                   <a href="../../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;pkg)
                            throws <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
 <dl>
@@ -1234,7 +1191,7 @@ implements <a href="../../../../../com/centurylink/mdw/dataaccess/RetryableTrans
 <ul class="blockList">
 <li class="blockList">
 <h4>addDocumentToCache</h4>
-<pre>public&nbsp;void&nbsp;addDocumentToCache(<a href="../../../../../com/centurylink/mdw/model/variable/Document.html" title="class in com.centurylink.mdw.model.variable">Document</a>&nbsp;docvo)</pre>
+<pre>public&nbsp;void&nbsp;addDocumentToCache(<a href="../../../../../com/centurylink/mdw/model/variable/Document.html" title="class in com.centurylink.mdw.model.variable">Document</a>&nbsp;doc)</pre>
 </li>
 </ul>
 <a name="cancelEventWaitInstances-java.lang.Long-">
@@ -1273,9 +1230,9 @@ implements <a href="../../../../../com/centurylink/mdw/dataaccess/RetryableTrans
 <h4>createEventWaitInstance</h4>
 <pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/event/EventWaitInstance.html" title="class in com.centurylink.mdw.model.event">EventWaitInstance</a>&nbsp;createEventWaitInstance(java.lang.Long&nbsp;procInstId,
                                                  java.lang.Long&nbsp;actInstId,
-                                                 java.lang.String&nbsp;pEventName,
+                                                 java.lang.String&nbsp;eventName,
                                                  java.lang.String&nbsp;compCode,
-                                                 boolean&nbsp;pRecurring,
+                                                 boolean&nbsp;recurring,
                                                  boolean&nbsp;notifyIfArrived,
                                                  boolean&nbsp;reregister)
                                           throws <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a>,
@@ -1295,9 +1252,9 @@ implements <a href="../../../../../com/centurylink/mdw/dataaccess/RetryableTrans
 <h4>createEventWaitInstance</h4>
 <pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/event/EventWaitInstance.html" title="class in com.centurylink.mdw.model.event">EventWaitInstance</a>&nbsp;createEventWaitInstance(java.lang.Long&nbsp;procInstId,
                                                  java.lang.Long&nbsp;actInstId,
-                                                 java.lang.String&nbsp;pEventName,
+                                                 java.lang.String&nbsp;eventName,
                                                  java.lang.String&nbsp;compCode,
-                                                 boolean&nbsp;pRecurring,
+                                                 boolean&nbsp;recurring,
                                                  boolean&nbsp;notifyIfArrived)
                                           throws <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a>,
                                                  <a href="../../../../../com/centurylink/mdw/services/ProcessException.html" title="class in com.centurylink.mdw.services">ProcessException</a></pre>
@@ -1316,9 +1273,9 @@ implements <a href="../../../../../com/centurylink/mdw/dataaccess/RetryableTrans
 <h4>createEventWaitInstances</h4>
 <pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/event/EventWaitInstance.html" title="class in com.centurylink.mdw.model.event">EventWaitInstance</a>&nbsp;createEventWaitInstances(java.lang.Long&nbsp;procInstId,
                                                   java.lang.Long&nbsp;actInstId,
-                                                  java.lang.String[]&nbsp;pEventNames,
-                                                  java.lang.String[]&nbsp;pWakeUpEventTypes,
-                                                  boolean[]&nbsp;pEventOccurances,
+                                                  java.lang.String[]&nbsp;eventNames,
+                                                  java.lang.String[]&nbsp;wakeUpEventTypes,
+                                                  boolean[]&nbsp;eventOccurances,
                                                   boolean&nbsp;notifyIfArrived,
                                                   boolean&nbsp;reregister)
                                            throws <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a>,
@@ -1364,20 +1321,6 @@ implements <a href="../../../../../com/centurylink/mdw/dataaccess/RetryableTrans
 </dl>
 </li>
 </ul>
-<a name="sendInternalEvent-com.centurylink.mdw.model.event.InternalEvent-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>sendInternalEvent</h4>
-<pre>public&nbsp;void&nbsp;sendInternalEvent(<a href="../../../../../com/centurylink/mdw/model/event/InternalEvent.html" title="class in com.centurylink.mdw.model.event">InternalEvent</a>&nbsp;event)
-                       throws <a href="../../../../../com/centurylink/mdw/common/MdwException.html" title="class in com.centurylink.mdw.common">MdwException</a></pre>
-<dl>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../../com/centurylink/mdw/common/MdwException.html" title="class in com.centurylink.mdw.common">MdwException</a></code></dd>
-</dl>
-</li>
-</ul>
 <a name="sendDelayedInternalEvent-com.centurylink.mdw.model.event.InternalEvent-int-java.lang.String-boolean-">
 <!--   -->
 </a>
@@ -1395,15 +1338,16 @@ implements <a href="../../../../../com/centurylink/mdw/dataaccess/RetryableTrans
 </dl>
 </li>
 </ul>
-<a name="getSynchronousProcessResponse-java.lang.Long-java.lang.String-">
+<a name="getSynchronousProcessResponse-java.lang.Long-java.lang.String-com.centurylink.mdw.model.workflow.Package-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getSynchronousProcessResponse</h4>
-<pre>public&nbsp;java.lang.String&nbsp;getSynchronousProcessResponse(java.lang.Long&nbsp;procInstId,
-                                                      java.lang.String&nbsp;varname)
-                                               throws <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
+<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/request/Response.html" title="class in com.centurylink.mdw.model.request">Response</a>&nbsp;getSynchronousProcessResponse(java.lang.Long&nbsp;procInstId,
+                                              java.lang.String&nbsp;varName,
+                                              <a href="../../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;pkg)
+                                       throws <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
@@ -1425,44 +1369,6 @@ implements <a href="../../../../../com/centurylink/mdw/dataaccess/RetryableTrans
 </dl>
 </li>
 </ul>
-<a name="runInTransaction-java.lang.Runnable-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>runInTransaction</h4>
-<pre>public&nbsp;void&nbsp;runInTransaction(java.lang.Runnable&nbsp;runnable)
-                      throws <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
-<div class="block">For running your own code inside a transaction.
- To be used in execute() method when transactions are not turned on globally.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>runnable</code> - </dd>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../../com/centurylink/mdw/services/ProcessException.html" title="class in com.centurylink.mdw.services">ProcessException</a></code></dd>
-<dd><code><a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
-</dl>
-</li>
-</ul>
-<a name="runInRetryableTransaction-java.lang.Runnable-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>runInRetryableTransaction</h4>
-<pre>public&nbsp;void&nbsp;runInRetryableTransaction(java.lang.Runnable&nbsp;runnable)
-                               throws <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
-<div class="block">For running your own code inside a retryable transaction.
- To be used in execute() method when transactions are not turned on globally.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>runnable</code> - </dd>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../../com/centurylink/mdw/services/ProcessException.html" title="class in com.centurylink.mdw.services">ProcessException</a></code></dd>
-<dd><code><a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
-</dl>
-</li>
-</ul>
 <a name="lockActivityInstance-java.lang.Long-">
 <!--   -->
 </a>
@@ -1473,8 +1379,6 @@ implements <a href="../../../../../com/centurylink/mdw/dataaccess/RetryableTrans
                                        throws <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
 <div class="block">This method must be called within the same transaction scope (namely engine is already started</div>
 <dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>actInstId</code> - </dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
 </dl>
@@ -1490,8 +1394,6 @@ implements <a href="../../../../../com/centurylink/mdw/dataaccess/RetryableTrans
                                       throws <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
 <div class="block">this method must be called within the same transaction scope (namely engine is already started</div>
 <dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>procInstId</code> - </dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
 </dl>
@@ -1572,12 +1474,7 @@ implements <a href="../../../../../com/centurylink/mdw/dataaccess/RetryableTrans
 <ul class="blockList">
 <li class="blockList">
 <h4>rollbackTransaction</h4>
-<pre>public&nbsp;void&nbsp;rollbackTransaction()
-                         throws <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
-<dl>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
-</dl>
+<pre>public&nbsp;void&nbsp;rollbackTransaction()</pre>
 </li>
 </ul>
 <a name="notifyMonitors-com.centurylink.mdw.model.workflow.ProcessInstance-com.centurylink.mdw.model.workflow.WorkStatus.InternalLogMessage-">
@@ -1597,7 +1494,7 @@ implements <a href="../../../../../com/centurylink/mdw/dataaccess/RetryableTrans
 <ul class="blockList">
 <li class="blockList">
 <h4>canRetryTransaction</h4>
-<pre>public&nbsp;boolean&nbsp;canRetryTransaction(java.lang.Throwable&nbsp;e)</pre>
+<pre>public&nbsp;boolean&nbsp;canRetryTransaction(java.lang.Throwable&nbsp;th)</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../../../../com/centurylink/mdw/dataaccess/RetryableTransaction.html#canRetryTransaction-java.lang.Throwable-">canRetryTransaction</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/dataaccess/RetryableTransaction.html" title="interface in com.centurylink.mdw.dataaccess">RetryableTransaction</a></code></dd>
@@ -1610,13 +1507,10 @@ implements <a href="../../../../../com/centurylink/mdw/dataaccess/RetryableTrans
 <ul class="blockList">
 <li class="blockList">
 <h4>getTransactionRetrier</h4>
-<pre>public&nbsp;java.lang.Object&nbsp;getTransactionRetrier()
-                                       throws <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
+<pre>public&nbsp;java.lang.Object&nbsp;getTransactionRetrier()</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../../../../com/centurylink/mdw/dataaccess/RetryableTransaction.html#getTransactionRetrier--">getTransactionRetrier</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/dataaccess/RetryableTransaction.html" title="interface in com.centurylink.mdw.dataaccess">RetryableTransaction</a></code></dd>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
 </dl>
 </li>
 </ul>

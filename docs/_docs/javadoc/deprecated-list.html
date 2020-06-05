@@ -73,8 +73,10 @@
 <ul>
 <li><a href="#interface">Deprecated Interfaces</a></li>
 <li><a href="#class">Deprecated Classes</a></li>
+<li><a href="#exception">Deprecated Exceptions</a></li>
 <li><a href="#field">Deprecated Fields</a></li>
 <li><a href="#method">Deprecated Methods</a></li>
+<li><a href="#constructor">Deprecated Constructors</a></li>
 </ul>
 </div>
 <div class="contentContainer"><a name="interface">
@@ -89,9 +91,16 @@
 </tr>
 <tbody>
 <tr class="altColor">
-<td class="colOne"><a href="com/centurylink/mdw/services/ProcessServices.html" title="interface in com.centurylink.mdw.services">com.centurylink.mdw.services.ProcessServices</a></td>
+<td class="colOne"><a href="com/centurylink/mdw/event/EventHandler.html" title="interface in com.centurylink.mdw.event">com.centurylink.mdw.event.EventHandler</a>
+<div class="block"><span class="deprecationComment">use <a href="com/centurylink/mdw/request/RequestHandlerException.html" title="class in com.centurylink.mdw.request"><code>RequestHandlerException</code></a></span></div>
+</td>
 </tr>
 <tr class="rowColor">
+<td class="colOne"><a href="com/centurylink/mdw/event/ExternalEventHandler.html" title="interface in com.centurylink.mdw.event">com.centurylink.mdw.event.ExternalEventHandler</a>
+<div class="block"><span class="deprecationComment">implement <a href="com/centurylink/mdw/request/RequestHandler.html" title="interface in com.centurylink.mdw.request"><code>RequestHandler</code></a></span></div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colOne"><a href="com/centurylink/mdw/activity/types/SuspendibleActivity.html" title="interface in com.centurylink.mdw.activity.types">com.centurylink.mdw.activity.types.SuspendibleActivity</a>
 <div class="block"><span class="deprecationComment">use <a href="com/centurylink/mdw/activity/types/SuspendableActivity.html" title="interface in com.centurylink.mdw.activity.types"><code>SuspendableActivity</code></a></span></div>
 </td>
@@ -112,29 +121,80 @@
 </tr>
 <tbody>
 <tr class="altColor">
-<td class="colOne"><a href="com/centurylink/mdw/config/PaaSPropertyManager.html" title="class in com.centurylink.mdw.config">com.centurylink.mdw.config.PaaSPropertyManager</a></td>
+<td class="colOne"><a href="com/centurylink/mdw/listener/ExternalEventHandlerBase.html" title="class in com.centurylink.mdw.listener">com.centurylink.mdw.listener.ExternalEventHandlerBase</a>
+<div class="block"><span class="deprecationComment">extend <a href="com/centurylink/mdw/services/request/BaseHandler.html" title="class in com.centurylink.mdw.services.request"><code>BaseHandler</code></a></span></div>
+</td>
 </tr>
 <tr class="rowColor">
+<td class="colOne"><a href="com/centurylink/mdw/common/translator/impl/GroovyNodeTranslator.html" title="class in com.centurylink.mdw.common.translator.impl">com.centurylink.mdw.common.translator.impl.GroovyNodeTranslator</a></td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><a href="com/centurylink/mdw/listener/NotifyWaitingActivityEventHandler.html" title="class in com.centurylink.mdw.listener">com.centurylink.mdw.listener.NotifyWaitingActivityEventHandler</a>
+<div class="block"><span class="deprecationComment">use <a href="com/centurylink/mdw/services/request/ProcessNotifyHandler.html" title="class in com.centurylink.mdw.services.request"><code>ProcessNotifyHandler</code></a></span></div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><a href="com/centurylink/mdw/util/file/Packages.html" title="class in com.centurylink.mdw.util.file">com.centurylink.mdw.util.file.Packages</a>
+<div class="block"><span class="deprecationComment">use <a href="com/centurylink/mdw/file/Packages.html" title="class in com.centurylink.mdw.file"><code>Packages</code></a></span></div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colOne"><a href="com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html" title="class in com.centurylink.mdw.workflow.adapter">com.centurylink.mdw.workflow.adapter.PoolableAdapterBase</a>
 <div class="block"><span class="deprecationComment">Extend <a href="com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html" title="class in com.centurylink.mdw.workflow.adapter"><code>TextAdapterActivity</code></a> whose name better
  describes its purpose.  Adapter poolability is no longer a concept
  in MDW as we rely on underlying protocol pooling mechanisms.</span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/centurylink/mdw/timer/cleanup/ProcessCleanup.html" title="class in com.centurylink.mdw.timer.cleanup">com.centurylink.mdw.timer.cleanup.ProcessCleanup</a></td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><a href="com/centurylink/mdw/listener/ProcessStartEventHandler.html" title="class in com.centurylink.mdw.listener">com.centurylink.mdw.listener.ProcessStartEventHandler</a>
+<div class="block"><span class="deprecationComment">use <a href="com/centurylink/mdw/services/request/ProcessRunHandler.html" title="class in com.centurylink.mdw.services.request"><code>ProcessRunHandler</code></a></span></div>
+</td>
 </tr>
 <tr class="rowColor">
 <td class="colOne"><a href="com/centurylink/mdw/util/StringHelper.html" title="class in com.centurylink.mdw.util">com.centurylink.mdw.util.StringHelper</a></td>
 </tr>
 <tr class="altColor">
-<td class="colOne"><a href="com/centurylink/mdw/timer/cleanup/StuckActivities.html" title="class in com.centurylink.mdw.timer.cleanup">com.centurylink.mdw.timer.cleanup.StuckActivities</a>
-<div class="block"><span class="deprecationComment">use asset com.centurylink.mdw.base/StuckActivities.java.</span></div>
+<td class="colOne"><a href="com/centurylink/mdw/service/data/task/UserGroupCache.html" title="class in com.centurylink.mdw.service.data.task">com.centurylink.mdw.service.data.task.UserGroupCache</a>
+<div class="block"><span class="deprecationComment">use <a href="com/centurylink/mdw/service/data/user/UserGroupCache.html" title="class in com.centurylink.mdw.service.data.user"><code>UserGroupCache</code></a></span></div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><a href="com/centurylink/mdw/service/data/task/UserGroupCache.html" title="class in com.centurylink.mdw.service.data.task">com.centurylink.mdw.service.data.task.UserGroupCache</a>
-<div class="block"><span class="deprecationComment">use <a href="com/centurylink/mdw/service/data/user/UserGroupCache.html" title="class in com.centurylink.mdw.service.data.user"><code>UserGroupCache</code></a></span></div>
+<td class="colOne"><a href="com/centurylink/mdw/xml/XmlBeanWrapper.html" title="class in com.centurylink.mdw.xml">com.centurylink.mdw.xml.XmlBeanWrapper</a></td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><a href="com/centurylink/mdw/common/translator/impl/XmlBeanWrapperTranslator.html" title="class in com.centurylink.mdw.common.translator.impl">com.centurylink.mdw.common.translator.impl.XmlBeanWrapperTranslator</a></td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+<a name="exception">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<table class="deprecatedSummary" border="0" cellpadding="3" cellspacing="0" summary="Deprecated Exceptions table, listing deprecated exceptions, and an explanation">
+<caption><span>Deprecated Exceptions</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colOne" scope="col">Exceptions and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colOne"><a href="com/centurylink/mdw/connector/adapter/AdapterException.html" title="class in com.centurylink.mdw.connector.adapter">com.centurylink.mdw.connector.adapter.AdapterException</a>
+<div class="block"><span class="deprecationComment">use <a href="com/centurylink/mdw/adapter/AdapterException.html" title="class in com.centurylink.mdw.adapter"><code>AdapterException</code></a></span></div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><a href="com/centurylink/mdw/connector/adapter/ConnectionException.html" title="class in com.centurylink.mdw.connector.adapter">com.centurylink.mdw.connector.adapter.ConnectionException</a>
+<div class="block"><span class="deprecationComment">use <a href="com/centurylink/mdw/adapter/ConnectionException.html" title="class in com.centurylink.mdw.adapter"><code>ConnectionException</code></a></span></div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><a href="com/centurylink/mdw/event/EventHandlerException.html" title="class in com.centurylink.mdw.event">com.centurylink.mdw.event.EventHandlerException</a>
+<div class="block"><span class="deprecationComment">use <a href="com/centurylink/mdw/request/RequestHandlerException.html" title="class in com.centurylink.mdw.request"><code>RequestHandlerException</code></a></span></div>
 </td>
 </tr>
 </tbody>
@@ -183,44 +243,45 @@
 <td class="colOne"><a href="com/centurylink/mdw/util/StringHelper.html#dateToString-java.util.Date-">com.centurylink.mdw.util.StringHelper.dateToString(Date)</a></td>
 </tr>
 <tr class="rowColor">
+<td class="colOne"><a href="com/centurylink/mdw/util/log/StandardLogger.html#debugException-java.lang.String-java.lang.Throwable-">com.centurylink.mdw.util.log.StandardLogger.debugException(String, Throwable)</a></td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><a href="com/centurylink/mdw/util/log/StandardLogger.html#exception-java.lang.String-java.lang.String-java.lang.Throwable-">com.centurylink.mdw.util.log.StandardLogger.exception(String, String, Throwable)</a></td>
+</tr>
+<tr class="rowColor">
 <td class="colOne"><a href="com/centurylink/mdw/services/test/TestCaseScript.html#file-java.lang.String-">com.centurylink.mdw.services.test.TestCaseScript.file(String)</a></td>
 </tr>
 <tr class="altColor">
-<td class="colOne"><a href="com/centurylink/mdw/service/data/process/ProcessCache.html#getAllProcesses--">com.centurylink.mdw.service.data.process.ProcessCache.getAllProcesses()</a>
-<div class="block"><span class="deprecationComment">use <a href="com/centurylink/mdw/service/data/process/ProcessCache.html#getProcesses-boolean-"><code>ProcessCache.getProcesses(boolean)</code></a></span></div>
+<td class="colOne"><a href="com/centurylink/mdw/model/variable/Document.html#getContent--">com.centurylink.mdw.model.variable.Document.getContent()</a></td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><a href="com/centurylink/mdw/dataaccess/MdwVariableTypes.html#getDeprecatedTypes--">com.centurylink.mdw.dataaccess.MdwVariableTypes.getDeprecatedTypes()</a></td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><a href="com/centurylink/mdw/model/variable/Document.html#getDocumentId--">com.centurylink.mdw.model.variable.Document.getDocumentId()</a></td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><a href="com/centurylink/mdw/model/variable/Document.html#getDocumentType--">com.centurylink.mdw.model.variable.Document.getDocumentType()</a></td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><a href="com/centurylink/mdw/model/variable/VariableInstance.html#getInstanceId--">com.centurylink.mdw.model.variable.VariableInstance.getInstanceId()</a></td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><a href="com/centurylink/mdw/model/workflow/Package.html#getObjectValue-java.lang.String-java.lang.String-boolean-">com.centurylink.mdw.model.workflow.Package.getObjectValue(String, String, boolean)</a></td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><a href="com/centurylink/mdw/services/process/BaseActivity.html#getParameters--">com.centurylink.mdw.services.process.BaseActivity.getParameters()</a>
+<div class="block"><span class="deprecationComment"><a href="com/centurylink/mdw/services/process/BaseActivity.html#getValues--"><code>BaseActivity.getValues()</code></a></span></div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><a href="com/centurylink/mdw/model/workflow/ActivityImplementor.html#getAttributeDescription--">com.centurylink.mdw.model.workflow.ActivityImplementor.getAttributeDescription()</a></td>
+<td class="colOne"><a href="com/centurylink/mdw/services/process/BaseActivity.html#getParameterStringValue-java.lang.String-">com.centurylink.mdw.services.process.BaseActivity.getParameterStringValue(String)</a>
+<div class="block"><span class="deprecationComment"><a href="com/centurylink/mdw/services/process/BaseActivity.html#getValue-java.lang.String-"><code>BaseActivity.getValue(String)</code></a></span></div>
+</td>
 </tr>
 <tr class="altColor">
-<td class="colOne"><a href="com/centurylink/mdw/model/workflow/ActivityImplementor.html#getBaseClassName--">com.centurylink.mdw.model.workflow.ActivityImplementor.getBaseClassName()</a></td>
-</tr>
-<tr class="rowColor">
-<td class="colOne"><a href="com/centurylink/mdw/model/variable/Document.html#getContent--">com.centurylink.mdw.model.variable.Document.getContent()</a></td>
-</tr>
-<tr class="altColor">
-<td class="colOne"><a href="com/centurylink/mdw/service/data/event/EventHandlerCache.html#getExternalEvents-java.lang.String-">com.centurylink.mdw.service.data.event.EventHandlerCache.getExternalEvents(String)</a></td>
-</tr>
-<tr class="rowColor">
-<td class="colOne"><a href="com/centurylink/mdw/model/workflow/ActivityImplementor.html#getIconName--">com.centurylink.mdw.model.workflow.ActivityImplementor.getIconName()</a></td>
-</tr>
-<tr class="altColor">
-<td class="colOne"><a href="com/centurylink/mdw/model/workflow/ActivityImplementor.html#getImplementorClassName--">com.centurylink.mdw.model.workflow.ActivityImplementor.getImplementorClassName()</a></td>
-</tr>
-<tr class="rowColor">
-<td class="colOne"><a href="com/centurylink/mdw/model/workflow/Package.html#getPackageId--">com.centurylink.mdw.model.workflow.Package.getPackageId()</a></td>
-</tr>
-<tr class="altColor">
-<td class="colOne"><a href="com/centurylink/mdw/model/workflow/Package.html#getPackageName--">com.centurylink.mdw.model.workflow.Package.getPackageName()</a></td>
-</tr>
-<tr class="rowColor">
-<td class="colOne"><a href="com/centurylink/mdw/services/ServiceLocator.html#getProcessServices--">com.centurylink.mdw.services.ServiceLocator.getProcessServices()</a></td>
-</tr>
-<tr class="altColor">
-<td class="colOne"><a href="com/centurylink/mdw/dataaccess/file/VersionControlGit.html#getRelativePath-java.io.File-">com.centurylink.mdw.dataaccess.file.VersionControlGit.getRelativePath(File)</a>
-<div class="block"><span class="deprecationComment">use <a href="com/centurylink/mdw/dataaccess/file/VersionControlGit.html#getRelativePath-java.nio.file.Path-"><code>VersionControlGit.getRelativePath(Path)</code></a>
- this has issues with relative git local paths like ../</span></div>
+<td class="colOne"><a href="com/centurylink/mdw/services/process/BaseActivity.html#getParameterValue-java.lang.String-">com.centurylink.mdw.services.process.BaseActivity.getParameterValue(String)</a>
+<div class="block"><span class="deprecationComment">use <a href="com/centurylink/mdw/services/process/BaseActivity.html#getValue-java.lang.String-"><code>BaseActivity.getValue(String)</code></a></span></div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -249,52 +310,84 @@
 <td class="colOne"><a href="com/centurylink/mdw/service/data/task/UserGroupCache.html#getUsers--">com.centurylink.mdw.service.data.task.UserGroupCache.getUsers()</a></td>
 </tr>
 <tr class="altColor">
+<td class="colOne"><a href="com/centurylink/mdw/services/process/BaseActivity.html#getValueSmart-java.lang.String-java.lang.String-">com.centurylink.mdw.services.process.BaseActivity.getValueSmart(String, String)</a>
+<div class="block"><span class="deprecationComment"><a href="com/centurylink/mdw/services/process/BaseActivity.html#getValue-java.lang.String-"><code>BaseActivity.getValue(String)</code></a></span></div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><a href="com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getVariables--">com.centurylink.mdw.model.workflow.ProcessRuntimeContext.getVariables()</a>
+<div class="block"><span class="deprecationComment">use <a href="com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getValues--"><code>ProcessRuntimeContext.getValues()</code></a></span></div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><a href="com/centurylink/mdw/cache/VariableTypeCache.html#getVariableType-java.lang.Integer-">com.centurylink.mdw.cache.VariableTypeCache.getVariableType(Integer)</a></td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><a href="com/centurylink/mdw/services/process/BaseActivity.html#getVariableValue-java.lang.String-">com.centurylink.mdw.services.process.BaseActivity.getVariableValue(String)</a>
+<div class="block"><span class="deprecationComment"><a href="com/centurylink/mdw/services/process/BaseActivity.html#getValue-java.lang.String-"><code>BaseActivity.getValue(String)</code></a></span></div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><a href="com/centurylink/mdw/services/process/BaseActivity.html#getVariableValueSmart-java.lang.String-">com.centurylink.mdw.services.process.BaseActivity.getVariableValueSmart(String)</a></td>
+</tr>
+<tr class="rowColor">
 <td class="colOne"><a href="com/centurylink/mdw/service/data/task/UserGroupCache.html#getWorkgroup-java.lang.String-">com.centurylink.mdw.service.data.task.UserGroupCache.getWorkgroup(String)</a></td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/centurylink/mdw/service/data/task/UserGroupCache.html#getWorkgroups--">com.centurylink.mdw.service.data.task.UserGroupCache.getWorkgroups()</a></td>
 </tr>
+<tr class="rowColor">
+<td class="colOne"><a href="com/centurylink/mdw/event/ExternalEventHandler.html#handleEventMessage-java.lang.String-java.lang.Object-java.util.Map-">com.centurylink.mdw.event.ExternalEventHandler.handleEventMessage(String, Object, Map&lt;String, String&gt;)</a></td>
+</tr>
 <tr class="altColor">
-<td class="colOne"><a href="com/centurylink/mdw/util/StringHelper.html#isEmpty-java.lang.String-">com.centurylink.mdw.util.StringHelper.isEmpty(String)</a></td>
+<td class="colOne"><a href="com/centurylink/mdw/util/log/StandardLogger.html#infoException-java.lang.String-java.lang.Throwable-">com.centurylink.mdw.util.log.StandardLogger.infoException(String, Throwable)</a></td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><a href="com/centurylink/mdw/util/StringHelper.html#isEqual-java.lang.String-java.lang.String-">com.centurylink.mdw.util.StringHelper.isEqual(String, String)</a></td>
+<td class="colOne"><a href="com/centurylink/mdw/util/StringHelper.html#isEmpty-java.lang.String-">com.centurylink.mdw.util.StringHelper.isEmpty(String)</a></td>
 </tr>
 <tr class="altColor">
+<td class="colOne"><a href="com/centurylink/mdw/util/StringHelper.html#isEqual-java.lang.String-java.lang.String-">com.centurylink.mdw.util.StringHelper.isEqual(String, String)</a></td>
+</tr>
+<tr class="rowColor">
 <td class="colOne"><a href="com/centurylink/mdw/services/process/BaseActivity.html#logdebug-java.lang.String-">com.centurylink.mdw.services.process.BaseActivity.logdebug(String)</a>
 <div class="block"><span class="deprecationComment">use <a href="com/centurylink/mdw/services/process/BaseActivity.html#logDebug-java.lang.String-"><code>BaseActivity.logDebug(String)</code></a></span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/centurylink/mdw/services/process/BaseActivity.html#logexception-java.lang.String-java.lang.Exception-">com.centurylink.mdw.services.process.BaseActivity.logexception(String, Exception)</a>
 <div class="block"><span class="deprecationComment">use <a href="com/centurylink/mdw/services/process/BaseActivity.html#logError-java.lang.String-java.lang.Throwable-"><code>BaseActivity.logError(String, Throwable)</code></a></span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/centurylink/mdw/services/process/BaseActivity.html#loginfo-java.lang.String-">com.centurylink.mdw.services.process.BaseActivity.loginfo(String)</a>
 <div class="block"><span class="deprecationComment">use <a href="com/centurylink/mdw/services/process/BaseActivity.html#logInfo-java.lang.String-"><code>BaseActivity.logInfo(String)</code></a></span></div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#logRequest-java.lang.String-">com.centurylink.mdw.workflow.adapter.ObjectAdapterActivity.logRequest(String)</a></td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#logRequest-java.lang.String-">com.centurylink.mdw.workflow.adapter.TextAdapterActivity.logRequest(String)</a></td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#logResponse-java.lang.String-">com.centurylink.mdw.workflow.adapter.ObjectAdapterActivity.logResponse(String)</a></td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#logResponse-java.lang.String-">com.centurylink.mdw.workflow.adapter.TextAdapterActivity.logResponse(String)</a></td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colOne"><a href="com/centurylink/mdw/services/process/BaseActivity.html#logsevere-java.lang.String-">com.centurylink.mdw.services.process.BaseActivity.logsevere(String)</a>
 <div class="block"><span class="deprecationComment">use <a href="com/centurylink/mdw/services/process/BaseActivity.html#logError-java.lang.String-"><code>BaseActivity.logError(String)</code></a></span></div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><a href="com/centurylink/mdw/services/process/BaseActivity.html#logwarn-java.lang.String-">com.centurylink.mdw.services.process.BaseActivity.logwarn(String)</a>
 <div class="block"><span class="deprecationComment">use <a href="com/centurylink/mdw/services/process/BaseActivity.html#logWarn-java.lang.String-"><code>BaseActivity.logWarn(String)</code></a></span></div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><a href="com/centurylink/mdw/listener/ListenerHelper.html#processEvent-java.lang.String-java.util.Map-">com.centurylink.mdw.listener.ListenerHelper.processEvent(String, Map&lt;String, String&gt;)</a>
+<div class="block"><span class="deprecationComment">use @{link #processRequest(String, Map)}</span></div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -316,6 +409,18 @@
 <td class="colOne"><a href="com/centurylink/mdw/util/StringHelper.html#serviceStringToDate-java.lang.String-">com.centurylink.mdw.util.StringHelper.serviceStringToDate(String)</a></td>
 </tr>
 <tr class="rowColor">
+<td class="colOne"><a href="com/centurylink/mdw/services/process/BaseActivity.html#setParameterValues-java.util.Map-">com.centurylink.mdw.services.process.BaseActivity.setParameterValues(Map&lt;String, Object&gt;)</a></td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><a href="com/centurylink/mdw/util/log/StandardLogger.html#severe-java.lang.String-">com.centurylink.mdw.util.log.StandardLogger.severe(String)</a></td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><a href="com/centurylink/mdw/util/log/StandardLogger.html#severe-java.lang.String-java.lang.String-">com.centurylink.mdw.util.log.StandardLogger.severe(String, String)</a></td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><a href="com/centurylink/mdw/util/log/StandardLogger.html#severeException-java.lang.String-java.lang.Throwable-">com.centurylink.mdw.util.log.StandardLogger.severeException(String, Throwable)</a></td>
+</tr>
+<tr class="rowColor">
 <td class="colOne"><a href="com/centurylink/mdw/util/StringHelper.html#stringToDate-java.lang.String-">com.centurylink.mdw.util.StringHelper.stringToDate(String)</a></td>
 </tr>
 <tr class="altColor">
@@ -324,7 +429,61 @@
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><a href="com/centurylink/mdw/translator/VariableTranslator.html#toString-java.lang.String-java.lang.Object-">com.centurylink.mdw.translator.VariableTranslator.toString(String, Object)</a></td>
+<td class="colOne"><a href="com/centurylink/mdw/util/log/StandardLogger.html#traceException-java.lang.String-java.lang.Throwable-">com.centurylink.mdw.util.log.StandardLogger.traceException(String, Throwable)</a></td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><a href="com/centurylink/mdw/util/log/StandardLogger.html#warnException-java.lang.String-java.lang.Throwable-">com.centurylink.mdw.util.log.StandardLogger.warnException(String, Throwable)</a></td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+<a name="constructor">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<table class="deprecatedSummary" border="0" cellpadding="3" cellspacing="0" summary="Deprecated Constructors table, listing deprecated constructors, and an explanation">
+<caption><span>Deprecated Constructors</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colOne" scope="col">Constructor and Description</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colOne"><a href="com/centurylink/mdw/connector/adapter/AdapterException.html#AdapterException-int-java.lang.String-">com.centurylink.mdw.connector.adapter.AdapterException(int, String)</a></td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><a href="com/centurylink/mdw/connector/adapter/AdapterException.html#AdapterException-int-java.lang.String-boolean-">com.centurylink.mdw.connector.adapter.AdapterException(int, String, boolean)</a></td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><a href="com/centurylink/mdw/connector/adapter/AdapterException.html#AdapterException-java.lang.String-">com.centurylink.mdw.connector.adapter.AdapterException(String)</a></td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><a href="com/centurylink/mdw/connector/adapter/AdapterException.html#AdapterException-java.lang.String-boolean-">com.centurylink.mdw.connector.adapter.AdapterException(String, boolean)</a></td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><a href="com/centurylink/mdw/connector/adapter/ConnectionException.html#ConnectionException-int-java.lang.String-">com.centurylink.mdw.connector.adapter.ConnectionException(int, String)</a></td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><a href="com/centurylink/mdw/connector/adapter/ConnectionException.html#ConnectionException-int-java.lang.String-java.lang.Throwable-">com.centurylink.mdw.connector.adapter.ConnectionException(int, String, Throwable)</a></td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><a href="com/centurylink/mdw/connector/adapter/ConnectionException.html#ConnectionException-java.lang.String-">com.centurylink.mdw.connector.adapter.ConnectionException(String)</a></td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><a href="com/centurylink/mdw/connector/adapter/ConnectionException.html#ConnectionException-java.lang.String-java.lang.Throwable-">com.centurylink.mdw.connector.adapter.ConnectionException(String, Throwable)</a></td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><a href="com/centurylink/mdw/event/EventHandlerException.html#EventHandlerException-java.lang.String-">com.centurylink.mdw.event.EventHandlerException(String)</a></td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><a href="com/centurylink/mdw/event/EventHandlerException.html#EventHandlerException-java.lang.String-java.lang.Throwable-">com.centurylink.mdw.event.EventHandlerException(String, Throwable)</a></td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><a href="com/centurylink/mdw/util/file/Packages.html#Packages-java.io.File-">com.centurylink.mdw.util.file.Packages(File)</a></td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><a href="com/centurylink/mdw/model/variable/VariableType.html#VariableType-java.lang.String-java.lang.String-boolean-java.lang.Integer-">com.centurylink.mdw.model.variable.VariableType(String, String, boolean, Integer)</a></td>
 </tr>
 </tbody>
 </table>

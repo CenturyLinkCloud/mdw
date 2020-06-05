@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":9,"i4":10,"i5":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":9,"i4":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -173,17 +173,13 @@ extends <a href="../../../../../com/centurylink/mdw/common/service/ServiceRegist
 <tr id="i0" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/observer/task/TaskNotifier.html" title="interface in com.centurylink.mdw.observer.task">TaskNotifier</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/task/types/TaskServiceRegistry.html#getDynamicNotifier-com.centurylink.mdw.model.workflow.Package-java.lang.String-">getDynamicNotifier</a></span>(<a href="../../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;packageVO,
-                  java.lang.String&nbsp;className)</code>
-<div class="block">Cloud mode</div>
-</td>
+                  java.lang.String&nbsp;className)</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>java.lang.Object</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/task/types/TaskServiceRegistry.html#getDynamicStrategy-com.centurylink.mdw.model.workflow.Package-java.lang.Class-java.lang.String-">getDynamicStrategy</a></span>(<a href="../../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;packageVO,
                   java.lang.Class&lt;? extends <a href="../../../../../com/centurylink/mdw/common/service/RegisteredService.html" title="interface in com.centurylink.mdw.common.service">RegisteredService</a>&gt;&nbsp;strategyInterface,
-                  java.lang.String&nbsp;strategyClassName)</code>
-<div class="block">Cloud mode</div>
-</td>
+                  java.lang.String&nbsp;strategyClassName)</code>&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/observer/task/TaskIndexProvider.html" title="interface in com.centurylink.mdw.observer.task">TaskIndexProvider</a></code></td>
@@ -195,10 +191,6 @@ extends <a href="../../../../../com/centurylink/mdw/common/service/ServiceRegist
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/task/types/TaskServiceRegistry.html#getInstance--">getInstance</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i4" class="altColor">
-<td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/observer/task/TaskNotifier.html" title="interface in com.centurylink.mdw.observer.task">TaskNotifier</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/task/types/TaskServiceRegistry.html#getNotifier-java.lang.String-">getNotifier</a></span>(java.lang.String&nbsp;className)</code>&nbsp;</td>
-</tr>
-<tr id="i5" class="rowColor">
 <td class="colFirst"><code>&lt;T extends <a href="../../../../../com/centurylink/mdw/common/service/RegisteredService.html" title="interface in com.centurylink.mdw.common.service">RegisteredService</a>&gt;<br>T</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/task/types/TaskServiceRegistry.html#getStrategy-java.lang.Class-java.lang.String-">getStrategy</a></span>(java.lang.Class&lt;T&gt;&nbsp;strategyInterface,
            java.lang.String&nbsp;className)</code>&nbsp;</td>
@@ -294,23 +286,6 @@ extends <a href="../../../../../com/centurylink/mdw/common/service/ServiceRegist
 <pre>public&nbsp;java.lang.Object&nbsp;getDynamicStrategy(<a href="../../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;packageVO,
                                            java.lang.Class&lt;? extends <a href="../../../../../com/centurylink/mdw/common/service/RegisteredService.html" title="interface in com.centurylink.mdw.common.service">RegisteredService</a>&gt;&nbsp;strategyInterface,
                                            java.lang.String&nbsp;strategyClassName)</pre>
-<div class="block">Cloud mode</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>packageVO</code> - </dd>
-<dd><code>strategyInterface</code> - </dd>
-<dd><code>strategyClassName</code> - </dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-</dl>
-</li>
-</ul>
-<a name="getNotifier-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getNotifier</h4>
-<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/observer/task/TaskNotifier.html" title="interface in com.centurylink.mdw.observer.task">TaskNotifier</a>&nbsp;getNotifier(java.lang.String&nbsp;className)</pre>
 </li>
 </ul>
 <a name="getDynamicNotifier-com.centurylink.mdw.model.workflow.Package-java.lang.String-">
@@ -321,14 +296,6 @@ extends <a href="../../../../../com/centurylink/mdw/common/service/ServiceRegist
 <h4>getDynamicNotifier</h4>
 <pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/observer/task/TaskNotifier.html" title="interface in com.centurylink.mdw.observer.task">TaskNotifier</a>&nbsp;getDynamicNotifier(<a href="../../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;packageVO,
                                        java.lang.String&nbsp;className)</pre>
-<div class="block">Cloud mode</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>packageVO</code> - </dd>
-<dd><code>class1</code> - </dd>
-<dd><code>notifierClassName</code> - </dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-</dl>
 </li>
 </ul>
 <a name="getIndexProvider-com.centurylink.mdw.model.workflow.Package-java.lang.String-">

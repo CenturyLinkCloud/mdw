@@ -17,8 +17,8 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10};
-var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
+var methods = {"i0":42,"i1":42,"i2":42};
+var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"],32:["t6","Deprecated Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
@@ -48,7 +48,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../com/centurylink/mdw/listener/NotifyWaitingActivityEventHandler.html" title="class in com.centurylink.mdw.listener"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../../com/centurylink/mdw/listener/RegressionTestEventHandler.html" title="class in com.centurylink.mdw.listener"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li>Next&nbsp;Class</li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../index.html?com/centurylink/mdw/listener/ProcessStartEventHandler.html" target="_top">Frames</a></li>
@@ -73,13 +73,13 @@ var activeTableTab = "activeTableTab";
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#fields.inherited.from.class.com.centurylink.mdw.listener.ExternalEventHandlerBase">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>
@@ -98,10 +98,15 @@ var activeTableTab = "activeTableTab";
 <li>java.lang.Object</li>
 <li>
 <ul class="inheritance">
+<li><a href="../../../../com/centurylink/mdw/services/request/BaseHandler.html" title="class in com.centurylink.mdw.services.request">com.centurylink.mdw.services.request.BaseHandler</a></li>
+<li>
+<ul class="inheritance">
 <li><a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBase.html" title="class in com.centurylink.mdw.listener">com.centurylink.mdw.listener.ExternalEventHandlerBase</a></li>
 <li>
 <ul class="inheritance">
 <li>com.centurylink.mdw.listener.ProcessStartEventHandler</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -112,11 +117,15 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <dl>
 <dt>All Implemented Interfaces:</dt>
-<dd><a href="../../../../com/centurylink/mdw/event/EventHandler.html" title="interface in com.centurylink.mdw.event">EventHandler</a>, <a href="../../../../com/centurylink/mdw/event/ExternalEventHandler.html" title="interface in com.centurylink.mdw.event">ExternalEventHandler</a></dd>
+<dd><a href="../../../../com/centurylink/mdw/event/ExternalEventHandler.html" title="interface in com.centurylink.mdw.event">ExternalEventHandler</a>, <a href="../../../../com/centurylink/mdw/request/RequestHandler.html" title="interface in com.centurylink.mdw.request">RequestHandler</a></dd>
 </dl>
 <hr>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
+<div class="block"><span class="deprecationComment">use <a href="../../../../com/centurylink/mdw/services/request/ProcessRunHandler.html" title="class in com.centurylink.mdw.services.request"><code>ProcessRunHandler</code></a></span></div>
+</div>
 <br>
-<pre>public class <span class="typeNameLabel">ProcessStartEventHandler</span>
+<pre>@Deprecated
+public class <span class="typeNameLabel">ProcessStartEventHandler</span>
 extends <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBase.html" title="class in com.centurylink.mdw.listener">ExternalEventHandlerBase</a></pre>
 </li>
 </ul>
@@ -124,23 +133,27 @@ extends <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBa
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="nested.class.summary">
+<!--   -->
+</a>
+<h3>Nested Class Summary</h3>
+<ul class="blockList">
+<li class="blockList"><a name="nested.classes.inherited.from.class.com.centurylink.mdw.request.RequestHandler">
+<!--   -->
+</a>
+<h3>Nested classes/interfaces inherited from interface&nbsp;com.centurylink.mdw.request.<a href="../../../../com/centurylink/mdw/request/RequestHandler.html" title="interface in com.centurylink.mdw.request">RequestHandler</a></h3>
+<code><a href="../../../../com/centurylink/mdw/request/RequestHandler.Routing.html" title="enum in com.centurylink.mdw.request">RequestHandler.Routing</a></code></li>
+</ul>
+</li>
+</ul>
 <!-- =========== FIELD SUMMARY =========== -->
 <ul class="blockList">
 <li class="blockList"><a name="field.summary">
 <!--   -->
 </a>
 <h3>Field Summary</h3>
-<table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Field Summary table, listing fields, and an explanation">
-<caption><span>Fields</span><span class="tabEnd">&nbsp;</span></caption>
-<tr>
-<th class="colFirst" scope="col">Modifier and Type</th>
-<th class="colLast" scope="col">Field and Description</th>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>protected static java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/listener/ProcessStartEventHandler.html#PROP_SINGLE_TRANSACTION">PROP_SINGLE_TRANSACTION</a></span></code>&nbsp;</td>
-</tr>
-</table>
 <ul class="blockList">
 <li class="blockList"><a name="fields.inherited.from.class.com.centurylink.mdw.listener.ExternalEventHandlerBase">
 <!--   -->
@@ -162,7 +175,9 @@ extends <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBa
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/listener/ProcessStartEventHandler.html#ProcessStartEventHandler--">ProcessStartEventHandler</a></span>()</code>&nbsp;</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/listener/ProcessStartEventHandler.html#ProcessStartEventHandler--">ProcessStartEventHandler</a></span>()</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
+&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -174,7 +189,7 @@ extends <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBa
 </a>
 <h3>Method Summary</h3>
 <table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
-<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t6" class="tableTab"><span><a href="javascript:show(32);">Deprecated Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colLast" scope="col">Method and Description</th>
@@ -184,6 +199,7 @@ extends <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBa
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/listener/ProcessStartEventHandler.html#buildParameters-org.apache.xmlbeans.XmlObject-java.util.Map-com.centurylink.mdw.model.workflow.Process-">buildParameters</a></span>(org.apache.xmlbeans.XmlObject&nbsp;msgdoc,
                java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;metaInfo,
                <a href="../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&nbsp;processVO)</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <div class="block">This method is invoked by handleEventMessage() to build parameters (input variables)
  when starting the process.</div>
 </td>
@@ -192,6 +208,7 @@ extends <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBa
 <td class="colFirst"><code>protected java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/listener/ProcessStartEventHandler.html#getMasterRequestId-org.apache.xmlbeans.XmlObject-java.util.Map-">getMasterRequestId</a></span>(org.apache.xmlbeans.XmlObject&nbsp;msgdoc,
                   java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;metaInfo)</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <div class="block">This method is invoked by handleEventMessage() to obtain master request ID.</div>
 </td>
 </tr>
@@ -200,9 +217,8 @@ extends <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBa
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/listener/ProcessStartEventHandler.html#handleEventMessage-java.lang.String-java.lang.Object-java.util.Map-">handleEventMessage</a></span>(java.lang.String&nbsp;message,
                   java.lang.Object&nbsp;msgdoc,
                   java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;metaInfo)</code>
-<div class="block">Handles the external event message
- The passed in message</div>
-</td>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
+&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -210,7 +226,14 @@ extends <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBa
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;com.centurylink.mdw.listener.<a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBase.html" title="class in com.centurylink.mdw.listener">ExternalEventHandlerBase</a></h3>
-<code><a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBase.html#createDocument-java.lang.String-java.lang.Object-java.lang.String-java.lang.Long-java.lang.Long-java.lang.String-java.lang.String-">createDocument</a>, <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBase.html#createResponseMessage-java.lang.Exception-java.lang.String-java.lang.Object-java.util.Map-">createResponseMessage</a>, <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBase.html#getJaxbTranslator-com.centurylink.mdw.model.workflow.Package-">getJaxbTranslator</a>, <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBase.html#getPackage--">getPackage</a>, <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBase.html#getProcessDefinition-java.lang.Long-">getProcessDefinition</a>, <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBase.html#getProcessId-java.lang.String-">getProcessId</a>, <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBase.html#getResource-java.lang.String-java.lang.String-int-">getResource</a>, <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBase.html#invokeServiceProcess-java.lang.Long-java.lang.Long-java.lang.String-java.lang.String-java.util.Map-">invokeServiceProcess</a>, <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBase.html#invokeServiceProcess-java.lang.Long-java.lang.Long-java.lang.String-java.lang.String-java.util.Map-java.lang.String-">invokeServiceProcess</a>, <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBase.html#invokeServiceProcess-java.lang.Long-java.lang.Long-java.lang.String-java.lang.String-java.util.Map-java.lang.String-int-">invokeServiceProcess</a>, <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBase.html#invokeServiceProcess-java.lang.Long-java.lang.Long-java.lang.String-java.lang.String-java.util.Map-java.lang.String-int-java.util.Map-">invokeServiceProcess</a>, <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBase.html#launchProcess-java.lang.Long-java.lang.Long-java.lang.String-java.util.Map-">launchProcess</a>, <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBase.html#launchProcess-java.lang.Long-java.lang.Long-java.lang.String-java.util.Map-java.util.Map-">launchProcess</a>, <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBase.html#marshalJaxb-java.lang.Object-com.centurylink.mdw.model.workflow.Package-">marshalJaxb</a>, <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBase.html#notifyProcesses-java.lang.String-java.lang.Long-java.lang.String-int-">notifyProcesses</a>, <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBase.html#placeHolderTranslation-java.lang.String-java.util.Map-org.apache.xmlbeans.XmlObject-">placeHolderTranslation</a>, <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBase.html#setPackage-com.centurylink.mdw.model.workflow.Package-">setPackage</a>, <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBase.html#translateParameters-java.lang.Long-java.util.Map-">translateParameters</a>, <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBase.html#unmarshalJaxb-java.lang.String-com.centurylink.mdw.model.workflow.Package-">unmarshalJaxb</a>, <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBase.html#updateDocumentContent-com.centurylink.mdw.model.variable.DocumentReference-java.lang.Object-java.lang.String-">updateDocumentContent</a></code></li>
+<code><a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBase.html#createDocument-java.lang.String-java.lang.Object-java.lang.String-java.lang.Long-java.lang.Long-java.lang.String-java.lang.String-">createDocument</a>, <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBase.html#createResponseMessage-java.lang.Exception-java.lang.String-java.lang.Object-java.util.Map-">createResponseMessage</a>, <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBase.html#getJaxbTranslator-com.centurylink.mdw.model.workflow.Package-">getJaxbTranslator</a>, <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBase.html#getPackage--">getPackage</a>, <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBase.html#getProcessDefinition-java.lang.Long-">getProcessDefinition</a>, <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBase.html#getProcessId-java.lang.String-">getProcessId</a>, <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBase.html#invokeServiceProcess-java.lang.Long-java.lang.Long-java.lang.String-java.lang.String-java.util.Map-">invokeServiceProcess</a>, <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBase.html#invokeServiceProcess-java.lang.Long-java.lang.Long-java.lang.String-java.lang.String-java.util.Map-java.lang.String-">invokeServiceProcess</a>, <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBase.html#invokeServiceProcess-java.lang.Long-java.lang.Long-java.lang.String-java.lang.String-java.util.Map-java.lang.String-int-">invokeServiceProcess</a>, <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBase.html#invokeServiceProcess-java.lang.Long-java.lang.Long-java.lang.String-java.lang.String-java.util.Map-java.lang.String-int-java.util.Map-">invokeServiceProcess</a>, <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBase.html#launchProcess-java.lang.Long-java.lang.Long-java.lang.String-java.util.Map-">launchProcess</a>, <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBase.html#marshalJaxb-java.lang.Object-com.centurylink.mdw.model.workflow.Package-">marshalJaxb</a>, <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBase.html#placeHolderTranslation-java.lang.String-java.util.Map-org.apache.xmlbeans.XmlObject-">placeHolderTranslation</a>, <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBase.html#setPackage-com.centurylink.mdw.model.workflow.Package-">setPackage</a>, <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBase.html#unmarshalJaxb-java.lang.String-com.centurylink.mdw.model.workflow.Package-">unmarshalJaxb</a>, <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBase.html#updateDocumentContent-com.centurylink.mdw.model.variable.DocumentReference-java.lang.Object-java.lang.String-">updateDocumentContent</a></code></li>
+</ul>
+<ul class="blockList">
+<li class="blockList"><a name="methods.inherited.from.class.com.centurylink.mdw.services.request.BaseHandler">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;com.centurylink.mdw.services.request.<a href="../../../../com/centurylink/mdw/services/request/BaseHandler.html" title="class in com.centurylink.mdw.services.request">BaseHandler</a></h3>
+<code><a href="../../../../com/centurylink/mdw/services/request/BaseHandler.html#getErrorResponse-com.centurylink.mdw.model.request.Request-java.lang.Object-java.util.Map-java.lang.Exception-">getErrorResponse</a>, <a href="../../../../com/centurylink/mdw/services/request/BaseHandler.html#getSuccessResponse-com.centurylink.mdw.model.request.Request-java.lang.Object-java.util.Map-">getSuccessResponse</a>, <a href="../../../../com/centurylink/mdw/services/request/BaseHandler.html#invokeServiceProcess-java.lang.Long-java.lang.Long-java.lang.String-java.lang.String-java.util.Map-java.util.Map-">invokeServiceProcess</a>, <a href="../../../../com/centurylink/mdw/services/request/BaseHandler.html#launchProcess-java.lang.Long-java.lang.Long-java.lang.String-java.util.Map-java.util.Map-">launchProcess</a>, <a href="../../../../com/centurylink/mdw/services/request/BaseHandler.html#notifyProcesses-java.lang.String-java.lang.Long-java.lang.String-int-">notifyProcesses</a>, <a href="../../../../com/centurylink/mdw/services/request/BaseHandler.html#translateInputValues-java.lang.Long-java.util.Map-">translateInputValues</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -224,14 +247,14 @@ extends <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBa
 <!--   -->
 </a>
 <h3>Methods inherited from interface&nbsp;com.centurylink.mdw.event.<a href="../../../../com/centurylink/mdw/event/ExternalEventHandler.html" title="interface in com.centurylink.mdw.event">ExternalEventHandler</a></h3>
-<code><a href="../../../../com/centurylink/mdw/event/ExternalEventHandler.html#handleEventMessage-com.centurylink.mdw.model.request.Request-java.lang.Object-java.util.Map-">handleEventMessage</a></code></li>
+<code><a href="../../../../com/centurylink/mdw/event/ExternalEventHandler.html#handleRequest-com.centurylink.mdw.model.request.Request-java.lang.Object-java.util.Map-">handleRequest</a></code></li>
 </ul>
 <ul class="blockList">
-<li class="blockList"><a name="methods.inherited.from.class.com.centurylink.mdw.event.EventHandler">
+<li class="blockList"><a name="methods.inherited.from.class.com.centurylink.mdw.request.RequestHandler">
 <!--   -->
 </a>
-<h3>Methods inherited from interface&nbsp;com.centurylink.mdw.event.<a href="../../../../com/centurylink/mdw/event/EventHandler.html" title="interface in com.centurylink.mdw.event">EventHandler</a></h3>
-<code><a href="../../../../com/centurylink/mdw/event/EventHandler.html#getRoles--">getRoles</a></code></li>
+<h3>Methods inherited from interface&nbsp;com.centurylink.mdw.request.<a href="../../../../com/centurylink/mdw/request/RequestHandler.html" title="interface in com.centurylink.mdw.request">RequestHandler</a></h3>
+<code><a href="../../../../com/centurylink/mdw/request/RequestHandler.html#getRoles--">getRoles</a></code></li>
 </ul>
 </li>
 </ul>
@@ -241,23 +264,6 @@ extends <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBa
 <div class="details">
 <ul class="blockList">
 <li class="blockList">
-<!-- ============ FIELD DETAIL =========== -->
-<ul class="blockList">
-<li class="blockList"><a name="field.detail">
-<!--   -->
-</a>
-<h3>Field Detail</h3>
-<a name="PROP_SINGLE_TRANSACTION">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>PROP_SINGLE_TRANSACTION</h4>
-<pre>protected static&nbsp;java.lang.String PROP_SINGLE_TRANSACTION</pre>
-</li>
-</ul>
-</li>
-</ul>
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 <ul class="blockList">
 <li class="blockList"><a name="constructor.detail">
@@ -271,6 +277,7 @@ extends <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBa
 <li class="blockList">
 <h4>ProcessStartEventHandler</h4>
 <pre>public&nbsp;ProcessStartEventHandler()</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 </li>
 </ul>
 </li>
@@ -290,20 +297,7 @@ extends <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBa
 <pre>public&nbsp;java.lang.String&nbsp;handleEventMessage(java.lang.String&nbsp;message,
                                            java.lang.Object&nbsp;msgdoc,
                                            java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;metaInfo)</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../com/centurylink/mdw/event/ExternalEventHandler.html#handleEventMessage-java.lang.String-java.lang.Object-java.util.Map-">ExternalEventHandler</a></code></span></div>
-<div class="block">Handles the external event message
- The passed in message</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>message</code> - message from external system in string format</dd>
-<dd><code>msgdoc</code> - message from external system in parsed form, such as generic XML bean, JSON object.
-         It is passed in as null if the message cannot be parsed
-         or does not have an object representation (such as USO orders)</dd>
-<dd><code>metaInfo</code> - meta information around the request message, such as protocol,
-     reply to address, request id, event name, event id, event instance id,
-     arguments specified for handler, etc. See constants in Listener.java
-     for typical ones</dd>
-</dl>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 </li>
 </ul>
 <a name="buildParameters-org.apache.xmlbeans.XmlObject-java.util.Map-com.centurylink.mdw.model.workflow.Process-">
@@ -315,6 +309,7 @@ extends <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBa
 <pre>protected&nbsp;java.util.Map&lt;java.lang.String,java.lang.Object&gt;&nbsp;buildParameters(org.apache.xmlbeans.XmlObject&nbsp;msgdoc,
                                                                            java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;metaInfo,
                                                                            <a href="../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&nbsp;processVO)</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <div class="block">This method is invoked by handleEventMessage() to build parameters (input variables)
  when starting the process. The default implementation returns null, i.e. passing
  no parameters at all. You can override this method to build parameters.
@@ -337,6 +332,7 @@ extends <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBa
 <h4>getMasterRequestId</h4>
 <pre>protected&nbsp;java.lang.String&nbsp;getMasterRequestId(org.apache.xmlbeans.XmlObject&nbsp;msgdoc,
                                               java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;metaInfo)</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <div class="block">This method is invoked by handleEventMessage() to obtain master request ID.
  The default implementation does the following:
     - If "mdw-request-id" is defined in metaInfo, then takes its value
@@ -381,7 +377,7 @@ extends <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBa
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../com/centurylink/mdw/listener/NotifyWaitingActivityEventHandler.html" title="class in com.centurylink.mdw.listener"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../../com/centurylink/mdw/listener/RegressionTestEventHandler.html" title="class in com.centurylink.mdw.listener"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li>Next&nbsp;Class</li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../index.html?com/centurylink/mdw/listener/ProcessStartEventHandler.html" target="_top">Frames</a></li>
@@ -406,13 +402,13 @@ extends <a href="../../../../com/centurylink/mdw/listener/ExternalEventHandlerBa
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#fields.inherited.from.class.com.centurylink.mdw.listener.ExternalEventHandlerBase">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>

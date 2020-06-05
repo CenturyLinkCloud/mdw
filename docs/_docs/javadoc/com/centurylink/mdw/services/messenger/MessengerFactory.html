@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":9,"i5":9};
+var methods = {"i0":9,"i1":9,"i2":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -47,7 +47,7 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../../com/centurylink/mdw/services/messenger/IntraMDWMessengerRmi.html" title="class in com.centurylink.mdw.services.messenger"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../../../../com/centurylink/mdw/services/messenger/InternalMessengerSameServer.html" title="class in com.centurylink.mdw.services.messenger"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
 <li>Next&nbsp;Class</li>
 </ul>
 <ul class="navList">
@@ -145,38 +145,16 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>static java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/messenger/MessengerFactory.html#getEngineUrl--">getEngineUrl</a></span>()</code>
-<div class="block">Returns URL for this engine.</div>
-</td>
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/messenger/MessengerFactory.html#init--">init</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code>static java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/messenger/MessengerFactory.html#getEngineUrl-java.lang.String-">getEngineUrl</a></span>(java.lang.String&nbsp;serverSpec)</code>
-<div class="block">Returns engine URL for another server, using server specification as input.</div>
-</td>
-</tr>
-<tr id="i2" class="altColor">
-<td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/messenger/MessengerFactory.html#init-java.lang.String-">init</a></span>(java.lang.String&nbsp;restServiceContext)</code>&nbsp;</td>
-</tr>
-<tr id="i3" class="rowColor">
 <td class="colFirst"><code>static boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/messenger/MessengerFactory.html#internalMessageUsingJms--">internalMessageUsingJms</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>static <a href="../../../../../com/centurylink/mdw/services/messenger/InternalMessenger.html" title="class in com.centurylink.mdw.services.messenger">InternalMessenger</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/messenger/MessengerFactory.html#newInternalMessenger--">newInternalMessenger</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i5" class="rowColor">
-<td class="colFirst"><code>static <a href="../../../../../com/centurylink/mdw/services/messenger/IntraMDWMessenger.html" title="class in com.centurylink.mdw.services.messenger">IntraMDWMessenger</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/messenger/MessengerFactory.html#newIntraMDWMessenger-java.lang.String-">newIntraMDWMessenger</a></span>(java.lang.String&nbsp;serverSpec)</code>
-<div class="block">Server specification can be one of the following forms
-   a) URL of the form t3://host:port, iiop://host:port, rmi://host:port, http://host:port/context_and_path
-   b) a logical server name, in which case the URL is obtained from property mdw.remote.server.<server-name>
-   c) server_name@URL
-   d) null, in which case it indicates on the same site (same domain)</div>
-</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -217,13 +195,13 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="init-java.lang.String-">
+<a name="init--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>init</h4>
-<pre>public static&nbsp;void&nbsp;init(java.lang.String&nbsp;restServiceContext)</pre>
+<pre>public static&nbsp;void&nbsp;init()</pre>
 </li>
 </ul>
 <a name="newInternalMessenger--">
@@ -235,80 +213,13 @@ extends java.lang.Object</pre>
 <pre>public static&nbsp;<a href="../../../../../com/centurylink/mdw/services/messenger/InternalMessenger.html" title="class in com.centurylink.mdw.services.messenger">InternalMessenger</a>&nbsp;newInternalMessenger()</pre>
 </li>
 </ul>
-<a name="newIntraMDWMessenger-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>newIntraMDWMessenger</h4>
-<pre>public static&nbsp;<a href="../../../../../com/centurylink/mdw/services/messenger/IntraMDWMessenger.html" title="class in com.centurylink.mdw.services.messenger">IntraMDWMessenger</a>&nbsp;newIntraMDWMessenger(java.lang.String&nbsp;serverSpec)
-                                              throws javax.naming.NamingException</pre>
-<div class="block">Server specification can be one of the following forms
-   a) URL of the form t3://host:port, iiop://host:port, rmi://host:port, http://host:port/context_and_path
-   b) a logical server name, in which case the URL is obtained from property mdw.remote.server.<server-name>
-   c) server_name@URL
-   d) null, in which case it indicates on the same site (same domain)</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>serverSpec</code> - see description above</dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>the messenger for the corresponding server</dd>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>javax.naming.NamingException</code></dd>
-</dl>
-</li>
-</ul>
 <a name="internalMessageUsingJms--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>internalMessageUsingJms</h4>
-<pre>public static&nbsp;boolean&nbsp;internalMessageUsingJms()</pre>
-</li>
-</ul>
-<a name="getEngineUrl--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getEngineUrl</h4>
-<pre>public static&nbsp;java.lang.String&nbsp;getEngineUrl()
-                                     throws javax.naming.NamingException</pre>
-<div class="block">Returns URL for this engine. Used to pass it to remove servers:
-   a) when invoking a remote process
-   b) when sending message to remote detail task manager
-   c) for central task manager to generate a unique session ID when linking to detail page
- For WebLogic: t3://host:port (works for both JMS for RMI. iiop may work as well for RMI)
- For Tomcat: rmi://host:port</div>
-<dl>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>javax.naming.NamingException</code></dd>
-</dl>
-</li>
-</ul>
-<a name="getEngineUrl-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>getEngineUrl</h4>
-<pre>public static&nbsp;java.lang.String&nbsp;getEngineUrl(java.lang.String&nbsp;serverSpec)
-                                     throws javax.naming.NamingException</pre>
-<div class="block">Returns engine URL for another server, using server specification as input.
-
- Server specification can be one of the following forms
-   a) URL of the form t3://host:port, iiop://host:port, rmi://host:port, http://host:port/context_and_path
-   b) a logical server name, in which case the URL is obtained from property mdw.remote.server.<server-name>
-   c) server_name@URL</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>serverSpec</code> - </dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>URL for the engine</dd>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>javax.naming.NamingException</code></dd>
-</dl>
+<h4>internalMessageUsingJms</h4>
+<pre>public static&nbsp;boolean&nbsp;internalMessageUsingJms()</pre>
 </li>
 </ul>
 </li>
@@ -338,7 +249,7 @@ extends java.lang.Object</pre>
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../../com/centurylink/mdw/services/messenger/IntraMDWMessengerRmi.html" title="class in com.centurylink.mdw.services.messenger"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../../../../com/centurylink/mdw/services/messenger/InternalMessengerSameServer.html" title="class in com.centurylink.mdw.services.messenger"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
 <li>Next&nbsp;Class</li>
 </ul>
 <ul class="navList">

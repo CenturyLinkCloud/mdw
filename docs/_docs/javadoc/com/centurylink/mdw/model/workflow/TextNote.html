@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -157,12 +157,10 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/TextNote.html#getAttribute-java.lang.String-">getAttribute</a></span>(java.lang.String&nbsp;attrname)</code>
-<div class="block">Returns the value of a process attribute.</div>
-</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/TextNote.html#getAttribute-java.lang.String-">getAttribute</a></span>(java.lang.String&nbsp;name)</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code>java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/attribute/Attribute.html" title="class in com.centurylink.mdw.model.attribute">Attribute</a>&gt;</code></td>
+<td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/Attributes.html" title="class in com.centurylink.mdw.model">Attributes</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/TextNote.html#getAttributes--">getAttributes</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
@@ -187,24 +185,18 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 </tr>
 <tr id="i7" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/TextNote.html#setAttribute-java.lang.String-java.lang.String-">setAttribute</a></span>(java.lang.String&nbsp;attrname,
-            java.lang.String&nbsp;value)</code>
-<div class="block">Set the value of a process attribute.</div>
-</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/TextNote.html#setAttribute-java.lang.String-java.lang.String-">setAttribute</a></span>(java.lang.String&nbsp;name,
+            java.lang.String&nbsp;value)</code>&nbsp;</td>
 </tr>
 <tr id="i8" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/TextNote.html#setAttributes-java.util.List-">setAttributes</a></span>(java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/attribute/Attribute.html" title="class in com.centurylink.mdw.model.attribute">Attribute</a>&gt;&nbsp;attributes)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/TextNote.html#setContent-java.lang.String-">setContent</a></span>(java.lang.String&nbsp;content)</code>&nbsp;</td>
 </tr>
 <tr id="i9" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/TextNote.html#setContent-java.lang.String-">setContent</a></span>(java.lang.String&nbsp;content)</code>&nbsp;</td>
-</tr>
-<tr id="i10" class="altColor">
-<td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/TextNote.html#setLogicalId-java.lang.String-">setLogicalId</a></span>(java.lang.String&nbsp;id)</code>&nbsp;</td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/TextNote.html#setReference-java.lang.String-">setReference</a></span>(java.lang.String&nbsp;reference)</code>&nbsp;</td>
 </tr>
@@ -291,67 +283,6 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="getAttributes--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getAttributes</h4>
-<pre>public&nbsp;java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/attribute/Attribute.html" title="class in com.centurylink.mdw.model.attribute">Attribute</a>&gt;&nbsp;getAttributes()</pre>
-<dl>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>the attributes</dd>
-</dl>
-</li>
-</ul>
-<a name="setAttributes-java.util.List-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setAttributes</h4>
-<pre>public&nbsp;void&nbsp;setAttributes(java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/attribute/Attribute.html" title="class in com.centurylink.mdw.model.attribute">Attribute</a>&gt;&nbsp;attributes)</pre>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>attributes</code> - the attributes to set</dd>
-</dl>
-</li>
-</ul>
-<a name="getAttribute-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getAttribute</h4>
-<pre>public&nbsp;java.lang.String&nbsp;getAttribute(java.lang.String&nbsp;attrname)</pre>
-<div class="block">Returns the value of a process attribute.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>attrname</code> - </dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>the value of the attribute, or null if the attribute does not exist</dd>
-</dl>
-</li>
-</ul>
-<a name="setAttribute-java.lang.String-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setAttribute</h4>
-<pre>public&nbsp;void&nbsp;setAttribute(java.lang.String&nbsp;attrname,
-                         java.lang.String&nbsp;value)</pre>
-<div class="block">Set the value of a process attribute.
- If the value is null, the attribute is removed.
- If the attribute does not exist and the value is not null, the attribute
- is created.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>attrname</code> - </dd>
-<dd><code>value</code> - </dd>
-</dl>
-</li>
-</ul>
 <a name="getContent--">
 <!--   -->
 </a>
@@ -386,6 +317,34 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <li class="blockList">
 <h4>setReference</h4>
 <pre>public&nbsp;void&nbsp;setReference(java.lang.String&nbsp;reference)</pre>
+</li>
+</ul>
+<a name="getAttributes--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getAttributes</h4>
+<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/Attributes.html" title="class in com.centurylink.mdw.model">Attributes</a>&nbsp;getAttributes()</pre>
+</li>
+</ul>
+<a name="getAttribute-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getAttribute</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getAttribute(java.lang.String&nbsp;name)</pre>
+</li>
+</ul>
+<a name="setAttribute-java.lang.String-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setAttribute</h4>
+<pre>public&nbsp;void&nbsp;setAttribute(java.lang.String&nbsp;name,
+                         java.lang.String&nbsp;value)</pre>
 </li>
 </ul>
 <a name="getLogicalId--">

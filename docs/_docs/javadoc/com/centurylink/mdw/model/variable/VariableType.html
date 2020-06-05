@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -48,7 +48,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html" title="class in com.centurylink.mdw.model.variable"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../../../com/centurylink/mdw/model/variable/XPathELResolver.html" title="class in com.centurylink.mdw.model.variable"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li>Next&nbsp;Class</li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../index.html?com/centurylink/mdw/model/variable/VariableType.html" target="_top">Frames</a></li>
@@ -107,17 +107,13 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <dl>
 <dt>All Implemented Interfaces:</dt>
-<dd>io.limberest.json.Jsonable, java.io.Serializable</dd>
+<dd>io.limberest.json.Jsonable</dd>
 </dl>
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">VariableType</span>
 extends java.lang.Object
-implements java.io.Serializable, <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" title="interface in com.centurylink.mdw.model">Jsonable</a></pre>
-<dl>
-<dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="../../../../../serialized-form.html#com.centurylink.mdw.model.variable.VariableType">Serialized Form</a></dd>
-</dl>
+implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" title="interface in com.centurylink.mdw.model">Jsonable</a></pre>
 </li>
 </ul>
 </div>
@@ -139,9 +135,17 @@ implements java.io.Serializable, <a href="../../../../../com/centurylink/mdw/mod
 <td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableType.html#VariableType-org.json.JSONObject-">VariableType</a></span>(org.json.JSONObject&nbsp;json)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableType.html#VariableType-java.lang.Long-java.lang.String-java.lang.String-">VariableType</a></span>(java.lang.Long&nbsp;variableTypeId,
-            java.lang.String&nbsp;variableType,
-            java.lang.String&nbsp;translatorClass)</code>&nbsp;</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableType.html#VariableType-java.lang.String-java.lang.String-boolean-">VariableType</a></span>(java.lang.String&nbsp;name,
+            java.lang.String&nbsp;translatorClass,
+            boolean&nbsp;document)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableType.html#VariableType-java.lang.String-java.lang.String-boolean-java.lang.Integer-">VariableType</a></span>(java.lang.String&nbsp;name,
+            java.lang.String&nbsp;translatorClass,
+            boolean&nbsp;document,
+            java.lang.Integer&nbsp;id)</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
+</td>
 </tr>
 </table>
 </li>
@@ -163,26 +167,26 @@ implements java.io.Serializable, <a href="../../../../../com/centurylink/mdw/mod
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableType.html#equals-java.lang.Object-">equals</a></span>(java.lang.Object&nbsp;obj)</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
+<td class="colFirst"><code>java.lang.Integer</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableType.html#getId--">getId</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>org.json.JSONObject</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableType.html#getJson--">getJson</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableType.html#getJsonName--">getJsonName</a></span>()</code>
 <div class="block">May be overridden to name the JSON object returned from <a href="../../../../../com/centurylink/mdw/model/Jsonable.html#getJson--"><code>Jsonable.getJson()</code></a>.</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableType.html#getTranslatorClass--">getTranslatorClass</a></span>()</code>&nbsp;</td>
-</tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableType.html#getVariableType--">getVariableType</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableType.html#getName--">getName</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i5" class="rowColor">
-<td class="colFirst"><code>java.lang.Long</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableType.html#getVariableTypeId--">getVariableTypeId</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableType.html#getTranslatorClass--">getTranslatorClass</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i6" class="altColor">
 <td class="colFirst"><code>int</code></td>
@@ -190,25 +194,21 @@ implements java.io.Serializable, <a href="../../../../../com/centurylink/mdw/mod
 </tr>
 <tr id="i7" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableType.html#isJavaObjectType--">isJavaObjectType</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableType.html#isDocument--">isDocument</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i8" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableType.html#isUpdateable--">isUpdateable</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableType.html#isJavaObjectType--">isJavaObjectType</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i9" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableType.html#setTranslatorClass-java.lang.String-">setTranslatorClass</a></span>(java.lang.String&nbsp;className)</code>&nbsp;</td>
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableType.html#isUpdateable--">isUpdateable</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i10" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableType.html#setUpdateable-boolean-">setUpdateable</a></span>(boolean&nbsp;updateable)</code>&nbsp;</td>
 </tr>
 <tr id="i11" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableType.html#setVariableType-java.lang.String-">setVariableType</a></span>(java.lang.String&nbsp;type)</code>&nbsp;</td>
-</tr>
-<tr id="i12" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/variable/VariableType.html#toString--">toString</a></span>()</code>&nbsp;</td>
 </tr>
@@ -248,15 +248,29 @@ implements java.io.Serializable, <a href="../../../../../com/centurylink/mdw/mod
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="VariableType-java.lang.Long-java.lang.String-java.lang.String-">
+<a name="VariableType-java.lang.String-java.lang.String-boolean-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>VariableType</h4>
-<pre>public&nbsp;VariableType(java.lang.Long&nbsp;variableTypeId,
-                    java.lang.String&nbsp;variableType,
-                    java.lang.String&nbsp;translatorClass)</pre>
+<pre>public&nbsp;VariableType(java.lang.String&nbsp;name,
+                    java.lang.String&nbsp;translatorClass,
+                    boolean&nbsp;document)</pre>
+</li>
+</ul>
+<a name="VariableType-java.lang.String-java.lang.String-boolean-java.lang.Integer-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>VariableType</h4>
+<pre>@Deprecated
+public&nbsp;VariableType(java.lang.String&nbsp;name,
+                                java.lang.String&nbsp;translatorClass,
+                                boolean&nbsp;document,
+                                java.lang.Integer&nbsp;id)</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 </li>
 </ul>
 <a name="VariableType-org.json.JSONObject-">
@@ -265,12 +279,7 @@ implements java.io.Serializable, <a href="../../../../../com/centurylink/mdw/mod
 <ul class="blockListLast">
 <li class="blockList">
 <h4>VariableType</h4>
-<pre>public&nbsp;VariableType(org.json.JSONObject&nbsp;json)
-             throws org.json.JSONException</pre>
-<dl>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>org.json.JSONException</code></dd>
-</dl>
+<pre>public&nbsp;VariableType(org.json.JSONObject&nbsp;json)</pre>
 </li>
 </ul>
 </li>
@@ -281,31 +290,13 @@ implements java.io.Serializable, <a href="../../../../../com/centurylink/mdw/mod
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="getVariableTypeId--">
+<a name="getName--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getVariableTypeId</h4>
-<pre>public&nbsp;java.lang.Long&nbsp;getVariableTypeId()</pre>
-</li>
-</ul>
-<a name="getVariableType--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getVariableType</h4>
-<pre>public&nbsp;java.lang.String&nbsp;getVariableType()</pre>
-</li>
-</ul>
-<a name="setVariableType-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setVariableType</h4>
-<pre>public&nbsp;void&nbsp;setVariableType(java.lang.String&nbsp;type)</pre>
+<h4>getName</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getName()</pre>
 </li>
 </ul>
 <a name="getTranslatorClass--">
@@ -317,13 +308,22 @@ implements java.io.Serializable, <a href="../../../../../com/centurylink/mdw/mod
 <pre>public&nbsp;java.lang.String&nbsp;getTranslatorClass()</pre>
 </li>
 </ul>
-<a name="setTranslatorClass-java.lang.String-">
+<a name="isDocument--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>setTranslatorClass</h4>
-<pre>public&nbsp;void&nbsp;setTranslatorClass(java.lang.String&nbsp;className)</pre>
+<h4>isDocument</h4>
+<pre>public&nbsp;boolean&nbsp;isDocument()</pre>
+</li>
+</ul>
+<a name="getId--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getId</h4>
+<pre>public&nbsp;java.lang.Integer&nbsp;getId()</pre>
 </li>
 </ul>
 <a name="isJavaObjectType--">
@@ -445,7 +445,7 @@ implements java.io.Serializable, <a href="../../../../../com/centurylink/mdw/mod
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html" title="class in com.centurylink.mdw.model.variable"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../../../com/centurylink/mdw/model/variable/XPathELResolver.html" title="class in com.centurylink.mdw.model.variable"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li>Next&nbsp;Class</li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../index.html?com/centurylink/mdw/model/variable/VariableType.html" target="_top">Frames</a></li>

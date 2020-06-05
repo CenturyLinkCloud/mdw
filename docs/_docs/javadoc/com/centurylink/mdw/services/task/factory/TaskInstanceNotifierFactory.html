@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":9,"i1":9,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10};
+var methods = {"i0":9,"i1":9,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -162,20 +162,14 @@ extends java.lang.Object</pre>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../../com/centurylink/mdw/observer/task/TaskNotifier.html" title="interface in com.centurylink.mdw.observer.task">TaskNotifier</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/services/task/factory/TaskInstanceNotifierFactory.html#getNotifierInstance-java.lang.String-com.centurylink.mdw.model.workflow.Package-">getNotifierInstance</a></span>(java.lang.String&nbsp;notifierClassName,
-                   <a href="../../../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;packageVO)</code>&nbsp;</td>
+                   <a href="../../../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;pkg)</code>&nbsp;</td>
 </tr>
 <tr id="i4" class="altColor">
-<td class="colFirst"><code>java.util.List&lt;<a href="../../../../../../com/centurylink/mdw/observer/task/TaskNotifier.html" title="interface in com.centurylink.mdw.observer.task">TaskNotifier</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/services/task/factory/TaskInstanceNotifierFactory.html#getNotifiers-java.lang.Long-java.lang.Long-java.lang.String-">getNotifiers</a></span>(java.lang.Long&nbsp;taskId,
-            java.lang.Long&nbsp;processInstanceId,
-            java.lang.String&nbsp;outcome)</code>&nbsp;</td>
-</tr>
-<tr id="i5" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../../../com/centurylink/mdw/observer/task/TaskNotifier.html" title="interface in com.centurylink.mdw.observer.task">TaskNotifier</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/services/task/factory/TaskInstanceNotifierFactory.html#getNotifiers-java.lang.Long-java.lang.String-">getNotifiers</a></span>(java.lang.Long&nbsp;taskId,
             java.lang.String&nbsp;outcome)</code>&nbsp;</td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;java.lang.String&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/services/task/factory/TaskInstanceNotifierFactory.html#getNotifierSpecs-java.lang.Long-java.lang.Long-java.lang.String-">getNotifierSpecs</a></span>(java.lang.Long&nbsp;taskId,
                 java.lang.Long&nbsp;processInstanceId,
@@ -184,7 +178,7 @@ extends java.lang.Object</pre>
  Get the template name and notifier class names based on the process activity attributes to get the relevant values for in flight and new processes</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>java.util.List&lt;java.lang.String&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/services/task/factory/TaskInstanceNotifierFactory.html#getNotifierSpecs-java.lang.Long-java.lang.String-">getNotifierSpecs</a></span>(java.lang.Long&nbsp;taskId,
                 java.lang.String&nbsp;outcome)</code>
@@ -247,7 +241,7 @@ extends java.lang.Object</pre>
 <h4>getNotifierSpecs</h4>
 <pre>public&nbsp;java.util.List&lt;java.lang.String&gt;&nbsp;getNotifierSpecs(java.lang.Long&nbsp;taskId,
                                                          java.lang.String&nbsp;outcome)
-                                                  throws <a href="../../../../../../com/centurylink/mdw/observer/ObserverException.html" title="class in com.centurylink.mdw.observer">ObserverException</a></pre>
+                                                  throws java.io.IOException</pre>
 <div class="block">Returns a list of notifier class name and template name pairs, delimited by colon</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -256,7 +250,7 @@ extends java.lang.Object</pre>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the registered notifier or null if not found</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../../../com/centurylink/mdw/observer/ObserverException.html" title="class in com.centurylink.mdw.observer">ObserverException</a></code></dd>
+<dd><code>java.io.IOException</code></dd>
 </dl>
 </li>
 </ul>
@@ -291,26 +285,10 @@ extends java.lang.Object</pre>
 <h4>getNotifiers</h4>
 <pre>public&nbsp;java.util.List&lt;<a href="../../../../../../com/centurylink/mdw/observer/task/TaskNotifier.html" title="interface in com.centurylink.mdw.observer.task">TaskNotifier</a>&gt;&nbsp;getNotifiers(java.lang.Long&nbsp;taskId,
                                                  java.lang.String&nbsp;outcome)
-                                          throws <a href="../../../../../../com/centurylink/mdw/observer/ObserverException.html" title="class in com.centurylink.mdw.observer">ObserverException</a></pre>
+                                          throws java.io.IOException</pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../../../com/centurylink/mdw/observer/ObserverException.html" title="class in com.centurylink.mdw.observer">ObserverException</a></code></dd>
-</dl>
-</li>
-</ul>
-<a name="getNotifiers-java.lang.Long-java.lang.Long-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getNotifiers</h4>
-<pre>public&nbsp;java.util.List&lt;<a href="../../../../../../com/centurylink/mdw/observer/task/TaskNotifier.html" title="interface in com.centurylink.mdw.observer.task">TaskNotifier</a>&gt;&nbsp;getNotifiers(java.lang.Long&nbsp;taskId,
-                                                 java.lang.Long&nbsp;processInstanceId,
-                                                 java.lang.String&nbsp;outcome)
-                                          throws <a href="../../../../../../com/centurylink/mdw/observer/ObserverException.html" title="class in com.centurylink.mdw.observer">ObserverException</a></pre>
-<dl>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../../../com/centurylink/mdw/observer/ObserverException.html" title="class in com.centurylink.mdw.observer">ObserverException</a></code></dd>
+<dd><code>java.io.IOException</code></dd>
 </dl>
 </li>
 </ul>
@@ -331,7 +309,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getNotifierInstance</h4>
 <pre>public&nbsp;<a href="../../../../../../com/centurylink/mdw/observer/task/TaskNotifier.html" title="interface in com.centurylink.mdw.observer.task">TaskNotifier</a>&nbsp;getNotifierInstance(java.lang.String&nbsp;notifierClassName,
-                                        <a href="../../../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;packageVO)
+                                        <a href="../../../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;pkg)
                                  throws <a href="../../../../../../com/centurylink/mdw/common/StrategyException.html" title="class in com.centurylink.mdw.common">StrategyException</a></pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>

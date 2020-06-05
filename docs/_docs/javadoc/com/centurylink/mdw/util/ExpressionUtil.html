@@ -146,8 +146,9 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/util/ExpressionUtil.html#substitute-java.lang.String-java.util.List-">substitute</a></span>(java.lang.String&nbsp;input,
-          java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/variable/VariableInstance.html" title="class in com.centurylink.mdw.model.variable">VariableInstance</a>&gt;&nbsp;variables)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/util/ExpressionUtil.html#substitute-java.lang.String-java.util.List-com.centurylink.mdw.model.workflow.Package-">substitute</a></span>(java.lang.String&nbsp;input,
+          java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/variable/VariableInstance.html" title="class in com.centurylink.mdw.model.variable">VariableInstance</a>&gt;&nbsp;variables,
+          <a href="../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;pkg)</code>
 <div class="block">Substitutes dynamic values for expressions in the input string.</div>
 </td>
 </tr>
@@ -276,7 +277,7 @@ extends java.lang.Object</pre>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>input</code> - raw input string</dd>
 <dd><code>model</code> - object containing the values to substitute</dd>
-<dd><code>map</code> - of images to populate based on special ${image:*.gif} syntax</dd>
+<dd><code>imageMap</code> - of images to populate based on special ${image:*.gif} syntax</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>string with values substituted</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
@@ -284,14 +285,15 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a name="substitute-java.lang.String-java.util.List-">
+<a name="substitute-java.lang.String-java.util.List-com.centurylink.mdw.model.workflow.Package-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>substitute</h4>
 <pre>public static&nbsp;java.lang.String&nbsp;substitute(java.lang.String&nbsp;input,
-                                          java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/variable/VariableInstance.html" title="class in com.centurylink.mdw.model.variable">VariableInstance</a>&gt;&nbsp;variables)
+                                          java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/variable/VariableInstance.html" title="class in com.centurylink.mdw.model.variable">VariableInstance</a>&gt;&nbsp;variables,
+                                          <a href="../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;pkg)
                                    throws <a href="../../../../com/centurylink/mdw/common/MdwException.html" title="class in com.centurylink.mdw.common">MdwException</a></pre>
 <div class="block">Substitutes dynamic values for expressions in the input string.</div>
 <dl>

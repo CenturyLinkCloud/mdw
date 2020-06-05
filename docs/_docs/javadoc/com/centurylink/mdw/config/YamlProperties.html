@@ -110,7 +110,8 @@ var activeTableTab = "activeTableTab";
 <pre>public class <span class="typeNameLabel">YamlProperties</span>
 extends java.lang.Object</pre>
 <div class="block">Reads and writes yaml configuration settings as if they were properties.
- Filename (minus extension) is the default property prefix.</div>
+ Filename (minus extension) is the default property prefix.
+ See https://centurylinkcloud.github.io/mdw/docs/guides/configuration/</div>
 </li>
 </ul>
 </div>
@@ -208,11 +209,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i7" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/YamlProperties.html#getString-java.lang.String-">getString</a></span>(java.lang.String&nbsp;name)</code>
-<div class="block">Examples:
-
- (in mdw.yaml):</div>
-</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/YamlProperties.html#getString-java.lang.String-">getString</a></span>(java.lang.String&nbsp;name)</code>&nbsp;</td>
 </tr>
 <tr id="i8" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
@@ -334,30 +331,6 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getString</h4>
 <pre>public&nbsp;java.lang.String&nbsp;getString(java.lang.String&nbsp;name)</pre>
-<div class="block">Examples:
-
- (in mdw.yaml):
- <pre>
-   # structured
-   database:
-     driver: org.mariadb.jdbc.Driver
-   # flat
-   hub.url: http://localhost:8080/mdw
-   # mixed
-   git:
-     remote.url: https://github.com/CenturyLinkCloud/mdw.git
- </pre>
-
- <code>
- getString("mdw.database.driver")
- getString("mdw.hub.url")
- getString("mdw.git.remote.url")
- </code></div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>name</code> - </dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-</dl>
 </li>
 </ul>
 <a name="isEncrypted-java.lang.String-">
@@ -438,13 +411,11 @@ extends java.lang.Object</pre>
 <pre>public static&nbsp;<a href="../../../../com/centurylink/mdw/config/YamlBuilder.html" title="class in com.centurylink.mdw.config">YamlBuilder</a>&nbsp;translate(java.lang.String&nbsp;prefix,
                                     java.util.Properties&nbsp;properties,
                                     java.util.Properties&nbsp;map)
-                             throws java.io.IOException,
-                                    java.lang.ReflectiveOperationException</pre>
+                             throws java.lang.ReflectiveOperationException</pre>
 <div class="block">Translate old-style properties to yaml according to rules in
  compatibility mapping file configurations.map.</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd>
 <dd><code>java.lang.ReflectiveOperationException</code></dd>
 </dl>
 </li>

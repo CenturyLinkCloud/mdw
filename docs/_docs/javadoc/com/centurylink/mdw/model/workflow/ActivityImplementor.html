@@ -17,8 +17,8 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":42,"i3":42,"i4":10,"i5":10,"i6":42,"i7":10,"i8":10,"i9":10,"i10":42,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10};
-var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"],32:["t6","Deprecated Methods"]};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10};
+var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
@@ -133,7 +133,7 @@ implements java.lang.Comparable&lt;<a href="../../../../../com/centurylink/mdw/m
 </tr>
 <tr class="altColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityImplementor.html#ActivityImplementor-org.json.JSONObject-">ActivityImplementor</a></span>(org.json.JSONObject&nbsp;json)</code>
-<div class="block">Parse old-style (non-annotation) .impl assets.</div>
+<div class="block">Parse .impl file.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -162,7 +162,7 @@ implements java.lang.Comparable&lt;<a href="../../../../../com/centurylink/mdw/m
 </a>
 <h3>Method Summary</h3>
 <table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
-<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t6" class="tableTab"><span><a href="javascript:show(32);">Deprecated Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colLast" scope="col">Method and Description</th>
@@ -177,153 +177,129 @@ implements java.lang.Comparable&lt;<a href="../../../../../com/centurylink/mdw/m
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityImplementor.html#getAttributeDescription--">getAttributeDescription</a></span>()</code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
-</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityImplementor.html#getCategory--">getCategory</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityImplementor.html#getBaseClassName--">getBaseClassName</a></span>()</code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
-</td>
-</tr>
-<tr id="i4" class="altColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityImplementor.html#getCategory--">getCategory</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i5" class="rowColor">
-<td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityImplementor.html#getIcon--">getIcon</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i6" class="altColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityImplementor.html#getIconName--">getIconName</a></span>()</code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
-</td>
-</tr>
-<tr id="i7" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>java.lang.Long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityImplementor.html#getId--">getId</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>javax.swing.ImageIcon</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityImplementor.html#getImageIcon--">getImageIcon</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityImplementor.html#getImplementorClass--">getImplementorClass</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i10" class="altColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityImplementor.html#getImplementorClassName--">getImplementorClassName</a></span>()</code>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
-</td>
-</tr>
-<tr id="i11" class="rowColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>org.json.JSONObject</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityImplementor.html#getJson--">getJson</a></span>()</code>
 <div class="block">Serialize old-style (non-annotation) .impl assets.</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityImplementor.html#getJsonName--">getJsonName</a></span>()</code>
 <div class="block">May be overridden to name the JSON object returned from <a href="../../../../../com/centurylink/mdw/model/Jsonable.html#getJson--"><code>Jsonable.getJson()</code></a>.</div>
 </td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityImplementor.html#getLabel--">getLabel</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityImplementor.html#getPackageName--">getPackageName</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityImplementor.html#getPagelet--">getPagelet</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityImplementor.html#getSimpleName--">getSimpleName</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>java.util.function.Supplier&lt;<a href="../../../../../com/centurylink/mdw/activity/types/GeneralActivity.html" title="interface in com.centurylink.mdw.activity.types">GeneralActivity</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityImplementor.html#getSupplier--">getSupplier</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityImplementor.html#hashCode--">hashCode</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityImplementor.html#isHidden--">isHidden</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityImplementor.html#isJava--">isJava</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i21" class="rowColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityImplementor.html#isLongRunning--">isLongRunning</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i22" class="altColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityImplementor.html#isScript--">isScript</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i23" class="rowColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityImplementor.html#isStart--">isStart</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i24" class="altColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityImplementor.html#isSubprocess--">isSubprocess</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i25" class="rowColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityImplementor.html#isTask--">isTask</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i26" class="altColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityImplementor.html#isWait--">isWait</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i27" class="rowColor">
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityImplementor.html#setCategory-java.lang.String-">setCategory</a></span>(java.lang.String&nbsp;category)</code>&nbsp;</td>
 </tr>
-<tr id="i28" class="altColor">
+<tr id="i24" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityImplementor.html#setHidden-boolean-">setHidden</a></span>(boolean&nbsp;hidden)</code>&nbsp;</td>
 </tr>
-<tr id="i29" class="rowColor">
+<tr id="i25" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityImplementor.html#setIcon-java.lang.String-">setIcon</a></span>(java.lang.String&nbsp;icon)</code>&nbsp;</td>
 </tr>
-<tr id="i30" class="altColor">
+<tr id="i26" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityImplementor.html#setId-java.lang.Long-">setId</a></span>(java.lang.Long&nbsp;id)</code>&nbsp;</td>
 </tr>
-<tr id="i31" class="rowColor">
+<tr id="i27" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityImplementor.html#setImageIcon-javax.swing.ImageIcon-">setImageIcon</a></span>(javax.swing.ImageIcon&nbsp;imageIcon)</code>&nbsp;</td>
 </tr>
-<tr id="i32" class="altColor">
+<tr id="i28" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityImplementor.html#setImplementorClass-java.lang.String-">setImplementorClass</a></span>(java.lang.String&nbsp;implClass)</code>&nbsp;</td>
 </tr>
-<tr id="i33" class="rowColor">
+<tr id="i29" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityImplementor.html#setLabel-java.lang.String-">setLabel</a></span>(java.lang.String&nbsp;label)</code>&nbsp;</td>
 </tr>
-<tr id="i34" class="altColor">
+<tr id="i30" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityImplementor.html#setPackageName-java.lang.String-">setPackageName</a></span>(java.lang.String&nbsp;packageName)</code>&nbsp;</td>
 </tr>
-<tr id="i35" class="rowColor">
+<tr id="i31" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityImplementor.html#setPagelet-java.lang.String-">setPagelet</a></span>(java.lang.String&nbsp;pagelet)</code>&nbsp;</td>
 </tr>
-<tr id="i36" class="altColor">
+<tr id="i32" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityImplementor.html#setSupplier-java.util.function.Supplier-">setSupplier</a></span>(java.util.function.Supplier&lt;<a href="../../../../../com/centurylink/mdw/activity/types/GeneralActivity.html" title="interface in com.centurylink.mdw.activity.types">GeneralActivity</a>&gt;&nbsp;supplier)</code>&nbsp;</td>
 </tr>
@@ -404,7 +380,7 @@ implements java.lang.Comparable&lt;<a href="../../../../../com/centurylink/mdw/m
 <h4>ActivityImplementor</h4>
 <pre>public&nbsp;ActivityImplementor(org.json.JSONObject&nbsp;json)
                     throws org.json.JSONException</pre>
-<div class="block">Parse old-style (non-annotation) .impl assets.</div>
+<div class="block">Parse .impl file.  Used only for built-in activities in META-INF.</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>org.json.JSONException</code></dd>
@@ -455,17 +431,6 @@ implements java.lang.Comparable&lt;<a href="../../../../../com/centurylink/mdw/m
 <pre>public&nbsp;void&nbsp;setImplementorClass(java.lang.String&nbsp;implClass)</pre>
 </li>
 </ul>
-<a name="getImplementorClassName--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getImplementorClassName</h4>
-<pre>@Deprecated
-public&nbsp;java.lang.String&nbsp;getImplementorClassName()</pre>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
-</li>
-</ul>
 <a name="getPackageName--">
 <!--   -->
 </a>
@@ -500,17 +465,6 @@ public&nbsp;java.lang.String&nbsp;getImplementorClassName()</pre>
 <li class="blockList">
 <h4>setCategory</h4>
 <pre>public&nbsp;void&nbsp;setCategory(java.lang.String&nbsp;category)</pre>
-</li>
-</ul>
-<a name="getBaseClassName--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getBaseClassName</h4>
-<pre>@Deprecated
-public&nbsp;java.lang.String&nbsp;getBaseClassName()</pre>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 </li>
 </ul>
 <a name="getLabel--">
@@ -549,17 +503,6 @@ public&nbsp;java.lang.String&nbsp;getBaseClassName()</pre>
 <pre>public&nbsp;void&nbsp;setIcon(java.lang.String&nbsp;icon)</pre>
 </li>
 </ul>
-<a name="getIconName--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getIconName</h4>
-<pre>@Deprecated
-public&nbsp;java.lang.String&nbsp;getIconName()</pre>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
-</li>
-</ul>
 <a name="getImageIcon--">
 <!--   -->
 </a>
@@ -594,17 +537,6 @@ public&nbsp;java.lang.String&nbsp;getIconName()</pre>
 <li class="blockList">
 <h4>setPagelet</h4>
 <pre>public&nbsp;void&nbsp;setPagelet(java.lang.String&nbsp;pagelet)</pre>
-</li>
-</ul>
-<a name="getAttributeDescription--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getAttributeDescription</h4>
-<pre>@Deprecated
-public&nbsp;java.lang.String&nbsp;getAttributeDescription()</pre>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 </li>
 </ul>
 <a name="isHidden--">

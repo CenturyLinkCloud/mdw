@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":9,"i4":9,"i5":9,"i6":9,"i7":9,"i8":10,"i9":10,"i10":10,"i11":9,"i12":10};
+var methods = {"i0":10,"i1":9,"i2":10,"i3":10,"i4":9,"i5":9,"i6":9,"i7":9,"i8":10,"i9":10,"i10":10,"i11":9,"i12":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -155,37 +155,37 @@ implements <a href="../../../../com/centurylink/mdw/cache/PreloadableCache.html"
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/camel/CamelRouteCache.html#clearCache--">clearCache</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
+<td class="colFirst"><code>static <a href="../../../../com/centurylink/mdw/model/asset/Asset.html" title="class in com.centurylink.mdw.model.asset">Asset</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/camel/CamelRouteCache.html#getAsset-com.centurylink.mdw.camel.CamelRouteCache.Key-">getAsset</a></span>(com.centurylink.mdw.camel.CamelRouteCache.Key&nbsp;key)</code>&nbsp;</td>
+</tr>
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/camel/CamelRouteCache.html#getCacheSize--">getCacheSize</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>org.apache.camel.CamelContext</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/camel/CamelRouteCache.html#getCamelContext--">getCamelContext</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>static org.apache.camel.model.RoutesDefinition</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/camel/CamelRouteCache.html#getRoutesDefinition-java.lang.String-">getRoutesDefinition</a></span>(java.lang.String&nbsp;name)</code>&nbsp;</td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>static org.apache.camel.model.RoutesDefinition</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/camel/CamelRouteCache.html#getRoutesDefinition-java.lang.String-java.lang.String-">getRoutesDefinition</a></span>(java.lang.String&nbsp;name,
                    java.lang.String&nbsp;modifier)</code>&nbsp;</td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>static <a href="../../../../com/centurylink/mdw/camel/RoutesDefinitionRuleSet.html" title="class in com.centurylink.mdw.camel">RoutesDefinitionRuleSet</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/camel/CamelRouteCache.html#getRoutesDefinitionRuleSet-com.centurylink.mdw.model.asset.AssetVersionSpec-java.lang.String-">getRoutesDefinitionRuleSet</a></span>(<a href="../../../../com/centurylink/mdw/model/asset/AssetVersionSpec.html" title="class in com.centurylink.mdw.model.asset">AssetVersionSpec</a>&nbsp;routeVersionSpec,
                           java.lang.String&nbsp;modifier)</code>
 <div class="block">Routes definition based on the route definition name and version</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../com/centurylink/mdw/camel/RoutesDefinitionRuleSet.html" title="class in com.centurylink.mdw.camel">RoutesDefinitionRuleSet</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/camel/CamelRouteCache.html#getRoutesDefinitionRuleSet-java.lang.String-java.lang.String-">getRoutesDefinitionRuleSet</a></span>(java.lang.String&nbsp;name,
                           java.lang.String&nbsp;modifier)</code>&nbsp;</td>
-</tr>
-<tr id="i7" class="rowColor">
-<td class="colFirst"><code>static <a href="../../../../com/centurylink/mdw/model/asset/Asset.html" title="class in com.centurylink.mdw.model.asset">Asset</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/camel/CamelRouteCache.html#getRuleSet-com.centurylink.mdw.camel.CamelRouteCache.Key-">getRuleSet</a></span>(com.centurylink.mdw.camel.CamelRouteCache.Key&nbsp;key)</code>&nbsp;</td>
 </tr>
 <tr id="i8" class="altColor">
 <td class="colFirst"><code>void</code></td>
@@ -395,13 +395,18 @@ implements <a href="../../../../com/centurylink/mdw/cache/PreloadableCache.html"
 </dl>
 </li>
 </ul>
-<a name="getRuleSet-com.centurylink.mdw.camel.CamelRouteCache.Key-">
+<a name="getAsset-com.centurylink.mdw.camel.CamelRouteCache.Key-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>getRuleSet</h4>
-<pre>public static&nbsp;<a href="../../../../com/centurylink/mdw/model/asset/Asset.html" title="class in com.centurylink.mdw.model.asset">Asset</a>&nbsp;getRuleSet(com.centurylink.mdw.camel.CamelRouteCache.Key&nbsp;key)</pre>
+<h4>getAsset</h4>
+<pre>public static&nbsp;<a href="../../../../com/centurylink/mdw/model/asset/Asset.html" title="class in com.centurylink.mdw.model.asset">Asset</a>&nbsp;getAsset(com.centurylink.mdw.camel.CamelRouteCache.Key&nbsp;key)
+                      throws java.io.IOException</pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd>
+</dl>
 </li>
 </ul>
 </li>

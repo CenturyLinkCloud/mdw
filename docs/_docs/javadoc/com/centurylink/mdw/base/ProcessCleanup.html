@@ -98,17 +98,7 @@ var activeTableTab = "activeTableTab";
 <li>java.lang.Object</li>
 <li>
 <ul class="inheritance">
-<li><a href="../../../../com/centurylink/mdw/model/monitor/LoadBalancedScheduledJob.html" title="class in com.centurylink.mdw.model.monitor">com.centurylink.mdw.model.monitor.LoadBalancedScheduledJob</a></li>
-<li>
-<ul class="inheritance">
-<li><a href="../../../../com/centurylink/mdw/services/workflow/RoundRobinScheduledJob.html" title="class in com.centurylink.mdw.services.workflow">com.centurylink.mdw.services.workflow.RoundRobinScheduledJob</a></li>
-<li>
-<ul class="inheritance">
 <li>com.centurylink.mdw.base.ProcessCleanup</li>
-</ul>
-</li>
-</ul>
-</li>
 </ul>
 </li>
 </ul>
@@ -127,23 +117,12 @@ var activeTableTab = "activeTableTab";
               <a href="../../../../com/centurylink/mdw/annotations/ScheduledJob.html#defaultEnabled--">defaultEnabled</a>=false,
               <a href="../../../../com/centurylink/mdw/annotations/ScheduledJob.html#isExclusive--">isExclusive</a>=true)
 public class <span class="typeNameLabel">ProcessCleanup</span>
-extends <a href="../../../../com/centurylink/mdw/services/workflow/RoundRobinScheduledJob.html" title="class in com.centurylink.mdw.services.workflow">RoundRobinScheduledJob</a>
+extends java.lang.Object
 implements <a href="../../../../com/centurylink/mdw/model/monitor/ScheduledJob.html" title="interface in com.centurylink.mdw.model.monitor">ScheduledJob</a></pre>
 <div class="block">This script cleans up old database entries from tables that are older than a specified time
  Make sure appropriate db package is imported and Cleanup-Runtime.sql is there.
- Add following to mdw.yaml
- timer.task:
- ProcessCleanup: # run every 15 min
- TimerClass: com.centurylink.mdw.timer.cleanup.ProcessCleanup
- Schedule: 0,15,30,45 * * * *    # to run daily at 2:30 am use : Schedule: 30 2 * * ? *
- RuntimeCleanupScript: Cleanup-Runtime.sql
- ProcessExpirationAgeInDays: 225 #How old process instance should be to be a candidate for deleting
- MaximumProcessExpiration: 1  #How many process instances to be deleted in each run
- ExternalEventExpirationAgeInDays: 225
- CommitInterval: 1000
- if you need to make change in above properties then first delete the db entry by identifying the row using
- this sql:  select * from event_instance where event_name like '%ScheduledJob%'
- Then re-start the server/instance for new clean-up properties to be effective.</div>
+ See the MDW configuration guide (search for cleanupscheduler):
+ https://centurylinkcloud.github.io/mdw/docs/guides/configuration/</div>
 </li>
 </ul>
 </div>
@@ -188,20 +167,6 @@ implements <a href="../../../../com/centurylink/mdw/model/monitor/ScheduledJob.h
 </td>
 </tr>
 </table>
-<ul class="blockList">
-<li class="blockList"><a name="methods.inherited.from.class.com.centurylink.mdw.services.workflow.RoundRobinScheduledJob">
-<!--   -->
-</a>
-<h3>Methods inherited from class&nbsp;com.centurylink.mdw.services.workflow.<a href="../../../../com/centurylink/mdw/services/workflow/RoundRobinScheduledJob.html" title="class in com.centurylink.mdw.services.workflow">RoundRobinScheduledJob</a></h3>
-<code><a href="../../../../com/centurylink/mdw/services/workflow/RoundRobinScheduledJob.html#runOnLoadBalancedInstance-com.centurylink.mdw.util.CallURL-">runOnLoadBalancedInstance</a></code></li>
-</ul>
-<ul class="blockList">
-<li class="blockList"><a name="methods.inherited.from.class.com.centurylink.mdw.model.monitor.LoadBalancedScheduledJob">
-<!--   -->
-</a>
-<h3>Methods inherited from class&nbsp;com.centurylink.mdw.model.monitor.<a href="../../../../com/centurylink/mdw/model/monitor/LoadBalancedScheduledJob.html" title="class in com.centurylink.mdw.model.monitor">LoadBalancedScheduledJob</a></h3>
-<code><a href="../../../../com/centurylink/mdw/model/monitor/LoadBalancedScheduledJob.html#runOnDifferentManagedServer-com.centurylink.mdw.util.CallURL-java.lang.String-">runOnDifferentManagedServer</a></code></li>
-</ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
 <!--   -->

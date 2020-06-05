@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":9,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":9,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -199,7 +199,7 @@ implements <a href="../../../../../com/centurylink/mdw/services/TestingServices.
 </tr>
 <tr id="i8" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/test/TestCaseList.html" title="class in com.centurylink.mdw.test">TestCaseList</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/test/TestingServicesImpl.html#getTestCases-java.lang.String:A-">getTestCases</a></span>(java.lang.String[]&nbsp;formats)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/test/TestingServicesImpl.html#getTestCases-java.lang.String:A-">getTestCases</a></span>(java.lang.String[]&nbsp;extensions)</code>
 <div class="block">Returns test cases for a specifics formats (eg: Groovy, Cucumber or JS).</div>
 </td>
 </tr>
@@ -213,13 +213,9 @@ implements <a href="../../../../../com/centurylink/mdw/services/TestingServices.
 </tr>
 <tr id="i11" class="rowColor">
 <td class="colFirst"><code>java.io.File</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/test/TestingServicesImpl.html#getTestResultsFile-java.lang.String-">getTestResultsFile</a></span>(java.lang.String&nbsp;format)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/test/TestingServicesImpl.html#getTestResultsFile--">getTestResultsFile</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i12" class="altColor">
-<td class="colFirst"><code>org.json.JSONObject</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/test/TestingServicesImpl.html#getTestResultsJson--">getTestResultsJson</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i13" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/test/TestingServicesImpl.html#setTestExecConfig-com.centurylink.mdw.test.TestExecConfig-">setTestExecConfig</a></span>(<a href="../../../../../com/centurylink/mdw/test/TestExecConfig.html" title="class in com.centurylink.mdw.test">TestExecConfig</a>&nbsp;config)</code>&nbsp;</td>
 </tr>
@@ -286,15 +282,12 @@ implements <a href="../../../../../com/centurylink/mdw/services/TestingServices.
 <ul class="blockList">
 <li class="blockList">
 <h4>getTestCaseList</h4>
-<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/test/TestCaseList.html" title="class in com.centurylink.mdw.test">TestCaseList</a>&nbsp;getTestCaseList(<a href="../../../../../com/centurylink/mdw/test/TestCase.html" title="class in com.centurylink.mdw.test">TestCase</a>&nbsp;testCase)
-                             throws <a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
+<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/test/TestCaseList.html" title="class in com.centurylink.mdw.test">TestCaseList</a>&nbsp;getTestCaseList(<a href="../../../../../com/centurylink/mdw/test/TestCase.html" title="class in com.centurylink.mdw.test">TestCase</a>&nbsp;testCase)</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../com/centurylink/mdw/services/TestingServices.html#getTestCaseList-com.centurylink.mdw.test.TestCase-">TestingServices</a></code></span></div>
 <div class="block">Build a TestCaseList which includes single test.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../../../../com/centurylink/mdw/services/TestingServices.html#getTestCaseList-com.centurylink.mdw.test.TestCase-">getTestCaseList</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/services/TestingServices.html" title="interface in com.centurylink.mdw.services">TestingServices</a></code></dd>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
 </dl>
 </li>
 </ul>
@@ -304,7 +297,7 @@ implements <a href="../../../../../com/centurylink/mdw/services/TestingServices.
 <ul class="blockList">
 <li class="blockList">
 <h4>getTestCases</h4>
-<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/test/TestCaseList.html" title="class in com.centurylink.mdw.test">TestCaseList</a>&nbsp;getTestCases(java.lang.String[]&nbsp;formats)
+<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/test/TestCaseList.html" title="class in com.centurylink.mdw.test">TestCaseList</a>&nbsp;getTestCases(java.lang.String[]&nbsp;extensions)
                           throws <a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../com/centurylink/mdw/services/TestingServices.html#getTestCases-java.lang.String:A-">TestingServices</a></code></span></div>
 <div class="block">Returns test cases for a specifics formats (eg: Groovy, Cucumber or JS).</div>
@@ -382,35 +375,17 @@ implements <a href="../../../../../com/centurylink/mdw/services/TestingServices.
 </dl>
 </li>
 </ul>
-<a name="getTestResultsJson--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getTestResultsJson</h4>
-<pre>public&nbsp;org.json.JSONObject&nbsp;getTestResultsJson()
-                                       throws <a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a>,
-                                              org.json.JSONException</pre>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../com/centurylink/mdw/services/TestingServices.html#getTestResultsJson--">getTestResultsJson</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/services/TestingServices.html" title="interface in com.centurylink.mdw.services">TestingServices</a></code></dd>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
-<dd><code>org.json.JSONException</code></dd>
-</dl>
-</li>
-</ul>
-<a name="getTestResultsFile-java.lang.String-">
+<a name="getTestResultsFile--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getTestResultsFile</h4>
-<pre>public&nbsp;java.io.File&nbsp;getTestResultsFile(java.lang.String&nbsp;format)
+<pre>public&nbsp;java.io.File&nbsp;getTestResultsFile()
                                 throws java.io.IOException</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../com/centurylink/mdw/services/TestingServices.html#getTestResultsFile-java.lang.String-">getTestResultsFile</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/services/TestingServices.html" title="interface in com.centurylink.mdw.services">TestingServices</a></code></dd>
+<dd><code><a href="../../../../../com/centurylink/mdw/services/TestingServices.html#getTestResultsFile--">getTestResultsFile</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/services/TestingServices.html" title="interface in com.centurylink.mdw.services">TestingServices</a></code></dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd>
 </dl>

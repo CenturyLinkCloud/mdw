@@ -231,7 +231,8 @@ implements java.lang.Runnable</pre>
 </tr>
 <tr id="i15" class="rowColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/test/TestCaseRun.html#getStringValue-com.centurylink.mdw.model.variable.VariableInstance-">getStringValue</a></span>(<a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html" title="class in com.centurylink.mdw.model.variable">VariableInstance</a>&nbsp;var)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/test/TestCaseRun.html#getStringValue-com.centurylink.mdw.model.variable.VariableInstance-com.centurylink.mdw.model.workflow.Package-">getStringValue</a></span>(<a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html" title="class in com.centurylink.mdw.model.variable">VariableInstance</a>&nbsp;var,
+              <a href="../../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;pkg)</code>&nbsp;</td>
 </tr>
 <tr id="i16" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityStubResponse.html" title="class in com.centurylink.mdw.model.workflow">ActivityStubResponse</a></code></td>
@@ -240,8 +241,8 @@ implements java.lang.Runnable</pre>
 </td>
 </tr>
 <tr id="i17" class="rowColor">
-<td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/event/AdapterStubResponse.html" title="class in com.centurylink.mdw.model.event">AdapterStubResponse</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/test/TestCaseRun.html#getStubResponse-com.centurylink.mdw.model.event.AdapterStubRequest-">getStubResponse</a></span>(<a href="../../../../../com/centurylink/mdw/model/event/AdapterStubRequest.html" title="class in com.centurylink.mdw.model.event">AdapterStubRequest</a>&nbsp;request)</code>
+<td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/adapter/AdapterStubResponse.html" title="class in com.centurylink.mdw.adapter">AdapterStubResponse</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/test/TestCaseRun.html#getStubResponse-com.centurylink.mdw.adapter.AdapterStubRequest-">getStubResponse</a></span>(<a href="../../../../../com/centurylink/mdw/adapter/AdapterStubRequest.html" title="class in com.centurylink.mdw.adapter">AdapterStubRequest</a>&nbsp;request)</code>
 <div class="block">Callback method invoked from stub server when notified from server.</div>
 </td>
 </tr>
@@ -606,16 +607,22 @@ implements java.lang.Runnable</pre>
 <pre>protected&nbsp;java.lang.String&nbsp;translateToYaml(java.util.Map&lt;java.lang.String,java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/workflow/ProcessInstance.html" title="class in com.centurylink.mdw.model.workflow">ProcessInstance</a>&gt;&gt;&nbsp;processInstances,
                                            java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;activityNames,
                                            <a href="../../../../../com/centurylink/mdw/test/TestCaseProcess.html" title="class in com.centurylink.mdw.test">TestCaseProcess</a>&nbsp;mainTestProc,
-                                           java.lang.String&nbsp;newLineChars)</pre>
+                                           java.lang.String&nbsp;newLineChars)
+                                    throws java.io.IOException</pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd>
+</dl>
 </li>
 </ul>
-<a name="getStringValue-com.centurylink.mdw.model.variable.VariableInstance-">
+<a name="getStringValue-com.centurylink.mdw.model.variable.VariableInstance-com.centurylink.mdw.model.workflow.Package-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getStringValue</h4>
-<pre>protected&nbsp;java.lang.String&nbsp;getStringValue(<a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html" title="class in com.centurylink.mdw.model.variable">VariableInstance</a>&nbsp;var)
+<pre>protected&nbsp;java.lang.String&nbsp;getStringValue(<a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html" title="class in com.centurylink.mdw.model.variable">VariableInstance</a>&nbsp;var,
+                                          <a href="../../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;pkg)
                                    throws <a href="../../../../../com/centurylink/mdw/test/TestException.html" title="class in com.centurylink.mdw.test">TestException</a></pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
@@ -704,13 +711,13 @@ implements java.lang.Runnable</pre>
 </dl>
 </li>
 </ul>
-<a name="getStubResponse-com.centurylink.mdw.model.event.AdapterStubRequest-">
+<a name="getStubResponse-com.centurylink.mdw.adapter.AdapterStubRequest-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getStubResponse</h4>
-<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/event/AdapterStubResponse.html" title="class in com.centurylink.mdw.model.event">AdapterStubResponse</a>&nbsp;getStubResponse(<a href="../../../../../com/centurylink/mdw/model/event/AdapterStubRequest.html" title="class in com.centurylink.mdw.model.event">AdapterStubRequest</a>&nbsp;request)
+<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/adapter/AdapterStubResponse.html" title="class in com.centurylink.mdw.adapter">AdapterStubResponse</a>&nbsp;getStubResponse(<a href="../../../../../com/centurylink/mdw/adapter/AdapterStubRequest.html" title="class in com.centurylink.mdw.adapter">AdapterStubRequest</a>&nbsp;request)
                                     throws org.json.JSONException,
                                            <a href="../../../../../com/centurylink/mdw/test/TestException.html" title="class in com.centurylink.mdw.test">TestException</a></pre>
 <div class="block">Callback method invoked from stub server when notified from server.

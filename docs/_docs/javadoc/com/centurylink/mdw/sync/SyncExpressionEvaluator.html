@@ -130,7 +130,8 @@ extends java.lang.Object</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/sync/SyncExpressionEvaluator.html#SyncExpressionEvaluator-java.lang.String:A-java.lang.String-java.util.Map-">SyncExpressionEvaluator</a></span>(java.lang.String[]&nbsp;syncedActivityIds,
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/sync/SyncExpressionEvaluator.html#SyncExpressionEvaluator-com.centurylink.mdw.model.workflow.Package-java.lang.String:A-java.lang.String-java.util.Map-">SyncExpressionEvaluator</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;pkg,
+                       java.lang.String[]&nbsp;syncedActivityIds,
                        java.lang.String&nbsp;syncExpression,
                        java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;idToEscapedName)</code>
 <div class="block">Creates a sync expression involving the specified activities.</div>
@@ -195,18 +196,20 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="SyncExpressionEvaluator-java.lang.String:A-java.lang.String-java.util.Map-">
+<a name="SyncExpressionEvaluator-com.centurylink.mdw.model.workflow.Package-java.lang.String:A-java.lang.String-java.util.Map-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>SyncExpressionEvaluator</h4>
-<pre>public&nbsp;SyncExpressionEvaluator(java.lang.String[]&nbsp;syncedActivityIds,
+<pre>public&nbsp;SyncExpressionEvaluator(<a href="../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;pkg,
+                               java.lang.String[]&nbsp;syncedActivityIds,
                                java.lang.String&nbsp;syncExpression,
                                java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;idToEscapedName)</pre>
 <div class="block">Creates a sync expression involving the specified activities.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>pkg</code> - workflow package</dd>
 <dd><code>syncedActivityIds</code> - the logical IDs of activities involved in the sync</dd>
 <dd><code>syncExpression</code> - exampleFormat: <pre>A38 && (A12 || A18)</pre></dd>
 </dl>
@@ -268,12 +271,6 @@ extends java.lang.Object</pre>
 <h4>getDefaultSyncExpression</h4>
 <pre>public&nbsp;java.lang.String&nbsp;getDefaultSyncExpression()</pre>
 <div class="block">Create the default sync expression based on the synced activity logical IDs.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>syncedActivityNames</code> - </dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>the default sync expression</dd>
-</dl>
 </li>
 </ul>
 </li>

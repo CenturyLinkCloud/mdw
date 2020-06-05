@@ -73,7 +73,7 @@ var activeTableTab = "activeTableTab";
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li><a href="#fields.inherited.from.class.com.centurylink.mdw.translator.VariableTranslator">Field</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
@@ -98,7 +98,7 @@ var activeTableTab = "activeTableTab";
 <li>java.lang.Object</li>
 <li>
 <ul class="inheritance">
-<li><a href="../../../../../../com/centurylink/mdw/translator/VariableTranslator.html" title="class in com.centurylink.mdw.translator">com.centurylink.mdw.translator.VariableTranslator</a></li>
+<li><a href="../../../../../../com/centurylink/mdw/common/translator/impl/BaseTranslator.html" title="class in com.centurylink.mdw.common.translator.impl">com.centurylink.mdw.common.translator.impl.BaseTranslator</a></li>
 <li>
 <ul class="inheritance">
 <li>com.centurylink.mdw.common.translator.impl.LongTranslator</li>
@@ -117,7 +117,7 @@ var activeTableTab = "activeTableTab";
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">LongTranslator</span>
-extends <a href="../../../../../../com/centurylink/mdw/translator/VariableTranslator.html" title="class in com.centurylink.mdw.translator">VariableTranslator</a></pre>
+extends <a href="../../../../../../com/centurylink/mdw/common/translator/impl/BaseTranslator.html" title="class in com.centurylink.mdw.common.translator.impl">BaseTranslator</a></pre>
 </li>
 </ul>
 </div>
@@ -131,11 +131,11 @@ extends <a href="../../../../../../com/centurylink/mdw/translator/VariableTransl
 </a>
 <h3>Field Summary</h3>
 <ul class="blockList">
-<li class="blockList"><a name="fields.inherited.from.class.com.centurylink.mdw.translator.VariableTranslator">
+<li class="blockList"><a name="fields.inherited.from.class.com.centurylink.mdw.variable.VariableTranslator">
 <!--   -->
 </a>
-<h3>Fields inherited from class&nbsp;com.centurylink.mdw.translator.<a href="../../../../../../com/centurylink/mdw/translator/VariableTranslator.html" title="class in com.centurylink.mdw.translator">VariableTranslator</a></h3>
-<code><a href="../../../../../../com/centurylink/mdw/translator/VariableTranslator.html#ARRAY_DELIMETER">ARRAY_DELIMETER</a>, <a href="../../../../../../com/centurylink/mdw/translator/VariableTranslator.html#EMPTY_STRING">EMPTY_STRING</a></code></li>
+<h3>Fields inherited from interface&nbsp;com.centurylink.mdw.variable.<a href="../../../../../../com/centurylink/mdw/variable/VariableTranslator.html" title="interface in com.centurylink.mdw.variable">VariableTranslator</a></h3>
+<code><a href="../../../../../../com/centurylink/mdw/variable/VariableTranslator.html#EMPTY_STRING">EMPTY_STRING</a></code></li>
 </ul>
 </li>
 </ul>
@@ -170,23 +170,23 @@ extends <a href="../../../../../../com/centurylink/mdw/translator/VariableTransl
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>java.lang.Object</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/common/translator/impl/LongTranslator.html#toObject-java.lang.String-">toObject</a></span>(java.lang.String&nbsp;pStr)</code>
-<div class="block">converts the passed in String to an equivalent object</div>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/common/translator/impl/LongTranslator.html#toObject-java.lang.String-">toObject</a></span>(java.lang.String&nbsp;str)</code>
+<div class="block">Deserialize an object from the given string</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/common/translator/impl/LongTranslator.html#toString-java.lang.Object-">toString</a></span>(java.lang.Object&nbsp;pObject)</code>
-<div class="block">Converts the passed in object to a string</div>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/common/translator/impl/LongTranslator.html#toString-java.lang.Object-">toString</a></span>(java.lang.Object&nbsp;obj)</code>
+<div class="block">Serialize the given object to a string value</div>
 </td>
 </tr>
 </table>
 <ul class="blockList">
-<li class="blockList"><a name="methods.inherited.from.class.com.centurylink.mdw.translator.VariableTranslator">
+<li class="blockList"><a name="methods.inherited.from.class.com.centurylink.mdw.common.translator.impl.BaseTranslator">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;com.centurylink.mdw.translator.<a href="../../../../../../com/centurylink/mdw/translator/VariableTranslator.html" title="class in com.centurylink.mdw.translator">VariableTranslator</a></h3>
-<code><a href="../../../../../../com/centurylink/mdw/translator/VariableTranslator.html#getPackage--">getPackage</a>, <a href="../../../../../../com/centurylink/mdw/translator/VariableTranslator.html#getTranslator-com.centurylink.mdw.model.workflow.Package-java.lang.String-">getTranslator</a>, <a href="../../../../../../com/centurylink/mdw/translator/VariableTranslator.html#getTranslator-java.lang.String-">getTranslator</a>, <a href="../../../../../../com/centurylink/mdw/translator/VariableTranslator.html#isDocumentReferenceVariable-com.centurylink.mdw.model.workflow.Package-java.lang.String-">isDocumentReferenceVariable</a>, <a href="../../../../../../com/centurylink/mdw/translator/VariableTranslator.html#isXmlDocumentTranslator-com.centurylink.mdw.model.workflow.Package-java.lang.String-">isXmlDocumentTranslator</a>, <a href="../../../../../../com/centurylink/mdw/translator/VariableTranslator.html#realToObject-com.centurylink.mdw.model.workflow.Package-java.lang.String-java.lang.String-">realToObject</a>, <a href="../../../../../../com/centurylink/mdw/translator/VariableTranslator.html#realToString-com.centurylink.mdw.model.workflow.Package-java.lang.String-java.lang.Object-">realToString</a>, <a href="../../../../../../com/centurylink/mdw/translator/VariableTranslator.html#setPackage-com.centurylink.mdw.model.workflow.Package-">setPackage</a>, <a href="../../../../../../com/centurylink/mdw/translator/VariableTranslator.html#toObject-java.lang.String-java.lang.String-">toObject</a>, <a href="../../../../../../com/centurylink/mdw/translator/VariableTranslator.html#toString-com.centurylink.mdw.model.workflow.Package-java.lang.String-java.lang.Object-">toString</a>, <a href="../../../../../../com/centurylink/mdw/translator/VariableTranslator.html#toString-java.lang.String-java.lang.Object-">toString</a></code></li>
+<h3>Methods inherited from class&nbsp;com.centurylink.mdw.common.translator.impl.<a href="../../../../../../com/centurylink/mdw/common/translator/impl/BaseTranslator.html" title="class in com.centurylink.mdw.common.translator.impl">BaseTranslator</a></h3>
+<code><a href="../../../../../../com/centurylink/mdw/common/translator/impl/BaseTranslator.html#getPackage--">getPackage</a>, <a href="../../../../../../com/centurylink/mdw/common/translator/impl/BaseTranslator.html#setPackage-com.centurylink.mdw.model.workflow.Package-">setPackage</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -194,6 +194,13 @@ extends <a href="../../../../../../com/centurylink/mdw/translator/VariableTransl
 </a>
 <h3>Methods inherited from class&nbsp;java.lang.Object</h3>
 <code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
+</ul>
+<ul class="blockList">
+<li class="blockList"><a name="methods.inherited.from.class.com.centurylink.mdw.variable.VariableTranslator">
+<!--   -->
+</a>
+<h3>Methods inherited from interface&nbsp;com.centurylink.mdw.variable.<a href="../../../../../../com/centurylink/mdw/variable/VariableTranslator.html" title="interface in com.centurylink.mdw.variable">VariableTranslator</a></h3>
+<code><a href="../../../../../../com/centurylink/mdw/variable/VariableTranslator.html#isDocumentReferenceVariable--">isDocumentReferenceVariable</a></code></li>
 </ul>
 </li>
 </ul>
@@ -232,18 +239,9 @@ extends <a href="../../../../../../com/centurylink/mdw/translator/VariableTransl
 <ul class="blockList">
 <li class="blockList">
 <h4>toString</h4>
-<pre>public&nbsp;java.lang.String&nbsp;toString(java.lang.Object&nbsp;pObject)</pre>
-<div class="block">Converts the passed in object to a string</div>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../../com/centurylink/mdw/variable/VariableTranslator.html#toString-java.lang.Object-">toString</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../com/centurylink/mdw/variable/VariableTranslator.html" title="interface in com.centurylink.mdw.variable">VariableTranslator</a></code></dd>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../../com/centurylink/mdw/translator/VariableTranslator.html#toString-java.lang.Object-">toString</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../com/centurylink/mdw/translator/VariableTranslator.html" title="class in com.centurylink.mdw.translator">VariableTranslator</a></code></dd>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>pObject</code> - </dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>String</dd>
-</dl>
+<pre>public&nbsp;java.lang.String&nbsp;toString(java.lang.Object&nbsp;obj)</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../../com/centurylink/mdw/variable/VariableTranslator.html#toString-java.lang.Object-">VariableTranslator</a></code></span></div>
+<div class="block">Serialize the given object to a string value</div>
 </li>
 </ul>
 <a name="toObject-java.lang.String-">
@@ -252,18 +250,9 @@ extends <a href="../../../../../../com/centurylink/mdw/translator/VariableTransl
 <ul class="blockListLast">
 <li class="blockList">
 <h4>toObject</h4>
-<pre>public&nbsp;java.lang.Object&nbsp;toObject(java.lang.String&nbsp;pStr)</pre>
-<div class="block">converts the passed in String to an equivalent object</div>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../../com/centurylink/mdw/variable/VariableTranslator.html#toObject-java.lang.String-">toObject</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../com/centurylink/mdw/variable/VariableTranslator.html" title="interface in com.centurylink.mdw.variable">VariableTranslator</a></code></dd>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../../com/centurylink/mdw/translator/VariableTranslator.html#toObject-java.lang.String-">toObject</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../com/centurylink/mdw/translator/VariableTranslator.html" title="class in com.centurylink.mdw.translator">VariableTranslator</a></code></dd>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>pStr</code> - </dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>Object</dd>
-</dl>
+<pre>public&nbsp;java.lang.Object&nbsp;toObject(java.lang.String&nbsp;str)</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../../com/centurylink/mdw/variable/VariableTranslator.html#toObject-java.lang.String-">VariableTranslator</a></code></span></div>
+<div class="block">Deserialize an object from the given string</div>
 </li>
 </ul>
 </li>
@@ -319,7 +308,7 @@ extends <a href="../../../../../../com/centurylink/mdw/translator/VariableTransl
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li><a href="#fields.inherited.from.class.com.centurylink.mdw.translator.VariableTranslator">Field</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>

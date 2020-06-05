@@ -48,7 +48,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li>Prev&nbsp;Class</li>
-<li><a href="../../../../../com/centurylink/mdw/services/workflow/ProcessServicesImpl.html" title="class in com.centurylink.mdw.services.workflow"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../../../com/centurylink/mdw/services/workflow/WorkflowServicesImpl.html" title="class in com.centurylink.mdw.services.workflow"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../index.html?com/centurylink/mdw/services/workflow/DesignServicesImpl.html" target="_top">Frames</a></li>
@@ -252,13 +252,10 @@ implements <a href="../../../../../com/centurylink/mdw/services/DesignServices.h
 <ul class="blockList">
 <li class="blockList">
 <h4>getProcessDefinitions</h4>
-<pre>public&nbsp;java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&gt;&nbsp;getProcessDefinitions(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)
-                                              throws <a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
+<pre>public&nbsp;java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&gt;&nbsp;getProcessDefinitions(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../../../../com/centurylink/mdw/services/DesignServices.html#getProcessDefinitions-com.centurylink.mdw.common.service.Query-">getProcessDefinitions</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/services/DesignServices.html" title="interface in com.centurylink.mdw.services">DesignServices</a></code></dd>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
 </dl>
 </li>
 </ul>
@@ -268,10 +265,13 @@ implements <a href="../../../../../com/centurylink/mdw/services/DesignServices.h
 <ul class="blockList">
 <li class="blockList">
 <h4>getProcessDefinition</h4>
-<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&nbsp;getProcessDefinition(java.lang.Long&nbsp;id)</pre>
+<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&nbsp;getProcessDefinition(java.lang.Long&nbsp;id)
+                             throws java.io.IOException</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../../../../com/centurylink/mdw/services/DesignServices.html#getProcessDefinition-java.lang.Long-">getProcessDefinition</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/services/DesignServices.html" title="interface in com.centurylink.mdw.services">DesignServices</a></code></dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd>
 </dl>
 </li>
 </ul>
@@ -403,7 +403,7 @@ implements <a href="../../../../../com/centurylink/mdw/services/DesignServices.h
 <div class="subNav">
 <ul class="navList">
 <li>Prev&nbsp;Class</li>
-<li><a href="../../../../../com/centurylink/mdw/services/workflow/ProcessServicesImpl.html" title="class in com.centurylink.mdw.services.workflow"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../../../com/centurylink/mdw/services/workflow/WorkflowServicesImpl.html" title="class in com.centurylink.mdw.services.workflow"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../index.html?com/centurylink/mdw/services/workflow/DesignServicesImpl.html" target="_top">Frames</a></li>
