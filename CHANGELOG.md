@@ -17,8 +17,14 @@
   https://github.com/CenturyLinkCloud/mdw/tree/master/mdw/database
 - JSON-format package meta files (.mdw/package.json) are no longer supported.
   Apps still using package.json must convert to package.yaml using the CLI (`mdw convert --packages`).
+- Classes in package `com.centurylink.mdw.connector.adapter` have been moved `com.centurylink.mdw.adapter`.
+- Model class `com.centurylink.mdw.model.Response` has been moved to package `com.centurylink.mdw.model.request`.
+- Class `com.centurylink.mdw.cache.impl.PackageCache` has been moved to package `com.centurylink.mdw.cache.asset`.
+- Method `Package.getCloudClassLoader()` has been renamed to `getClassLoader()`.
+- Static method `ApplicationContext.getContextCloudClassLoader()` has been renamed to `getContextPackageClassLoader`.
+- Constructor for `com.centurylink.mdw.event.EventHandlerException` no longer takes a code.  
 - API methods `WorkflowServices.invokeServiceProcess()` and `ProcessEngineDriver.invokeServiceProcess()`
-  now return a Response modle object instead of a plain string.  To unwrap the raw string payload,
+  now return a Response model object instead of a plain string.  To unwrap the raw string payload,
   use `Response.getContent()`.
 
 ## [6.1.35](https://github.com/CenturyLinkCloud/mdw/tree/6.1.35) (2020-05-14)
@@ -121,9 +127,9 @@
 
 **Compatibility Notes:**
 
-- To avoid `Error: zip END header not found​` when updating to 6.1.30 assets, install the latest 
-  [CLI](https://centurylinkcloud.github.io/mdw/docs/getting-started/cli/) 
-  and/or [MDW Studio](https://centurylinkcloud.github.io/mdw/docs/guides/mdw-studio/) version 2.0.2 or later. 
+- To avoid `Error: zip END header not found​` when updating to 6.1.30 assets, install the latest
+  [CLI](https://centurylinkcloud.github.io/mdw/docs/getting-started/cli/)
+  and/or [MDW Studio](https://centurylinkcloud.github.io/mdw/docs/guides/mdw-studio/) version 2.0.2 or later.
 
 ## [6.1.29](https://github.com/CenturyLinkCloud/mdw/tree/6.1.29) (2019-12-13)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.28...6.1.29)
@@ -171,7 +177,7 @@
           <version>2.5.8</version>
           <type>pom</type>
       </dependency>  
-  ``` 
+  ```
 
 ## [6.1.28](https://github.com/CenturyLinkCloud/mdw/tree/6.1.28) (2019-11-22)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.27...6.1.28)
@@ -191,7 +197,7 @@
 
 **Compatibility Notes:**
 
-  - For #758 Activity logging, in-place db upgrade automatically adds the new ACTIVITY_LOG table.  If your db app user 
+  - For #758 Activity logging, in-place db upgrade automatically adds the new ACTIVITY_LOG table.  If your db app user
     lacks permission, you'll need to create the table by executing the steps at the bottom of the upgrade SQL scripts:
      - https://github.com/CenturyLinkCloud/mdw/blob/master/mdw/database/mysql/mdw_upgrade_6.0_To_6.1.sql
      - https://github.com/CenturyLinkCloud/mdw/blob/master/mdw/database/oracle/mdw_upgrade_6.0_To_6.1.sql
@@ -240,7 +246,7 @@
 
 **Compatibility Notes:**
   - Due to [\#748](https://github.com/CenturyLinkCloud/mdw/issues/748), MDW Studio 1.3.6+ is required for 6.1.26.
-    Without upgrading to 1.3.6+, base activities will be missing from Studio's Toolbox view. 
+    Without upgrading to 1.3.6+, base activities will be missing from Studio's Toolbox view.
 
 ## [6.1.25](https://github.com/CenturyLinkCloud/mdw/tree/6.1.25) (2019-09-06)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.24...6.1.25)
