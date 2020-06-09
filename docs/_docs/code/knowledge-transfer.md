@@ -16,5 +16,5 @@ title: MDW Knowledge Transfer Sessions
   - [Milestones](#milestones)
   - [mdw-ctl-internal](#mdw-ctl-internal)
   - [Autotests](#autotests)
-  - [CLI](#cli)
+  - [CLI/Environments](#cli-environments)
   - [MDW Studio](#mdw-studio)
