@@ -49,7 +49,7 @@ public class JsonObjectTranslator extends DocumentReferenceTranslator implements
         return (JSONObject) obj;
     }
 
-    public Object fromJson(JSONObject json) throws TranslationException {
+    public Object fromJson(JSONObject json, String type) throws TranslationException {
         return json;
     }
 }

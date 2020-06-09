@@ -173,7 +173,7 @@ public class SwaggerValidatorActivity extends DefaultActivityImpl {
         if (responseVariable.getType().equals(Jsonable.class.getName()))
             responseObject = statusResponse; // _type has not been set, so serialization would fail
         else
-            responseObject = serviceValues.fromJson(responseVariableName, statusResponse.getJson());
+            responseObject = serviceValues.fromJson(responseVariableName, statusResponse.getJson(), getDocumentType(responseVariableName));
         setVariableValue(responseVariableName, responseObject);
         return !result.isError();
     }

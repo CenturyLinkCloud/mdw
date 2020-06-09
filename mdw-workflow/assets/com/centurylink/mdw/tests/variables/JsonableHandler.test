@@ -6,12 +6,9 @@ def response = post http("api/REST/variablesTest/Jsonable") {
             "mdw-request-id": masterRequestId
     ]
     payload = """{
-  "_type": "com.centurylink.mdw.tests.variables.Mountain",
-  "mountain": {
-    "name": "Kilimanjaro",
-    "elevation": 19341,
-    "country": "Tanzania"
-  } 
+  "name": "Kilimanjaro",
+  "elevation": 19341,
+  "country": "Tanzania"
 }"""
 }
 assert response.code == 200

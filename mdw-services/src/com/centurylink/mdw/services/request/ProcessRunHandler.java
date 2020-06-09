@@ -87,10 +87,10 @@ public abstract class ProcessRunHandler extends BaseHandler {
                 values = new HashMap<>();
                 String varType = requestVar.getType();
                 if (pkg.getTranslator(varType).isDocumentReferenceVariable()) {
-                    Object document = pkg.getObjectValue(varType, request.getContent(), true, message.getClass().getName());
+                    Object docObj = pkg.getObjectValue(varType, request.getContent(), true, message.getClass().getName());
                     String path = headers.get(Listener.METAINFO_REQUEST_PATH);
                     Long requestId = new Long(headers.get(Listener.METAINFO_DOCUMENT_ID));
-                    Long docId = ServiceLocator.getEventServices().createDocument(varType, OwnerType.DOCUMENT, requestId, document, pkg, path);
+                    Long docId = ServiceLocator.getEventServices().createDocument(varType, OwnerType.DOCUMENT, requestId, docObj, pkg, path);
                     DocumentReference docRef = new DocumentReference(docId);
                     values.put("request", docRef.toString());
                 } else {

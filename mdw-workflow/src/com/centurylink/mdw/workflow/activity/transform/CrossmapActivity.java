@@ -109,7 +109,7 @@ public class CrossmapActivity extends DefaultActivityImpl {
                 setVariableValue(outputVar.getName(), output);
             }
             else if (outputTrans instanceof JsonTranslator) {
-                Object output = ((JsonTranslator)outputTrans).fromJson(new JsonObject(builder.getString()));
+                Object output = ((JsonTranslator)outputTrans).fromJson(new JsonObject(builder.getString()), getDocumentType(outputVar.getName()));
                 setVariableValue(outputVar.getName(), output);
             }
 

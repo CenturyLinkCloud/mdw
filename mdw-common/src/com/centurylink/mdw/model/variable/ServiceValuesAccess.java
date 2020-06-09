@@ -153,16 +153,13 @@ public class ServiceValuesAccess {
         }
     }
 
-    /**
-     * For Jsonable, _type property is required.
-     */
-    public Object fromJson(String variableName, JSONObject json) throws TranslationException {
+    public Object fromJson(String variableName, JSONObject json, String type) throws TranslationException {
         if (json == null)
             return null;
         Variable variable = context.getProcess().getVariable(variableName);
         VariableTranslator translator = context.getPackage().getTranslator(variable.getType());
         if (translator instanceof JsonTranslator) {
-            return ((JsonTranslator)translator).fromJson(json);
+            return ((JsonTranslator)translator).fromJson(json, type);
         }
         else {
             throw new TranslationException("Cannot convert from JSON using " + translator.getClass());

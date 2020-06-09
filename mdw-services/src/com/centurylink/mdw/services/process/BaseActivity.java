@@ -858,6 +858,16 @@ public abstract class BaseActivity implements GeneralActivity {
         }
     }
 
+    protected String getDocumentType(String variableName) throws ActivityException {
+        VariableInstance var = getVariableInstance(variableName);
+        try {
+            DocumentReference docRef = new DocumentReference(var.getStringValue(getPackage()));
+            return engine.getDocument(docRef, false).getType();
+        } catch (DataAccessException ex) {
+            throw new ActivityException("Error retrieving document for: " + variableName, ex);
+        }
+    }
+
     protected String getDocumentContent(DocumentReference docRef)
             throws ActivityException {
         Document doc;
@@ -1228,7 +1238,8 @@ public abstract class BaseActivity implements GeneralActivity {
     @Deprecated
     protected Object getVariableValue(String varName) throws ActivityException {
         VariableInstance var = getVariableInstance(varName);
-        if (var == null) return null;
+        if (var == null)
+            return null;
         Object value = var.getData(getPackage());
         if (var.isDocument(pkg)) {
             DocumentReference docref = (DocumentReference)value;

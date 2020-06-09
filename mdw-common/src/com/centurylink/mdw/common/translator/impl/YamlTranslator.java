@@ -15,9 +15,13 @@
  */
 package com.centurylink.mdw.common.translator.impl;
 
-import java.beans.IntrospectionException;
-import java.util.Set;
-
+import com.centurylink.mdw.bpm.ProcessExecutionPlanDocument;
+import com.centurylink.mdw.model.ExecutionPlan;
+import com.centurylink.mdw.model.Jsonable;
+import com.centurylink.mdw.translator.DocumentReferenceTranslator;
+import com.centurylink.mdw.translator.JsonTranslator;
+import com.centurylink.mdw.translator.TranslationException;
+import com.centurylink.mdw.translator.XmlDocumentTranslator;
 import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -28,13 +32,8 @@ import org.yaml.snakeyaml.constructor.ConstructorException;
 import org.yaml.snakeyaml.introspector.Property;
 import org.yaml.snakeyaml.representer.Representer;
 
-import com.centurylink.mdw.bpm.ProcessExecutionPlanDocument;
-import com.centurylink.mdw.model.ExecutionPlan;
-import com.centurylink.mdw.model.Jsonable;
-import com.centurylink.mdw.translator.DocumentReferenceTranslator;
-import com.centurylink.mdw.translator.JsonTranslator;
-import com.centurylink.mdw.translator.TranslationException;
-import com.centurylink.mdw.translator.XmlDocumentTranslator;
+import java.beans.IntrospectionException;
+import java.util.Set;
 
 /**
  * By convention, the first line of serialized yaml is a comment that
@@ -125,14 +124,9 @@ public class YamlTranslator extends DocumentReferenceTranslator
     }
 
     @Override
-    public Object fromJson(JSONObject json) throws TranslationException {
+    public Object fromJson(JSONObject json, String type) throws TranslationException {
         try {
-            if (json.has(JSONABLE_TYPE)) {
-                return createJsonable(json);
-            }
-            else {
-                throw new UnsupportedOperationException("No Json > Yaml deserialization for non-Jsonables");
-            }
+            return createJsonable(json, type);
         }
         catch (Exception ex) {
             throw new TranslationException(ex.getMessage(), ex);
