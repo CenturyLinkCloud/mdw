@@ -17,7 +17,6 @@ package com.centurylink.mdw.services.rest;
 
 import com.centurylink.mdw.cache.asset.PackageCache;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.StatusResponse;
 import com.centurylink.mdw.model.asset.AssetRequest;
@@ -33,7 +32,6 @@ import com.centurylink.mdw.util.log.StandardLogger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,30 +77,16 @@ public class ProcessInvoker extends JsonRestService {
             if (JSONObject.class.getName().equals(requestType)) {
                 requestObj = content;
             }
-            else if (Jsonable.class.getName().equals(requestType)) {
+            else {
                 // try to instantiate specify bodyParam type if configured
                 Parameter bodyParam = assetRequest.getBodyParameter();
                 if (bodyParam.getDataType() != null) {
-                    // TODO primitive types
                     Package processPackage = PackageCache.getPackage(process.getPackageName());
-                    try {
-                        Class<?> bodyClass = processPackage.getClassLoader().loadClass(bodyParam.getDataType());
-                        if (Jsonable.class.isAssignableFrom(bodyClass)) {
-                            Constructor<? extends Jsonable> constructor = bodyClass.asSubclass(Jsonable.class).getConstructor(JSONObject.class);
-                            requestObj = constructor.newInstance(content);
-                        }
-                    }
-                    catch (ClassNotFoundException ex) {
-                        logger.error("No class found for dataType: " + bodyParam.getDataType(), ex);
-                    }
-                    catch (ReflectiveOperationException ex) {
-                        throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
-                    }
-                }
-                if (requestObj == null) {
+                    requestObj = processPackage.getObjectValue(requestVar.getType(), content.toString(), true, bodyParam.getDataType());
                 }
             }
-            else {
+
+            if (requestObj == null) {
                 requestObj = content.toString(2);
             }
         }
