@@ -17,6 +17,7 @@ package com.centurylink.mdw.timer.process;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import com.centurylink.mdw.constant.OwnerType;
@@ -54,8 +55,8 @@ public class ScheduledProcessStart extends ExternalEventHandlerBase
             SimpleDateFormat sdf = new SimpleDateFormat("yyMMddHHmmss");
             String timetag = sdf.format(new Date(DatabaseAccess.getCurrentTime()));
             String masterRequestId = "ScheduledProcess."+processName+"."+timetag;
-            Long procInstId = driver.startProcess(processId, masterRequestId,
-                    OwnerType.SYSTEM, new Long(timetag), args.getParameters(), null, null, null);
+            Long procInstId = driver.start(processId, masterRequestId,
+                    OwnerType.SYSTEM, new Long(timetag), new HashMap<>(args.getParameters()), null, null, null);
             logger.info("[ScheduledProcessStart] Started " + processName
                     + " Process Instance ID = " + procInstId);
         } catch (Exception ex) {

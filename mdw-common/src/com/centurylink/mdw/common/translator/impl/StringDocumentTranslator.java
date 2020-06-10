@@ -39,7 +39,7 @@ public class StringDocumentTranslator extends DocumentReferenceTranslator implem
     }
 
     @Override
-    public Object fromJson(JSONObject json) throws TranslationException {
+    public Object fromJson(JSONObject json, String type) throws TranslationException {
         return json.toString(2);
     }
 }

@@ -208,7 +208,7 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
             ProcessInstance pi = getEngine().createProcessInstance(
                     process.getId(), OwnerType.PROCESS_INSTANCE,
                     getProcessInstanceId(), OwnerType.ACTIVITY_INSTANCE, getActivityInstanceId(),
-                    getMasterRequestId(), parameters);
+                    getMasterRequestId(), new HashMap<>(parameters));
             piplan.setInstanceId(pi.getId().toString());
             // create initial transition instance
             piplan.setStatusCode(WorkStatus.STATUS_IN_PROGRESS);
@@ -391,8 +391,8 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
                 List<Variable> childVars = process.getVariables();
                 int perfLevel = getEngine().getPerformanceLevel();
                 Map<String,String> parameters = createVariableBindings(childVars, piplan, perfLevel >= 5); // DHO
-                outParameters = engineDriver.invokeServiceAsSubprocess(process.getId(),
-                        getProcessInstanceId(), getMasterRequestId(), parameters, perfLevel);
+                outParameters = engineDriver.invokeSubprocess(process.getId(),
+                        getProcessInstanceId(), getMasterRequestId(), new HashMap<>(parameters), perfLevel);
 
                 procInstId = engineDriver.getMainProcessInstanceId();
             } catch (Exception e) {

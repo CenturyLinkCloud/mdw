@@ -4,9 +4,9 @@ start process("Jsonable.proc") {
     variables = [input: '''{
   "_type": "com.centurylink.mdw.tests.variables.Mountain",
   "mountain": {
-    "name": "Denali",
-    "elevation": 20310,
-    "country": "United States"
+  "name": "Denali",
+  "elevation": 20310,
+  "country": "United States"
   }
 }''',
             testCase: 'Input Variable'

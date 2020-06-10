@@ -69,7 +69,7 @@ public class ProcessExecutor implements RetryableTransaction {
     }
 
     public ProcessInstance createProcessInstance(Long processId, String ownerType, Long ownerId,
-            String secondaryOwnerType, Long secondaryOwnerId, String masterRequestId, Map<String,String> parameters)
+            String secondaryOwnerType, Long secondaryOwnerId, String masterRequestId, Map<String,Object> values)
             throws ProcessException, DataAccessException {
 
         String label = null, template = null;
@@ -86,10 +86,10 @@ public class ProcessExecutor implements RetryableTransaction {
                 if (pkg != null)
                     pkgName = pkg.getName();
             }
-            if (process.getName().startsWith("$") && parameters.containsKey(process.getName())) {
+            if (process.getName().startsWith("$") && values.containsKey(process.getName())) {
                 // template process -- name is provided in params
-                label = parameters.get(process.getName());
-                parameters.remove(process.getName());
+                label = values.get(process.getName()).toString();
+                values.remove(process.getName());
                 template = process.getLabel();
                 if (!StringUtils.isBlank(pkgName))
                     template = pkgName + "/" + template;
@@ -106,12 +106,12 @@ public class ProcessExecutor implements RetryableTransaction {
             transaction = startTransaction();
             return engineImpl.createProcessInstance(processId, ownerType,
                     ownerId, secondaryOwnerType, secondaryOwnerId,
-                    masterRequestId, parameters, label, template);
+                    masterRequestId, values, label, template);
         } catch (MdwException ex) {
             if (canRetryTransaction(ex)) {
                 transaction = (TransactionWrapper)initTransactionRetry(transaction);
                 return ((ProcessExecutor)getTransactionRetrier()).createProcessInstance(processId, ownerType,
-                        ownerId, secondaryOwnerType, secondaryOwnerId, masterRequestId, parameters);
+                        ownerId, secondaryOwnerType, secondaryOwnerId, masterRequestId, values);
             }
             else {
                 throw ex;

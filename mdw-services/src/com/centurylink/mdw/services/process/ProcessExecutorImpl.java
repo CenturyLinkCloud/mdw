@@ -189,57 +189,18 @@ class ProcessExecutorImpl {
         }
     }
 
-    void updateDocumentContent(DocumentReference docRef, Object doc, Package pkg)
+    void updateDocumentContent(DocumentReference docRef, Object docObj, Package pkg)
             throws DataAccessException {
         try {
-            Document docvo = edao.getDocument(docRef.getDocumentId(), false);
-            if (doc instanceof String)
-                docvo.setContent((String)doc);
+            Document doc = edao.getDocument(docRef.getDocumentId(), false);
+            if (docObj instanceof String)
+                doc.setContent((String)docObj);
             else
-                docvo.setObject(doc);
-            edao.updateDocumentContent(docvo.getId(), docvo.getContent(pkg));
+                doc.setObject(docObj);
+            edao.updateDocumentContent(doc.getId(), doc.getContent(pkg));
         } catch (SQLException ex) {
             throw new DataAccessException(ex.getMessage(), ex);
         }
-    }
-
-    private List<VariableInstance> convertParameters(Map<String,String> eventParams,
-            Process process, Long procInstId) throws ProcessException, DataAccessException {
-        List<VariableInstance> vars = new ArrayList<>();
-        if (eventParams == null || eventParams.isEmpty()) {
-            return vars;
-        }
-        for (String varName : eventParams.keySet()) {
-            Variable variable = process.getVariable(varName);
-            if (variable == null) {
-                String msg = "there is no variable named " + varName
-                        + " in process with ID " + process.getId()
-                        + " for parameter binding";
-                throw new ProcessException(msg);
-            }
-            VariableInstance var = new VariableInstance();
-            var.setName(variable.getName());
-            var.setVariableId(variable.getId());
-            var.setType(variable.getType());
-            String value = eventParams.get(varName);
-            if (value != null && value.length() > 0) {
-                if (getPackage(process).getTranslator(var.getType()).isDocumentReferenceVariable()) {
-                    if (value.startsWith("DOCUMENT:")) {
-                        var.setStringValue(value);
-                    }
-                    else {
-                        var.setData(createDocument(variable.getType(), OwnerType.PROCESS_INSTANCE, procInstId, value, getPackage(process)));
-                    }
-                }
-                else  {
-                    var.setStringValue(value);
-                }
-                vars.add(var);    // only create variable instances when value is not null
-            }
-            // vars.add(var);    // if we put here, we create variables regardless if value is null
-        }
-
-        return vars;
     }
 
     /**
@@ -247,7 +208,7 @@ class ProcessExecutorImpl {
      */
     ProcessInstance createProcessInstance(Long processId, String ownerType,
             Long ownerId, String secondaryOwnerType, Long secondaryOwnerId,
-            String masterRequestId, Map<String,String> parameters, String label, String template)
+            String masterRequestId, Map<String,Object> values, String label, String template)
             throws ProcessException, DataAccessException {
         ProcessInstance pi = null;
         try {
@@ -285,7 +246,7 @@ class ProcessExecutorImpl {
             if (template != null)
                 pi.setTemplate(template);
             edao.createProcessInstance(pi);
-            createVariableInstancesFromEventMessage(pi, parameters);
+            createVariableInstances(pi, values);
         } catch (IOException ex) {
             throw new ProcessException("Cannot load process " + processId, ex);
         } catch (SQLException ex) {
@@ -300,16 +261,44 @@ class ProcessExecutorImpl {
         return pi;
     }
 
-    private void createVariableInstancesFromEventMessage(ProcessInstance pi, Map<String,String> parameters)
+    private void createVariableInstances(ProcessInstance pi, Map<String,Object> values)
             throws ProcessException, DataAccessException, SQLException {
         Process process = getProcessDefinition(pi);
-        pi.setVariables(convertParameters(parameters, process, pi.getId()));
-        for (VariableInstance vi : pi.getVariables()) {
-            Package pkg = getPackage(process);
-            edao.createVariableInstance(vi, pi.getId(), pkg);
-            if (vi.isDocument(pkg)) {
-                DocumentReference docRef = new DocumentReference(vi.getStringValue(getPackage(process)));
-                updateDocumentInfo(docRef, vi.getType(), OwnerType.VARIABLE_INSTANCE, vi.getId(), null, null);
+        Package pkg = getPackage(getMainProcessDefinition(pi));
+        pi.setVariables(new ArrayList<>());
+        if (values != null) {
+            for (String variableName : values.keySet()) {
+                Variable variable = process.getVariable(variableName);
+                if (variable == null)
+                    throw new ProcessException("Variable " + variableName + " not defined for process " + process.getLabel());
+                Object value = values.get(variableName);
+                if (value != null && !value.toString().isEmpty()) {
+                    VariableInstance variableInstance = new VariableInstance();
+                    variableInstance.setName(variable.getName());
+                    variableInstance.setVariableId(variable.getId());
+                    variableInstance.setType(variable.getType());
+                    boolean isDocument = pkg.getTranslator(variable.getType()).isDocumentReferenceVariable();
+                    if (isDocument) {
+                        if (value instanceof String && ((String) value).startsWith("DOCUMENT:")) {
+                            variableInstance.setStringValue((String) value);
+                        } else {
+                            DocumentReference docRef = createDocument(variable.getType(), OwnerType.PROCESS_INSTANCE, pi.getId(), value, pkg);
+                            variableInstance.setData(docRef);
+                        }
+                    } else {
+                        if (value instanceof String)
+                            variableInstance.setStringValue((String)value);
+                        else
+                            variableInstance.setData(value);
+                    }
+                    pi.getVariables().add(variableInstance);
+                    edao.createVariableInstance(variableInstance, pi.getId(), pkg);
+                    if (isDocument) {
+                        DocumentReference docRef = new DocumentReference(variableInstance.getStringValue(pkg));
+                        String type = (value instanceof String) ? null : value.getClass().getName();
+                        updateDocumentInfo(docRef, type, OwnerType.VARIABLE_INSTANCE, variableInstance.getId(), null, null);
+                    }
+                }
             }
         }
     }
@@ -319,7 +308,7 @@ class ProcessExecutorImpl {
         try {
             boolean dirty = false;
             Document doc = edao.getDocument(docRef.getDocumentId(), false);
-            if (documentType != null && !documentType.equalsIgnoreCase(doc.getType())) {
+            if (documentType != null && !documentType.equals(doc.getType())) {
                 doc.setType(documentType);
                 dirty = true;
             }
@@ -870,7 +859,7 @@ class ProcessExecutorImpl {
         event.setWorkInstanceId(ai.getId());
 
         activity.prepare(actDef, pi, ai, vars, workTransInstId,
-                event.getCompletionCode(), activityTimer, new ProcessExecutor(this));
+                activityTimer, new ProcessExecutor(this));
     }
 
     private void removeActivitySLA(ActivityInstance ai, ProcessInstance procInst) {
@@ -1335,11 +1324,11 @@ class ProcessExecutorImpl {
         try {
             // use design-time package
             Package pkg = PackageCache.getPackage(getMainProcessDefinition(procInst).getPackageName());
-            BaseActivity cntrActivity = (BaseActivity)getActivityInstance(pkg, activity.getImplementor());
-            Tracked t = cntrActivity.getClass().getAnnotation(Tracked.class);
+            BaseActivity activityInstance = (BaseActivity)getActivityInstance(pkg, activity.getImplementor());
+            Tracked t = activityInstance.getClass().getAnnotation(Tracked.class);
             if (t != null) {
                 String logTag = EngineLogger.logtag(procInst.getProcessId(), procInst.getId(), actId, actInst.getId());
-                activityTimer = new TrackingTimer(logTag, cntrActivity.getClass().getName(), t.value());
+                activityTimer = new TrackingTimer(logTag, activityInstance.getClass().getName(), t.value());
                 activityTimer.start("Prepare Activity for Resume");
             }
             List<VariableInstance> vars = process.isEmbeddedProcess()?
@@ -1347,9 +1336,9 @@ class ProcessExecutorImpl {
                     edao.getProcessInstanceVariables(procInstId);
             // procInst.setVariables(vars);     set inside edac method
             Long workTransitionInstId = event.getTransitionInstanceId();
-            cntrActivity.prepare(activity, procInst, actInst, vars, workTransitionInstId,
-                    event.getCompletionCode(), activityTimer, new ProcessExecutor(this));
-            return cntrActivity;
+            activityInstance.prepare(activity, procInst, actInst, vars, workTransitionInstId,
+                    activityTimer, new ProcessExecutor(this));
+            return activityInstance;
         } catch (Exception e) {
             engineLogger.error(procInst.getProcessId(), procInst.getId(), actInst.getActivityId(), actInst.getId(),
                     "Unable to instantiate implementer " + activity.getImplementor(), e);
@@ -1942,7 +1931,7 @@ class ProcessExecutorImpl {
             for (Variable var : process.getVariables()) {
                 try {
                     if (activityImpl != null)
-                        runtimeContext.getVariables().put(var.getName(), activityImpl.getVariableValue(var.getName()));
+                        runtimeContext.getValues().put(var.getName(), activityImpl.getValue(var.getName()));
                     else if (processInst.getVariable(var.getName()) != null) {
                         Object value = processInst.getVariable(var.getName()).getData(pkg);
                         if (value instanceof DocumentReference) {

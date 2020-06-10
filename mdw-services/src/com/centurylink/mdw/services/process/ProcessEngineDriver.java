@@ -201,7 +201,7 @@ public class ProcessEngineDriver {
                 if (messageDoc.getStatusMessage() == null || !messageDoc.getStatusMessage().startsWith("com.centurylink.mdw.activity.ActivityException: At least one subprocess is not completed\n"))
                     packageHandlerProc = getPackageHandler(processInstance, eventType);
                 if (packageHandlerProc != null) {
-                    Map<String,String> params = new HashMap<>();
+                    Map<String,Object> params = new HashMap<>();
                     Variable exVar = packageHandlerProc.getVariable("exception");
                     if (exVar == null || !exVar.isInput()) {
                         logger.warn("Handler proc " + packageHandlerProc.getQualifiedLabel() + " does not declare input var: 'exception'");
@@ -210,13 +210,13 @@ public class ProcessEngineDriver {
                         params.put("exception", new DocumentReference(messageDoc.getSecondaryOwnerId()).toString());
                     }
                     if (packageHandlerProc.isService()) {
-                        invokeService(packageHandlerProc.getId(), OwnerType.ERROR,
+                        invoke(packageHandlerProc.getId(), OwnerType.ERROR,
                                 messageDoc.getSecondaryOwnerId(),
                                 originatingInstance.getMasterRequestId(), null, params, null, 0,
                                 messageDoc.isProcess() ? OwnerType.PROCESS_INSTANCE : OwnerType.ACTIVITY_INSTANCE, messageDoc.getWorkInstanceId(), null);
                     }
                     else {
-                        startProcess(packageHandlerProc.getId(), originatingInstance.getMasterRequestId(), OwnerType.ERROR,
+                        start(packageHandlerProc.getId(), originatingInstance.getMasterRequestId(), OwnerType.ERROR,
                                 messageDoc.getSecondaryOwnerId(), params, messageDoc.isProcess() ? OwnerType.PROCESS_INSTANCE : OwnerType.ACTIVITY_INSTANCE, messageDoc.getWorkInstanceId(), null);
                     }
                 }
@@ -617,7 +617,7 @@ public class ProcessEngineDriver {
                         procInst = engine.createProcessInstance(
                                 event.getWorkId(), event.getOwnerType(), event.getOwnerId(),
                                 event.getSecondaryOwnerType(), event.getSecondaryOwnerId(),
-                                event.getMasterRequestId(), event.getParameters());
+                                event.getMasterRequestId(), new HashMap<>(event.getParameters()));
                     }
                     engine.startProcessInstance(procInst, 0);
                 } else if (event.getEventType().equals(EventType.FINISH)) {
@@ -683,17 +683,17 @@ public class ProcessEngineDriver {
         }
     }
 
-    private void addDocumentToCache(ProcessExecutor engine, Long docId, String variableType, String docType, String content, Package pkg) {
-        if (content != null) {
+    private void addDocumentToCache(ProcessExecutor engine, Long docId, String variableType, String docType, Object docObj, Package pkg) {
+        if (docObj != null) {
             if (docId == 0L) {
                 try {
-                    engine.createDocument(variableType, OwnerType.LISTENER_REQUEST, 0L, content, pkg);
+                    engine.createDocument(variableType, OwnerType.LISTENER_REQUEST, 0L, docObj, pkg);
                 } catch (DataAccessException e) {
                     // should never happen, as this is cache only
                 }
             } else {
                 Document doc = new Document();
-                doc.setContent(content);
+                doc.setObject(docObj);
                 doc.setId(docId);
                 doc.setType(docType);
                 doc.setVariableType(variableType);
@@ -703,13 +703,37 @@ public class ProcessEngineDriver {
     }
 
     /**
-     * Invoke a real-time service process.
-     * @return the service response
+     * @deprecated use {@link #invoke(Long, String, Long, String, Object, Map, String, Map)}
      */
+    @Deprecated
     public Response invokeService(Long processId, String ownerType,
             Long ownerId, String masterRequestId, String masterRequest,
             Map<String,String> parameters, String responseVarName, Map<String,String> headers) throws Exception {
-        return invokeService(processId, ownerType, ownerId, masterRequestId, masterRequest, parameters, responseVarName, 0, null, null, headers);
+        return invoke(processId, ownerType, ownerId, masterRequestId, masterRequest, new HashMap<>(parameters),
+                responseVarName, 0, null, null, headers);
+    }
+
+    /**
+     * Invoke a service process synchronously.
+     * @return the service response
+     */
+    public Response invoke(Long processId, String ownerType,
+            Long ownerId, String masterRequestId, Object masterRequest,
+            Map<String,Object> values, String responseVarName, Map<String,String> headers) throws Exception {
+        return invoke(processId, ownerType, ownerId, masterRequestId, masterRequest, values, responseVarName, 0, null, null, headers);
+    }
+
+    /**
+     * @deprecated user {@link #invoke(Long, String, Long, String, Object, Map, String, int, String, Long, Map)}
+     */
+    @Deprecated
+    public Response invokeService(Long processId, String ownerType,
+            Long ownerId, String masterRequestId, Object masterRequest,
+            Map<String,String> parameters, String responseVarName, int performanceLevel,
+            String secondaryOwnerType, Long secondaryOwnerId, Map<String,String> headers)
+            throws ProcessException, DataAccessException {
+        return invoke(processId, ownerType, ownerId, masterRequestId, masterRequest, new HashMap<>(parameters),
+                responseVarName, performanceLevel, secondaryOwnerType, secondaryOwnerId, headers);
     }
 
     /**
@@ -727,7 +751,7 @@ public class ProcessEngineDriver {
      * @param ownerId owner ID of the request event
      * @param masterRequestId master request ID
      * @param masterRequest content of the request event
-     * @param parameters Input parameter bindings for the process instance to be created
+     * @param values Input parameter bindings for the process instance to be created
      * @param responseVarName the name of the variable where the response is to be obtained.
      *         If you leave this null, the response will be taken from "response"
      *         if one is defined, and null otherwise
@@ -737,9 +761,9 @@ public class ProcessEngineDriver {
      * @return response message, which is obtained from the variable named ie responseVarName
      *      of the process.
      */
-    public Response invokeService(Long processId, String ownerType,
-            Long ownerId, String masterRequestId, String masterRequest,
-            Map<String,String> parameters, String responseVarName, int performanceLevel,
+    public Response invoke(Long processId, String ownerType,
+            Long ownerId, String masterRequestId, Object masterRequest,
+            Map<String,Object> values, String responseVarName, int performanceLevel,
             String secondaryOwnerType, Long secondaryOwnerId, Map<String,String> headers)
             throws ProcessException, DataAccessException {
         Process process = getProcessDefinition(processId);
@@ -758,11 +782,11 @@ public class ProcessEngineDriver {
             if (OwnerType.DOCUMENT.equals(ownerType)) {
                 addDocumentToCache(engine, ownerId, XmlObject.class.getName(), XmlObject.class.getName(), masterRequest, pkg);
             }
-            if (parameters != null) {
-                for (String key : parameters.keySet()) {
-                    String value = parameters.get(key);
-                    if (value != null && value.startsWith("DOCUMENT:")) {
-                        DocumentReference docRef = new DocumentReference(parameters.get(key));
+            if (values != null) {
+                for (String key : values.keySet()) {
+                    Object value = values.get(key);
+                    if (value instanceof String && ((String)value).startsWith("DOCUMENT:")) {
+                        DocumentReference docRef = new DocumentReference((String)value);
                         if (!docRef.getDocumentId().equals(ownerId)) {
                             Document doc = engine.loadDocument(docRef, false);
                             if (doc != null) {
@@ -777,7 +801,7 @@ public class ProcessEngineDriver {
             }
         }
         ProcessInstance mainProcessInst = executeServiceProcess(engine, processId,
-                ownerType, ownerId, masterRequestId, parameters, secondaryOwnerType, secondaryOwnerId, headers);
+                ownerType, ownerId, masterRequestId, values, secondaryOwnerType, secondaryOwnerId, headers);
         boolean completed = mainProcessInst.getStatusCode().equals(WorkStatus.STATUS_COMPLETED);
         if (headers != null)
             headers.put(Listener.METAINFO_MDW_PROCESS_INSTANCE_ID, mainProcessInst.getId().toString());
@@ -800,8 +824,8 @@ public class ProcessEngineDriver {
      * subprocesses of regular processes.
      * @return map of output parameters (can be empty hash, but not null);
      */
-    public Map<String,String> invokeServiceAsSubprocess(Long processId, Long parentInstanceId,
-            String masterRequestId, Map<String,String> parameters, int performanceLevel)
+    public Map<String,String> invokeSubprocess(Long processId, Long parentInstanceId,
+            String masterRequestId, Map<String,Object> values, int performanceLevel)
             throws Exception {
         long startMilli = System.currentTimeMillis();
         if (performanceLevel <= 0)
@@ -814,7 +838,7 @@ public class ProcessEngineDriver {
         msgBroker.setCacheOption(InternalMessenger.CACHE_ONLY);
         ProcessExecutor engine = new ProcessExecutor(edao, msgBroker, true);
         ProcessInstance mainProcessInst = executeServiceProcess(engine, processId,
-                OwnerType.PROCESS_INSTANCE, parentInstanceId, masterRequestId, parameters, null, null, null);
+                OwnerType.PROCESS_INSTANCE, parentInstanceId, masterRequestId, values, null, null, null);
            boolean completed = mainProcessInst.getStatusCode().equals(WorkStatus.STATUS_COMPLETED);
         Map<String,String> resp = completed?engine.getOutPutParameters(mainProcessInst.getId(), processId):null;
         long stopMilli = System.currentTimeMillis();
@@ -831,7 +855,7 @@ public class ProcessEngineDriver {
      * execute service process using asynch engine
      */
     private ProcessInstance executeServiceProcess(ProcessExecutor engine, Long processId,
-            String ownerType, Long ownerId, String masterRequestId, Map<String,String> parameters,
+            String ownerType, Long ownerId, String masterRequestId, Map<String,Object> values,
             String secondaryOwnerType, Long secondaryOwnerId, Map<String,String> headers)
             throws ProcessException, DataAccessException {
         Process procdef = getProcessDefinition(processId);
@@ -840,7 +864,7 @@ public class ProcessEngineDriver {
             masterRequestId = genMasterRequestId();
         ProcessInstance mainProcessInst = engine.createProcessInstance(
                 processId, ownerType, ownerId, secondaryOwnerType, secondaryOwnerId,
-                masterRequestId, parameters);
+                masterRequestId, values);
         mainProcessInstanceId = mainProcessInst.getId();
         engine.updateProcessInstanceStatus(mainProcessInst.getId(), WorkStatus.STATUS_PENDING_PROCESS);
         if (OwnerType.DOCUMENT.equals(ownerType) && ownerId != 0L) {
@@ -885,17 +909,17 @@ public class ProcessEngineDriver {
         }
     }
 
-    private void bindRequestVariable(Process procdef,
-            Long reqdocId, ProcessExecutor engine, ProcessInstance pi)
+    private void bindRequestVariable(Process process, Long requestDocId,
+            ProcessExecutor engine, ProcessInstance pi)
     throws DataAccessException {
-        Variable requestVar = procdef.getVariable(VariableConstants.REQUEST);
+        Variable requestVar = process.getVariable(VariableConstants.REQUEST);
         if (requestVar == null)
             return;
         int cat = requestVar.getVariableCategory();
         String vartype = requestVar.getType();
         if (cat != Variable.CAT_INPUT && cat != Variable.CAT_INOUT)
             return;
-        if (!getPackage(procdef).getTranslator(vartype).isDocumentReferenceVariable())
+        if (!getPackage(process).getTranslator(vartype).isDocumentReferenceVariable())
             return;
         List<VariableInstance> viList = pi.getVariables();
         if (viList != null) {
@@ -904,8 +928,8 @@ public class ProcessEngineDriver {
                     return;
             }
         }
-        DocumentReference docref = new DocumentReference(reqdocId);
-        engine.createVariableInstance(pi, VariableConstants.REQUEST, docref);
+        DocumentReference docRef = new DocumentReference(requestDocId);
+        engine.createVariableInstance(pi, VariableConstants.REQUEST, docRef);
     }
 
     private void bindRequestHeadersVariable(Process process, Map<String,String> headers,
@@ -936,32 +960,53 @@ public class ProcessEngineDriver {
     }
 
     /**
-     * Start a process.
+     * @deprecated user {@link #start(Long, String, String, Long, Map, Map)}
+     */
+    @Deprecated
+    public Long startProcess(Long processId, String masterRequestId, String ownerType,
+            Long ownerId, Map<String,String> vars, Map<String,String> headers)
+            throws ProcessException, DataAccessException {
+        return start(processId, masterRequestId, ownerType, ownerId, new HashMap<>(vars), headers);
+    }
+
+    /**
+     * Start a process asynchronously.
      * @param processId
      * @param masterRequestId
      * @param ownerType
      * @param ownerId
-     * @param vars Input parameter bindings for the process instance to be created
+     * @param values Input variable values for the process instance to be created
      * @param headers
      * @return the process instance ID
      */
-    public Long startProcess(Long processId, String masterRequestId, String ownerType,
-            Long ownerId, Map<String,String> vars, Map<String,String> headers)
+    public Long start(Long processId, String masterRequestId, String ownerType,
+            Long ownerId, Map<String,Object> values, Map<String,String> headers)
             throws ProcessException, DataAccessException {
-        return startProcess(processId, masterRequestId, ownerType, ownerId, vars, null, null, headers);
+        return start(processId, masterRequestId, ownerType, ownerId, values, null, null, headers);
     }
 
     /**
-     * Starting a regular process.
+     * @deprecated user {@link #start(Long, String, String, Long, Map, String, Long, Map)}
+     */
+    @Deprecated
+    public Long startProcess(Long processId, String masterRequestId, String ownerType, Long ownerId,
+            Map<String,String> vars, String secondaryOwnerType, Long secondaryOwnerId, Map<String,String> headers)
+            throws ProcessException, DataAccessException {
+        return start(processId, masterRequestId, ownerType, ownerId, new HashMap<>(vars), secondaryOwnerType,
+                secondaryOwnerId, headers);
+    }
+
+    /**
+     * Start a process asynchronously.
      * @param processId ID of the process to be started
      * @param masterRequestId
      * @param ownerType
      * @param ownerId
-     * @param vars Input parameter bindings for the process instance to be created
+     * @param values Input variable values for the process instance to be created
      * @return Process instance ID
      */
-    public Long startProcess(Long processId, String masterRequestId, String ownerType, Long ownerId,
-            Map<String,String> vars, String secondaryOwnerType, Long secondaryOwnerId, Map<String,String> headers)
+    public Long start(Long processId, String masterRequestId, String ownerType, Long ownerId,
+            Map<String,Object> values, String secondaryOwnerType, Long secondaryOwnerId, Map<String,String> headers)
             throws ProcessException, DataAccessException {
         Process procdef = getProcessDefinition(processId);
         int perfLevel = procdef.getPerformanceLevel();
@@ -978,7 +1023,7 @@ public class ProcessEngineDriver {
         ProcessExecutor engine = new ProcessExecutor(edao, messenger, false);
         ProcessInstance processInst = engine.createProcessInstance(processId,
                 ownerType, ownerId, secondaryOwnerType, secondaryOwnerId,
-                masterRequestId, vars);
+                masterRequestId, values);
         if (ownerType.equals(OwnerType.DOCUMENT) && ownerId != 0L) {
             setOwnerDocumentProcessInstanceId(engine, ownerId, processInst.getId(), masterRequestId);
             bindRequestVariable(procdef, ownerId, engine, processInst);

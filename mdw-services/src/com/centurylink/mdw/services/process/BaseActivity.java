@@ -24,7 +24,6 @@ import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccessException;
-import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.Attributes;
 import com.centurylink.mdw.model.event.EventType;
 import com.centurylink.mdw.model.task.TaskAction;
@@ -52,7 +51,6 @@ import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.TrackingTimer;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -82,7 +80,6 @@ public abstract class BaseActivity implements GeneralActivity {
     private Long workTransitionInstanceId;
     private String returnCode;
     private String returnMessage;
-    private String entryCode;
     private List<VariableInstance> parameters;
     private Attributes attributes;
     private ProcessExecutor engine;
@@ -115,7 +112,7 @@ public abstract class BaseActivity implements GeneralActivity {
      *    or of the parent process instance when this is in an embedded process
      */
     void prepare(Activity actVO, ProcessInstance pi, ActivityInstance ai, List<VariableInstance> parameters,
-            Long transInstId, String entryCode, TrackingTimer timer, ProcessExecutor engine) {
+            Long transInstId, TrackingTimer timer, ProcessExecutor engine) {
         try {
             if (timer != null)
                 timer.start("Prepare Activity");
@@ -127,7 +124,6 @@ public abstract class BaseActivity implements GeneralActivity {
             this.parameters = parameters;
             this.attributes = actVO.getAttributes();
             this.timer = timer;
-            this.entryCode = entryCode;
             try {
                 pkg = PackageCache.getPackage(getMainProcessDefinition().getPackageName());
                 ActivityImplementor implementor = ImplementorCache.get(activityDef.getImplementor());
@@ -338,9 +334,6 @@ public abstract class BaseActivity implements GeneralActivity {
     protected String getReturnCode() {
         return this.returnCode;
     }
-    protected final String getEntryCode() {
-        return entryCode;
-    }
     protected void setReturnMessage(String pMessage) {
         this.returnMessage = pMessage;
     }
@@ -365,16 +358,6 @@ public abstract class BaseActivity implements GeneralActivity {
             engine.setProcessInstanceCompletionCode(getProcessInstanceId(), code);
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
-            throw new ActivityException(0, ex.getMessage(),ex);
-        }
-    }
-
-    protected Long getParentProcessId() throws ActivityException {
-        try {
-            Long parentProcInstId = this.getProcessInstanceOwnerId();
-            ProcessInstance parentProcInst = this.getEngine().getProcessInstance(parentProcInstId);
-            return parentProcInst.getProcessId();
-        } catch (Exception ex) {
             throw new ActivityException(0, ex.getMessage(),ex);
         }
     }
@@ -520,42 +503,6 @@ public abstract class BaseActivity implements GeneralActivity {
     }
 
     /**
-     * This method is used to set the value of a variable that does not
-     * belong to the current process instance. The feature is mainly
-     * for backward compatibility and should not be used for new code.
-     * Warning: this method should *not* be used for setting variable values
-     * for the current process instance, as it does not update cached variable instance.
-     *
-     * @param processInstId process instance ID where the variable belongs.
-     * @param name variable name
-     * @param value variable value; the value must not be null or
-     *    empty string, which will cause database not-null constraint
-     *    violation
-     * @return variable instance ID
-     */
-    protected Long setParameterValue(Long processInstId, String name, Object value)
-            throws ActivityException {
-        Long varInstId;
-        try {
-            VariableInstance varInst = engine.getVariableInstance(processInstId, name);
-            if (varInst != null) {
-                varInstId = varInst.getId();
-                if (value instanceof String) varInst.setStringValue((String)value);
-                else varInst.setData(value);
-                engine.updateVariableInstance(varInst, getPackage());
-            } else {
-                ProcessInstance procInst = engine.getProcessInstance(processInstId);
-                varInst = engine.createVariableInstance(procInst, name, value);
-                varInstId = varInst.getId();
-            }
-        } catch (Exception ex) {
-            logger.error(ex.getMessage(), ex);
-            throw new ActivityException(0, ex.getMessage(),ex);
-        }
-        return varInstId;
-    }
-
-    /**
      * Set the value of the variable as a document reference to the given
      * document. If the variable is already bound to a document reference,
      * the method updates the content of the referred document.
@@ -567,13 +514,15 @@ public abstract class BaseActivity implements GeneralActivity {
      */
     protected DocumentReference setParameterValueAsDocument(String name, String variableType, Object value)
             throws ActivityException {
-        DocumentReference docref = (DocumentReference)this.getParameterValue(name);
+        DocumentReference docref = (DocumentReference)getParameterValue(name);
         if (docref == null) {
             docref = createDocument(variableType, value, OwnerType.VARIABLE_INSTANCE, 0L);
             Long varInstId = setParameterValue(name, docref);
-            updateDocumentInfo(docref, null, OwnerType.VARIABLE_INSTANCE, varInstId);
+            updateDocumentInfo(docref, value.getClass().getName(), OwnerType.VARIABLE_INSTANCE, varInstId);
         } else {
             updateDocumentContent(docref, value, variableType);
+            if (!value.getClass().getName().equals(variableType))
+                updateDocumentInfo(docref, value.getClass().getName(), null, null);
         }
         return docref;
     }
@@ -858,6 +807,26 @@ public abstract class BaseActivity implements GeneralActivity {
         }
     }
 
+    /**
+     * Returns variable type if document does not exist.
+     */
+    protected String getDocumentType(String variableName) throws ActivityException {
+        Variable variable = getMainProcessDefinition().getVariable(variableName);
+        if (variable == null)
+            throw new ActivityException("Variable not defined: " + variableName);
+        VariableInstance variableInstance = getVariableInstance(variableName);
+        if (variableInstance == null)
+            return variable.getType();
+        if (!variableInstance.isDocument(getPackage()))
+            throw new ActivityException("Variable is not a document: " + variableName);
+        try {
+            DocumentReference docRef = new DocumentReference(variableInstance.getStringValue(getPackage()));
+            return engine.getDocument(docRef, false).getType();
+        } catch (DataAccessException ex) {
+            throw new ActivityException("Error retrieving document for: " + variableName, ex);
+        }
+    }
+
     protected String getDocumentContent(DocumentReference docRef)
             throws ActivityException {
         Document doc;
@@ -880,7 +849,7 @@ public abstract class BaseActivity implements GeneralActivity {
         Document doc;
         try {
             doc = engine.getDocument(docRef, true);
-            // deserialize here (TODO why?)
+            // deserialize here to restore runtime type
             Object obj = getPackage().getObjectValue(variableType, doc.getContent(getPackage()), true, doc.getType());
             doc.setObject(obj);
             doc.setVariableType(variableType);
@@ -891,14 +860,14 @@ public abstract class BaseActivity implements GeneralActivity {
         return doc.getObject(variableType, getPackage());
     }
 
-    protected DocumentReference createDocument(String variableType, Object document, String ownerType,
+    protected DocumentReference createDocument(String variableType, Object docObj, String ownerType,
             Long ownerId) throws ActivityException {
-        return createDocument(variableType, document, ownerType, ownerId, null, null, null);
+        return createDocument(variableType, docObj, ownerType, ownerId, null, null, null);
     }
 
-    protected DocumentReference createDocument(String docType, Object document, String ownerType,
+    protected DocumentReference createDocument(String docType, Object docObj, String ownerType,
             Long ownerId, String path) throws ActivityException {
-        return createDocument(docType, document, ownerType, ownerId, null, null, path);
+        return createDocument(docType, docObj, ownerType, ownerId, null, null, path);
     }
 
     protected DocumentReference createDocument(String variableType, Object document, String ownerType,
@@ -923,10 +892,6 @@ public abstract class BaseActivity implements GeneralActivity {
     protected DocumentReference createDocument(String variableType, Object docObj, String ownerType,
             Long ownerId, Integer statusCode, String statusMessage, String path) throws ActivityException {
         try {
-            if (!(docObj instanceof String)) {
-                // do serialization here TODO: left over from package-aware translator providers?
-                docObj = getPackage().getStringValue(variableType, docObj, true);
-            }
             return engine.createDocument(variableType, ownerType, ownerId, statusCode, statusMessage, path, docObj, getPackage());
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
@@ -973,24 +938,6 @@ public abstract class BaseActivity implements GeneralActivity {
         }
     }
 
-
-    /**
-     * Open a database connection.
-     * @param database_name it must be null if you are accessing
-     *          MDW database (the default database where MDW schemas reside).
-     *          For other databases, you need to pass in either a data source name
-     *         or JDBC URL.
-     */
-    protected DatabaseAccess openDatabaseAccess(String database_name) throws SQLException {
-        DatabaseAccess db;
-        if (engine!=null && database_name==null) {
-            db = engine.getDatabaseAccess();
-        } else {
-            db = new DatabaseAccess(database_name);
-            db.openConnection();
-        }
-        return db;
-    }
 
     protected Package getPackage() {
         return pkg;
@@ -1191,10 +1138,10 @@ public abstract class BaseActivity implements GeneralActivity {
             ScriptExecutor executor = getScriptExecutor(language, qualifier);
             retObj = executor.execute(script, bindings);
 
-            for (Variable variableVO: vars) {
-                String variableName = variableVO.getName();
+            for (Variable var : vars) {
+                String variableName = var.getName();
                 Object bindValue = bindings.get(variableName);
-                String varType = variableVO.getType();
+                String varType = var.getType();
                 Object value = bindValue;
                 if (varType.equals("java.lang.String") && value != null)
                     value = value.toString();  // convert to string
@@ -1228,7 +1175,8 @@ public abstract class BaseActivity implements GeneralActivity {
     @Deprecated
     protected Object getVariableValue(String varName) throws ActivityException {
         VariableInstance var = getVariableInstance(varName);
-        if (var == null) return null;
+        if (var == null)
+            return null;
         Object value = var.getData(getPackage());
         if (var.isDocument(pkg)) {
             DocumentReference docref = (DocumentReference)value;

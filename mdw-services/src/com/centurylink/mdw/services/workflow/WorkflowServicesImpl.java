@@ -826,42 +826,50 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
     }
 
-    public Long launchProcess(String name, String masterRequestId, String ownerType,
-                              Long ownerId, Map<String,Object> parameters) throws ServiceException {
+    @Override
+    public Long startProcess(String name, String masterRequestId, String ownerType,
+            Long ownerId, Map<String,Object> values) throws ServiceException {
+        Process process = ProcessCache.getProcess(name);
+        if (process == null)
+            throw new ServiceException(ServiceException.NOT_FOUND, "Process not found: " + name);
+        return startProcess(process, masterRequestId, ownerType, ownerId, values);
+    }
+
+    @Override
+    public Long startProcess(Process process, String masterRequestId, String ownerType,
+            Long ownerId, Map<String,Object> values) throws ServiceException {
         try {
-            Process process = ProcessCache.getProcess(name);
             ProcessEngineDriver driver = new ProcessEngineDriver();
-            Map<String,String> params = translateParameters(process, parameters);
-            return driver.startProcess(process.getId(), masterRequestId, ownerType, ownerId, params, null);
+            return driver.start(process.getId(), masterRequestId, ownerType, ownerId, values, null);
         }
-        catch (Exception ex) {
+        catch (ProcessException | DataAccessException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
         }
     }
 
+    @Deprecated
+    public Long launchProcess(String name, String masterRequestId, String ownerType,
+            Long ownerId, Map<String,Object> values) throws ServiceException {
+        return startProcess(name, masterRequestId, ownerType, ownerId, values);
+    }
+    @Deprecated
     public Long launchProcess(Process process, String masterRequestId, String ownerType,
                               Long ownerId, Map<String,String> params) throws ServiceException {
-        try {
-            ProcessEngineDriver driver = new ProcessEngineDriver();
-            return driver.startProcess(process.getId(), masterRequestId, ownerType, ownerId, params, null);
-        }
-        catch (Exception ex) {
-            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
-        }
+        return startProcess(process.getQualifiedName(), masterRequestId, ownerType, ownerId, new HashMap<>(params));
     }
 
-    public Response invokeServiceProcess(String name, Object masterRequest, String masterRequestId,
-            Map<String,Object> parameters, Map<String,String> headers) throws ServiceException {
-        return invokeServiceProcess(name, masterRequest, masterRequestId, parameters, headers, null);
+    @Override
+    public Response invokeProcess(String name, Object masterRequest, String masterRequestId,
+            Map<String,Object> values, Map<String,String> headers) throws ServiceException {
+        return invokeProcess(name, masterRequest, masterRequestId, values, headers, null);
     }
-
-    public Response invokeServiceProcess(String processName, Object masterRequest, String masterRequestId,
-            Map<String,Object> parameters, Map<String,String> headers, Map<String,String> responseHeaders)
+    @Override
+    public Response invokeProcess(String name, Object masterRequest, String masterRequestId,
+            Map<String,Object> values, Map<String,String> headers, Map<String,String> responseHeaders)
             throws ServiceException {
         try {
             Long docId = 0L;
-            String request = null;
-            Process process = ProcessCache.getProcess(processName);
+            Process process = ProcessCache.getProcess(name);
             Package pkg = PackageCache.getPackage(process.getPackageName());
             if (masterRequest != null) {
                 String varType = StringDocument.class.getName();
@@ -871,19 +879,16 @@ public class WorkflowServicesImpl implements WorkflowServices {
                     varType = Jsonable.class.getName();
                 EventServices eventMgr = ServiceLocator.getEventServices();
                 docId = eventMgr.createDocument(varType, OwnerType.LISTENER_REQUEST, 0L, masterRequest, pkg);
-                request = pkg.getStringValue(varType, masterRequest, true);
                 if (headers == null)
                     headers = new HashMap<>();
                 headers.put(Listener.METAINFO_DOCUMENT_ID, docId.toString());
             }
 
-            Map<String,String> stringParams = translateParameters(process, parameters);
-
             String responseVarName = "response";  // currently not configurable
 
             ProcessEngineDriver engineDriver = new ProcessEngineDriver();
-            Response response = engineDriver.invokeService(process.getId(), OwnerType.DOCUMENT, docId, masterRequestId,
-                    request, stringParams, responseVarName, headers);
+            Response response = engineDriver.invoke(process.getId(), OwnerType.DOCUMENT, docId, masterRequestId,
+                    masterRequest, values, responseVarName, headers);
             Variable responseHeadersVar = process.getVariable("responseHeaders");
             if (responseHeaders != null && responseHeadersVar != null && responseHeadersVar.getType().equals(
                     "java.util.Map<String,String>")) {
@@ -909,22 +914,43 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
     }
 
-    public Response invokeServiceProcess(Process process, String masterRequestId, String ownerType,
-            Long ownerId, Map<String,String> params) throws ServiceException {
-        return invokeServiceProcess(process, masterRequestId, ownerType, ownerId, params, null);
+    @Override
+    public Response invokeProcess(String name, String masterRequestId, String ownerType, Long ownerId,
+            Map<String,Object> values, Map<String,String> headers) throws ServiceException {
+        Process process = ProcessCache.getProcess(name);
+        if (process == null)
+            throw new ServiceException(ServiceException.NOT_FOUND, "Process not found: " + name);
+        return invokeProcess(process, masterRequestId, ownerType, ownerId, values, headers);
     }
 
-    public Response invokeServiceProcess(Process process, String masterRequestId, String ownerType,
-            Long ownerId, Map<String,String> params, Map<String,String> headers) throws ServiceException {
+    @Override
+    public Response invokeProcess(Process process, String masterRequestId, String ownerType, Long ownerId,
+            Map<String,Object> values, Map<String,String> headers) throws ServiceException {
         try {
             ProcessEngineDriver driver = new ProcessEngineDriver();
-            String masterRequest = params == null ? null : params.get("request");
-            return driver.invokeService(process.getId(), ownerType, ownerId, masterRequestId,
-                    masterRequest, params, null, headers);
+            Object masterRequest = values == null ? null : values.get("request");
+            return driver.invoke(process.getId(), ownerType, ownerId, masterRequestId,
+                    masterRequest, values, null, headers);
         }
         catch (Exception ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
         }
+    }
+
+    @Deprecated
+    public Response invokeServiceProcess(String name, Object masterRequest, String masterRequestId,
+            Map<String,Object> values, Map<String,String> headers) throws ServiceException {
+        return invokeProcess(name, masterRequest, masterRequestId, values, headers);
+    }
+    @Deprecated
+    public Response invokeServiceProcess(String name, Object masterRequest, String masterRequestId,
+            Map<String,Object> values, Map<String,String> headers, Map<String,String> responseHeaders) throws ServiceException {
+        return invokeProcess(name, masterRequest, masterRequestId, values, headers, responseHeaders);
+    }
+    @Deprecated
+    public Response invokeServiceProcess(Process process, String masterRequestId, String ownerType, Long ownerId,
+            Map<String,String> values, Map<String,String> headers) throws ServiceException {
+        return invokeProcess(process, masterRequestId, ownerType, ownerId, new HashMap<>(values), headers);
     }
 
     /**
@@ -1143,13 +1169,13 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
         if (proc.isService()) {
             Map<String,String> headers = new HashMap<>();
-            invokeServiceProcess(proc, masterRequestId, ownerType, ownerId, params, headers);
+            invokeProcess(proc, masterRequestId, ownerType, ownerId, new HashMap<>(params), headers);
             String instIdStr = headers.get(Listener.METAINFO_MDW_PROCESS_INSTANCE_ID);
             if (instIdStr != null)
                 actualRun.setInstanceId(Long.parseLong(instIdStr));
         }
         else {
-            Long instanceId = launchProcess(proc, masterRequestId, ownerType, ownerId, params);
+            Long instanceId = startProcess(proc, masterRequestId, ownerType, ownerId, new HashMap<>(params));
             actualRun.setInstanceId(instanceId);
         }
         return actualRun;
@@ -1182,8 +1208,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
                             " v" + process.getVersionString() + "(id=" + process.getId() + ")");
                 }
                 String translated;
-                if (val instanceof String)
+                if (val instanceof String) {
                     translated = (String) val;
+                }
                 else {
                     Package pkg = PackageCache.getPackage(process.getPackageName());
                     translated = pkg.getStringValue(variable.getType(), val, true);

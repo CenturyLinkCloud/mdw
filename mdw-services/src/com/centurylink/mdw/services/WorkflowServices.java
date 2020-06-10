@@ -176,26 +176,69 @@ public interface WorkflowServices {
     ActivityInstance getActivity(Long instanceId) throws ServiceException;
     ActivityLog getActivityLog(Long instanceId) throws ServiceException;
 
-    Long launchProcess(String name, String masterRequestId, String ownerType,
-            Long ownerId, Map<String, Object> params) throws ServiceException;
-
-    Long launchProcess(Process process, String masterRequestId, String ownerType,
-            Long ownerId, Map<String, String> params) throws ServiceException;
-
-    Response invokeServiceProcess(String processName, Object masterRequest, String masterRequestId,
-            Map<String, Object> parameters, Map<String, String> headers) throws ServiceException;
-
-    Response invokeServiceProcess(Process process, String masterRequestId, String ownerType,
-            Long ownerId, Map<String, String> params, Map<String, String> headers) throws ServiceException;
+    /**
+     * Launch a process asynchronously
+     */
+    Long startProcess(String name, String masterRequestId, String ownerType,
+            Long ownerId, Map<String,Object> values) throws ServiceException;
+    Long startProcess(Process process, String masterRequestId, String ownerType,
+            Long ownerId, Map<String,Object> values) throws ServiceException;
 
     /**
-     * responseHeaders will be populated from process variable, if any
+     * @deprecated use {@link #startProcess(String, String, String, Long, Map)}
      */
-    Response invokeServiceProcess(String processName, Object masterRequest, String masterRequestId,
-            Map<String, Object> parameters, Map<String,String> headers, Map<String,String> responseHeaders) throws ServiceException;
+    @Deprecated
+    Long launchProcess(String name, String masterRequestId, String ownerType,
+            Long ownerId, Map<String,Object> values) throws ServiceException;
 
+    /**
+     * @deprecated use {@link #startProcess(String, String, String, Long, Map)}
+     */
+    @Deprecated
+    Long launchProcess(Process process, String masterRequestId, String ownerType,
+            Long ownerId, Map<String,String> values) throws ServiceException;
+
+
+    /**
+     * Invoke a service process synchronously.
+     */
+    Response invokeProcess(String name, Object masterRequest, String masterRequestId,
+            Map<String,Object> values, Map<String,String> headers) throws ServiceException;
+
+    /**
+     * Invoke a service process synchronously.
+     * responseHeaders will be populated from process value, if any
+     */
+    Response invokeProcess(String name, Object masterRequest, String masterRequestId,
+            Map<String,Object> values, Map<String,String> headers, Map<String,String> responseHeaders) throws ServiceException;
+
+    /**
+     * Invoke a service process synchronously.
+     */
+    Response invokeProcess(String name, String masterRequestId, String ownerType,
+            Long ownerId, Map<String,Object> values, Map<String,String> headers) throws ServiceException;
+    Response invokeProcess(Process process, String masterRequestId, String ownerType,
+            Long ownerId, Map<String,Object> values, Map<String,String> headers) throws ServiceException;
+
+    /**
+     * @deprecated use {@link #invokeProcess(String, Object, String, Map, Map, Map)}
+     */
+    @Deprecated
+    Response invokeServiceProcess(String processName, Object masterRequest, String masterRequestId,
+            Map<String,Object> values, Map<String,String> headers) throws ServiceException;
+    /**
+     * @deprecated use {@link #invokeProcess(String, Object, String, Map, Map, Map)}
+     */
+    @Deprecated
+    Response invokeServiceProcess(String processName, Object masterRequest, String masterRequestId,
+            Map<String,Object> values, Map<String,String> headers, Map<String,String> responseHeaders) throws ServiceException;
+
+    /**
+     * @deprecated user {@link #invokeProcess(Process, String, String, Long, Map, Map)}
+     */
+    @Deprecated
     Response invokeServiceProcess(Process process, String masterRequestId, String ownerType,
-            Long ownerId, Map<String,String> params) throws ServiceException;
+            Long ownerId, Map<String,String> values, Map<String,String> headers) throws ServiceException;
 
     Integer notify(String event, String message, int delay) throws ServiceException;
 

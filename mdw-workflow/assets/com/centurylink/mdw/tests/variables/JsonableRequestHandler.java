@@ -5,7 +5,9 @@ import com.centurylink.mdw.model.request.Request;
 import com.centurylink.mdw.request.RequestHandler;
 import com.centurylink.mdw.request.RequestHandlerException;
 import com.centurylink.mdw.services.request.ProcessRunHandler;
+import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Handler(match=RequestHandler.Routing.Path, path="/variablesTest/Jsonable")
@@ -18,8 +20,9 @@ public class JsonableRequestHandler extends ProcessRunHandler {
 
     @Override
     protected Map<String,Object> getInputValues(Request request, Object message, Map<String, String> headers) throws RequestHandlerException {
-        Map<String,Object> values = super.getInputValues(request, message, headers);
+        Map<String,Object> values = new HashMap<>();
         values.put("testCase", "Request Handler");
+        values.put("request", new Mountain((JSONObject)message));
         return values;
     }
 }

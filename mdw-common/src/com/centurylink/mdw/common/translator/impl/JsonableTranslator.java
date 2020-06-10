@@ -25,35 +25,21 @@ import org.json.JSONObject;
 
 public class JsonableTranslator extends DocumentReferenceTranslator implements JsonTranslator {
 
-    /**
-     * TODO honor runtime type
-     */
     @Override
     public Object toObject(String str, String type) throws TranslationException {
         try {
             JSONObject json = new JsonObject(str);
-            return createJsonable(json);
+            return createJsonable(json, type);
         }
         catch (Exception ex) {
             throw new TranslationException(ex.getMessage(), ex);
         }
     }
 
-    /**
-     * TODO prop-driven JSONABLE_TYPE population
-     */
     @Override
     public String toString(Object obj, String variableType) throws TranslationException {
-        Jsonable jsonable = (Jsonable) obj;
-        JSONObject json = new JsonObject();
         try {
-            json.put(JSONABLE_TYPE, jsonable.getClass().getName());
-            String name = jsonable.getJsonName();
-            if (name == null)
-                name = jsonable.getClass().getSimpleName().substring(0, 1).toLowerCase() + jsonable.getClass().getSimpleName().substring(1);
-
-            json.put(name, jsonable.getJson());
-            return json.toString(2);
+            return toJson(obj).toString(2);
         }
         catch (JSONException ex) {
             throw new TranslationException(ex.getMessage(), ex);
@@ -61,17 +47,15 @@ public class JsonableTranslator extends DocumentReferenceTranslator implements J
     }
 
     public JSONObject toJson(Object obj) throws TranslationException {
-        try {
+        if (obj instanceof JSONObject)
+            return (JSONObject)obj;
+        else
             return ((Jsonable)obj).getJson();
-        }
-        catch (JSONException ex) {
-            throw new TranslationException(ex.getMessage(), ex);
-        }
     }
 
-    public Object fromJson(JSONObject json) throws TranslationException {
+    public Object fromJson(JSONObject json, String type) throws TranslationException {
         try {
-            return createJsonable(json);
+            return createJsonable(json, type);
         }
         catch (Exception ex) {
             throw new TranslationException(ex.getMessage(), ex);

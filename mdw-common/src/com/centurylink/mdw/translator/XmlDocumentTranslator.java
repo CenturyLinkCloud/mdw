@@ -46,15 +46,9 @@ public interface XmlDocumentTranslator extends JsonTranslator {
     }
 
     @Override
-    default Object fromJson(JSONObject json) throws TranslationException {
+    default Object fromJson(JSONObject json, String type) throws TranslationException {
         try {
-            if (json.has(JSONABLE_TYPE)) {
-                return createJsonable(json);
-            }
-            else {
-                String xml = org.json.XML.toString(json);
-                return fromDomNode(DomHelper.toDomNode(xml));
-            }
+            return createJsonable(json, type);
         }
         catch (Exception ex) {
             throw new TranslationException(ex.getMessage(), ex);
