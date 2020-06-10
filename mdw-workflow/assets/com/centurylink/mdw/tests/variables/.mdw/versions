@@ -12,5 +12,5 @@ JsonableInput.test=4
 JsonableInput.yaml=1
 JsonableRequest.test=3
 JsonableRequest.yaml=2
-JsonableRequestHandler.java=1
+JsonableRequestHandler.java=2
 Mountain.java=3
