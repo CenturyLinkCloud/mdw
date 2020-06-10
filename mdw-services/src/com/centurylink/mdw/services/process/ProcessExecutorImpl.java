@@ -265,7 +265,7 @@ class ProcessExecutorImpl {
             throws ProcessException, DataAccessException, SQLException {
         Process process = getProcessDefinition(pi);
         Package pkg = getPackage(getMainProcessDefinition(pi));
-        List<VariableInstance> variableInstances = new ArrayList<>();
+        pi.setVariables(new ArrayList<>());
         if (values != null) {
             for (String variableName : values.keySet()) {
                 Variable variable = process.getVariable(variableName);
@@ -291,7 +291,7 @@ class ProcessExecutorImpl {
                         else
                             variableInstance.setData(value);
                     }
-                    variableInstances.add(variableInstance);
+                    pi.getVariables().add(variableInstance);
                     edao.createVariableInstance(variableInstance, pi.getId(), pkg);
                     if (isDocument) {
                         DocumentReference docRef = new DocumentReference(variableInstance.getStringValue(pkg));
@@ -301,7 +301,6 @@ class ProcessExecutorImpl {
                 }
             }
         }
-        pi.setVariables(variableInstances);
     }
 
     void updateDocumentInfo(DocumentReference docRef, String documentType, String ownerType,
