@@ -144,7 +144,7 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
                     ProcessInstance pi = getEngine().createProcessInstance(
                             subprocdef.getId(), OwnerType.PROCESS_INSTANCE,
                             getProcessInstanceId(), secondaryOwnerType, secondaryOwnerId,
-                            getMasterRequestId(), validParams);
+                            getMasterRequestId(), new HashMap<>(validParams));
 
                     engine.startProcessInstance(pi, 0);  // call directly using same engine so documents are visible to child when PerfLvl >= 5  */
                 }
@@ -168,8 +168,8 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
                 if (subprocIsService && isSynchronousCall() && !getProcessDefinition().isService() && (engine.getPerformanceLevel() < 9 || !passingByReference)) {
                     // Documents exist in DB and so are visible to child
                     ProcessEngineDriver engineDriver = new ProcessEngineDriver();   // Execute in new separate engine
-                    Map<String,String> params =  engineDriver.invokeServiceAsSubprocess(subprocdef.getId(), ownerId, getMasterRequestId(),
-                            validParams, subprocdef.getPerformanceLevel());
+                    Map<String,String> params =  engineDriver.invokeSubprocess(subprocdef.getId(), ownerId, getMasterRequestId(),
+                            new HashMap<>(validParams), subprocdef.getPerformanceLevel());
                     // Documents modified in child are not reflected in this engine's documentCache, so force retrieval from DB if needed by removing from cache
                     this.bindVariables(params, true, true);        // passDocContent arg should be true only when perf_level>=9 (DHO:actually 5), but this works
                 }
@@ -177,7 +177,7 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
                         ProcessInstance pi = getEngine().createProcessInstance(
                                 subprocdef.getId(), OwnerType.PROCESS_INSTANCE,
                                 getProcessInstanceId(), secondaryOwnerType, secondaryOwnerId,
-                                getMasterRequestId(), validParams);
+                                getMasterRequestId(), new HashMap<>(validParams));
 
                         engine.startProcessInstance(pi, 0);  // call directly using same engine so documents are visible to child (PerfLvl 9)  */
                 }
@@ -187,7 +187,7 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
                         ProcessInstance pi = getEngine().createProcessInstance(
                                 subprocdef.getId(), OwnerType.PROCESS_INSTANCE,
                                 getProcessInstanceId(), secondaryOwnerType, secondaryOwnerId,
-                                getMasterRequestId(), validParams);
+                                getMasterRequestId(), new HashMap<>(validParams));
                         engine.startProcessInstance(pi, 0);
                     } else {   // Either Async, or mismatch of perf lvls between parent and child - run on new thread and engine
                         String msgid = ScheduledEvent.INTERNAL_EVENT_PREFIX + getActivityInstanceId()

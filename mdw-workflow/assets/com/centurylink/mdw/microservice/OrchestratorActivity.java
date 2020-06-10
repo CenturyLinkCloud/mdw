@@ -173,7 +173,7 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
         return getEngine().createProcessInstance(
                 process.getId(), OwnerType.PROCESS_INSTANCE,
                 getProcessInstanceId(), OwnerType.ACTIVITY_INSTANCE, getActivityInstanceId(),
-                getMasterRequestId(), parameters);
+                getMasterRequestId(), new HashMap<>(parameters));
     }
 
     /**
@@ -415,8 +415,8 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
                 List<Variable> childVars = process.getVariables();
                 int perfLevel = getEngine().getPerformanceLevel();
                 Map<String,String> parameters = createBindings(childVars, index, service, perfLevel >= 5);
-                success = engineDriver.invokeServiceAsSubprocess(process.getId(),
-                        getProcessInstanceId(), getMasterRequestId(), parameters, perfLevel) != null;
+                success = engineDriver.invokeSubprocess(process.getId(),
+                        getProcessInstanceId(), getMasterRequestId(), new HashMap<>(parameters), perfLevel) != null;
                 procInstId = engineDriver.getMainProcessInstanceId();
             }
             catch (Exception e) {

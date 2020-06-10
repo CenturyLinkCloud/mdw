@@ -213,7 +213,7 @@ public class TestCaseRun implements Runnable {
                 new Thread(() -> {
                     try {
                         Thread.sleep((1000));
-                        workflowServices.invokeServiceProcess(proc, masterRequestId, OwnerType.TESTER, 0L, params);
+                        workflowServices.invokeProcess(proc, masterRequestId, OwnerType.TESTER, 0L, new HashMap<>(params), null);
                     } catch (Exception ex) {
                         throw new TestException("Execution failure " + process.getLabel(), ex);
                     }
@@ -221,7 +221,7 @@ public class TestCaseRun implements Runnable {
                 }).start();
             }
             else {
-                workflowServices.launchProcess(proc, masterRequestId, OwnerType.TESTER, 0L, params);
+                workflowServices.startProcess(proc, masterRequestId, OwnerType.TESTER, 0L, new HashMap<>(params));
             }
         }
         catch (Exception ex) {

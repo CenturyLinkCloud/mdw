@@ -19,7 +19,6 @@ import java.lang.reflect.Constructor;
 import java.util.Iterator;
 
 import com.centurylink.mdw.model.JsonObject;
-import com.centurylink.mdw.model.JsonableImpl;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -72,9 +71,6 @@ public interface JsonTranslator {
 
         if (JSONObject.class.getName().equals(type) || JsonObject.class.getName().equals(type)) {
             return json;
-        }
-        else if (Jsonable.class.getName().equals(type)) {
-            return new JsonableImpl(json);
         }
         else {
             // dynamically typed Jsonable implementation

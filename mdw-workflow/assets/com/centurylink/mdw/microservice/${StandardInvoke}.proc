@@ -19,10 +19,10 @@ activities:
   name: "Map\r\nRequest"
   implementor: com.centurylink.mdw.workflow.activity.transform.CrossmapActivity
   attributes:
-    Mapper: ${requestMapper}
     Input: request
-    Output: serviceRequest
+    Mapper: ${requestMapper}
     Mapper_assetVersion: '0'
+    Output: serviceRequest
     WORK_DISPLAY_INFO: x=394,y=132,w=119,h=79
   transitions:
   - id: T7
@@ -34,14 +34,14 @@ activities:
   name: "REST\r\nInvoke"
   implementor: com.centurylink.mdw.microservice.MicroserviceRestAdapter
   attributes:
-    RetryHttpCodes: '500'
     EndpointUri: ${serviceUrl}
+    HeadersVariable: requestHeaders
+    HttpMethod: ${serviceMethod}
     Invocation Request ID: serviceRequestId
     REQUEST_VARIABLE: serviceRequest
     RESPONSE_VARIABLE: serviceResponse
+    RetryHttpCodes: '500'
     WORK_DISPLAY_INFO: x=85,y=249,w=159,h=81
-    HeadersVariable: requestHeaders
-    HttpMethod: ${serviceMethod}
   transitions:
   - id: T3
     to: A6
@@ -57,10 +57,10 @@ activities:
   name: "Map\r\nResponse"
   implementor: com.centurylink.mdw.workflow.activity.transform.CrossmapActivity
   attributes:
-    Mapper: ${responseMapper}
     Input: serviceResponse
-    Output: response
+    Mapper: ${responseMapper}
     Mapper_assetVersion: '0'
+    Output: response
     WORK_DISPLAY_INFO: x=398,y=249,w=120,h=80
   transitions:
   - id: T9
@@ -74,11 +74,11 @@ activities:
     Dependencies
   implementor: com.centurylink.mdw.microservice.DependenciesWaitActivity
   attributes:
-    MICROSERVICE_NAMES: '[["true","",""]]'
-    WAIT_EVENT_NAMES: '[["service-summary-update-${masterRequestId}",""]]'
-    STATUS_AFTER_TIMEOUT: Cancelled
-    WORK_DISPLAY_INFO: x=399,y=11,w=119,h=81
     DEPENDENCIES: ${dependencies}
+    MICROSERVICE_NAMES: '[["true","",""]]'
+    STATUS_AFTER_TIMEOUT: Cancelled
+    WAIT_EVENT_NAMES: '[["service-summary-update-${masterRequestId}",""]]'
+    WORK_DISPLAY_INFO: x=399,y=11,w=119,h=81
   transitions:
   - id: T5
     to: A4
@@ -102,9 +102,9 @@ activities:
   name: Is Synchronous?
   implementor: com.centurylink.mdw.workflow.activity.script.ScriptEvaluator
   attributes:
-    WORK_DISPLAY_INFO: x=197,y=68,w=124,h=88
-    SCRIPT: Groovy
     Expression: 'synchronous ? ''Yes'' : ''No'''
+    SCRIPT: Groovy
+    WORK_DISPLAY_INFO: x=197,y=68,w=124,h=88
   transitions:
   - id: T11
     to: A4
@@ -177,8 +177,8 @@ variables:
     type: java.lang.Boolean
     category: INPUT
 attributes:
-  Monitors: '[["false","Due Date Monitor","com.centurylink.mdw.base/ProcessDueDateMonitor.java",""],["true","Microservice Status Monitor","com.centurylink.mdw.microservice/MicroserviceStatusProcessMonitor.java",""]]'
   ArrowStyle: ArrowEnd
+  Monitors: '[["false","Due Date Monitor","com.centurylink.mdw.base/ProcessDueDateMonitor.java",""],["true","Microservice Status Monitor","com.centurylink.mdw.microservice/MicroserviceStatusProcessMonitor.java",""]]'
   NodeStyle: BoxIcon
-  WORK_DISPLAY_INFO: x=30,y=25,w=175,h=26
   PROCESS_VISIBILITY: PUBLIC
+  WORK_DISPLAY_INFO: x=30,y=25,w=175,h=26

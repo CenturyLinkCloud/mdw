@@ -8,6 +8,7 @@ import com.centurylink.mdw.model.event.EventInstance;
 import com.centurylink.mdw.model.request.Request;
 import com.centurylink.mdw.model.request.Response;
 import com.centurylink.mdw.model.variable.Variable;
+import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.request.RequestHandler;
 import com.centurylink.mdw.service.data.process.ProcessCache;
@@ -18,7 +19,6 @@ import com.centurylink.mdw.services.process.ProcessEngineDriver;
 import com.centurylink.mdw.translator.DocumentReferenceTranslator;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
-import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.variable.VariableTranslator;
 
 import java.io.IOException;
@@ -45,9 +45,8 @@ public abstract class BaseHandler implements RequestHandler {
     protected Long launchProcess(Long processId, Long requestId, String masterRequestId,
             Map<String,Object> inputValues, Map<String,String> headers)
             throws ProcessException, DataAccessException {
-        Map<String,String> stringParams = translateInputValues(processId, inputValues);
         ProcessEngineDriver driver = new ProcessEngineDriver();
-        return driver.startProcess(processId, masterRequestId, OwnerType.DOCUMENT, requestId, stringParams, headers);
+        return driver.start(processId, masterRequestId, OwnerType.DOCUMENT, requestId, inputValues, headers);
     }
 
     /**
@@ -63,10 +62,9 @@ public abstract class BaseHandler implements RequestHandler {
     protected Response invokeServiceProcess(Long processId, Long requestId, String masterRequestId,
             String masterRequest, Map<String,Object> inputValues, Map<String,String> headers)
             throws ProcessException, DataAccessException {
-        Map<String,String> stringParams = translateInputValues(processId, inputValues);
         ProcessEngineDriver engineDriver = new ProcessEngineDriver();
-        return engineDriver.invokeService(processId, OwnerType.DOCUMENT, requestId, masterRequestId,
-                masterRequest, stringParams, null, 0, null, null, headers);
+        return engineDriver.invoke(processId, OwnerType.DOCUMENT, requestId, masterRequestId,
+                masterRequest, inputValues, null, 0, null, null, headers);
     }
 
     /**

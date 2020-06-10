@@ -1,4 +1,4 @@
-${StandardInvoke}.proc=11
+${StandardInvoke}.proc=12
 .mdwignore=4
 CombiningConsolidator.java=2
 Consolidator.java=1
@@ -14,7 +14,7 @@ MicroserviceInstance.java=3
 MicroserviceList.java=2
 MicroserviceRestAdapter.java=24
 MicroserviceStatusProcessMonitor.java=5
-OrchestratorActivity.java=19
+OrchestratorActivity.java=20
 ResponseCollector.java=4
 ServicePlanModel.kt=6
 ServiceSummary.java=7

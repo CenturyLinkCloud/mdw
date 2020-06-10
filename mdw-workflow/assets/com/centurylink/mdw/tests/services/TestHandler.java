@@ -138,8 +138,8 @@ public class TestHandler extends BaseHandler {
         if (processType.equals(ProcessVisibilityConstant.SERVICE)) {
             Map<String,String> stringParams = translateInputValues(proc.getId(), params);
             ProcessEngineDriver engineDriver = new ProcessEngineDriver();
-            Response resp = engineDriver.invokeService(proc.getId(), OwnerType.DOCUMENT, requestId, masterRequestId,
-                    message, stringParams, null, performanceLevel, null, null, metaInfo);
+            Response resp = engineDriver.invoke(proc.getId(), OwnerType.DOCUMENT, requestId, masterRequestId,
+                    message, new HashMap<>(stringParams), null, performanceLevel, null, null, metaInfo);
             return resp == null ? null : resp.getContent();
         } else {
             launchProcess(proc.getId(), requestId, masterRequestId, params, null);

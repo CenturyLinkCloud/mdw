@@ -42,6 +42,7 @@ import org.apache.xmlbeans.XmlObject;
 
 import javax.xml.bind.JAXBElement;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 /**

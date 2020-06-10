@@ -219,7 +219,7 @@ public abstract class JsonRestService extends RestService implements JsonService
             Map<String,Object> parameters, Map<String,String> headers) throws ServiceException {
         JSONObject responseJson;
         Map<String,String> responseHeaders = new HashMap<>();
-        Object responseObject = ServiceLocator.getWorkflowServices().invokeServiceProcess(name,
+        Object responseObject = ServiceLocator.getWorkflowServices().invokeProcess(name,
                 request, requestId, parameters, headers, responseHeaders).getObject();
         if (responseObject instanceof JSONObject)
             responseJson = (JSONObject) responseObject;
@@ -243,7 +243,7 @@ public abstract class JsonRestService extends RestService implements JsonService
             if (process.getVariable("requestHeaders") != null)
                 parameters.put("requestHeaders", headers);
         }
-        workflowServices.launchProcess(name, masterRequestId, OwnerType.DOCUMENT, documentId, parameters);
+        workflowServices.startProcess(name, masterRequestId, OwnerType.DOCUMENT, documentId, parameters);
     }
 
     protected int notifyProcess(String packageName, String eventId, Map<String,String> headers) throws ServiceException {
