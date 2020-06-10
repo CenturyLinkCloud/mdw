@@ -1,4 +1,9 @@
-Gson.proc=1
+Gson.proc=2
+GsonHandler.test=1
+GsonHandler.yaml=1
+GsonRequest.test=1
+GsonRequest.yaml=1
+GsonRequestHandler.java=1
 JavaObject.proc=2
 JavaObject.test=2
 JavaObject.yaml=1
@@ -12,5 +17,5 @@ JsonableInput.test=4
 JsonableInput.yaml=1
 JsonableRequest.test=3
 JsonableRequest.yaml=2
-JsonableRequestHandler.java=2
+JsonableRequestHandler.java=3
 Mountain.java=3

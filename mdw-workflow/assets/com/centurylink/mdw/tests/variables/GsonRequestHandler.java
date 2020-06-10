@@ -9,12 +9,12 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-@Handler(match=RequestHandler.Routing.Path, path="/variablesTest/Jsonable")
-public class JsonableRequestHandler extends ProcessRunHandler {
+@Handler(match=RequestHandler.Routing.Path, path="/variablesTest/Gson")
+public class GsonRequestHandler extends ProcessRunHandler {
 
     @Override
     public String getProcess(Request request, Object message, Map<String,String> headers) {
-        return "com.centurylink.mdw.tests.variables/Jsonable.proc";
+        return "com.centurylink.mdw.tests.variables/Gson.proc";
     }
 
     @Override

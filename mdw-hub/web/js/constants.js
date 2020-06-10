@@ -21,7 +21,7 @@ constantsMod.constant('QUEUE_NAMES', [
 constantsMod.constant('EXCEL_DOWNLOAD', 'DownloadFormat=xlsx');
 constantsMod.constant('ZIP_DOWNLOAD', 'DownloadFormat=zip');
 
-// TODO: should be dynamic through a service
+// TODO: should be dynamic through service /mdw/api/VariableTypes
 constantsMod.constant('DOCUMENT_TYPES', {
   'org.w3c.dom.Document': 'xml',
   'org.apache.xmlbeans.XmlObject': 'xml',
@@ -40,7 +40,8 @@ constantsMod.constant('DOCUMENT_TYPES', {
   'java.util.List<Integer>': 'json',
   'java.util.List<Long>': 'json',
   'java.util.List<String>': 'json',
-  'java.util.Map<String,String>': 'json'
+  'java.util.Map<String,String>': 'json',
+  'com.google.gson.Gson': 'json'
 });
 
 constantsMod.constant('WORKFLOW_STATUSES', [

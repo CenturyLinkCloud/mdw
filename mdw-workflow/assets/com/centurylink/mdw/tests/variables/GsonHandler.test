@@ -1,0 +1,19 @@
+package com.centurylink.mdw.tests.variables
+
+def response = post http("api/REST/variablesTest/Gson") {
+    headers = [
+            "Content-Type": "application/json",
+            "mdw-request-id": masterRequestId
+    ]
+    payload = """{
+  "name": "Kilimanjaro",
+  "elevation": 19341,
+  "country": "Tanzania"
+}"""
+}
+assert response.code == 200
+
+wait process("Gson.proc")
+verify process {
+    excludeVariables = ['requestHeaders']
+}

@@ -3,20 +3,81 @@ activities:
   name: Start
   implementor: com.centurylink.mdw.workflow.activity.process.ProcessStartActivity
   attributes:
-    WORK_DISPLAY_INFO: x=70,y=150,w=60,h=40
+    WORK_DISPLAY_INFO: x=70,y=110,w=60,h=40
   transitions:
   - id: T1
-    to: A2
+    to: A4
     event: FINISH
     attributes:
-      TRANSITION_DISPLAY_INFO: type=Elbow,lx=310,ly=170,xs=134&486,ys=170&170
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=175,ly=130,xs=134&216,ys=130&130
 - id: A2
   name: Stop
   implementor: com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity
   attributes:
-    WORK_DISPLAY_INFO: x=490,y=150,w=60,h=40
+    WORK_DISPLAY_INFO: x=640,y=110,w=60,h=40
+- id: A3
+  name: Further Updates
+  implementor: com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity
+  attributes:
+    ClassName: Gson_A3
+    Java: "package com.centurylink.mdw.tests.variables;\n\nimport com.centurylink.mdw.java.JavaExecutionException;\nimport com.centurylink.mdw.java.JavaExecutor;\n\nimport java.util.Map;\n\npublic class Gson_A3 implements JavaExecutor {\n\n    public Object execute(Map<String,Object> variables) throws JavaExecutionException  {\n        Mountain request = (Mountain)variables.get(\"request\");\n        if (request != null) {\n            request.setElevation(request.getElevation() - 1);\n        }\n        Mountain input = (Mountain)variables.get(\"input\");\n        if (input != null) {\n            input.setElevation(input.getElevation() - 1);\n        }\n        Mountain local = (Mountain)variables.get(\"local\");\n        if (local != null) {\n            local.setElevation(local.getElevation() - 1);\n        }\n        \n        return null;\n    }\n}\n"
+    Output Documents: '["input","local","request"]'
+    WORK_DISPLAY_INFO: x=430,y=90,w=120,h=80
+  transitions:
+  - id: T4
+    to: A2
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=595,ly=130,xs=554&636,ys=130&130
+- id: A4
+  name: Create/Update
+  implementor: com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity
+  attributes:
+    Output Documents: '["input","local","request"]'
+    Rule: |+
+      import com.centurylink.mdw.tests.variables.Mountain
+
+      if (testCase == null)
+          testCase = "Process Request"
+      if (request != null) {
+          request.elevation = request.elevation - 1 // rising sea level
+      }
+      if (input != null) {
+          input.elevation = input.elevation - 1
+      }
+      local = new Mountain("Fuji", 12389, "Japan")
+
+
+    SCRIPT: Groovy
+    WORK_DISPLAY_INFO: x=220,y=90,w=120,h=80
+  transitions:
+  - id: T3
+    to: A3
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=385,ly=130,xs=344&426,ys=130&130
+variables:
+  input:
+    type: com.google.gson.Gson
+    category: INPUT
+  local:
+    type: com.google.gson.Gson
+    category: LOCAL
+  request:
+    type: com.google.gson.Gson
+    category: INPUT
+  requestHeaders:
+    type: java.util.Map<String,String>
+    category: INPUT
+  testCase:
+    type: java.lang.String
+    category: INPUT
 attributes:
   ArrowStyle: ArrowEnd
   NodeStyle: BoxIcon
   PROCESS_VISIBILITY: PUBLIC
-  WORK_DISPLAY_INFO: x=41,y=40,w=172,h=26
+  WORK_DISPLAY_INFO: x=37,y=31,w=51,h=26
+  requestMethod: POST
+  requestParameters: '[["mountain","Body","true","","com.centurylink.mdw.tests.variables/Mountain.java"]]'
+  requestPath: Gson
+  requestSummary: Because it's there

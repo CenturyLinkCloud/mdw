@@ -1,0 +1,34 @@
+process: # 10614
+  name: Gson
+  instance: 1
+  activity: # 1 "2020-06-04 17:05:03.010"
+    name: Start
+    status: Completed
+  activity: # 4 "2020-06-04 17:05:03.026"
+    name: Create/Update
+    status: Completed
+  activity: # 6 "2020-06-04 17:05:03.042"
+    name: Further Updates
+    status: Completed
+  activity: # 2 "2020-06-04 17:05:03.059"
+    name: Stop
+    status: Completed
+  variable: # 12387
+    name: local
+    value: |
+      {
+        "country": "Japan",
+        "elevation": 12388,
+        "name": "Fuji"
+      }
+  variable: # 12384
+    name: request
+    value: |
+      {
+        "country": "Nepal",
+        "elevation": 29027,
+        "name": "Everest"
+      }
+  variable: # 12388
+    name: testCase
+    value: Process Request
