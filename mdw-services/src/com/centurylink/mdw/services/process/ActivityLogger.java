@@ -5,6 +5,7 @@ import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
 import com.centurylink.mdw.service.data.WorkflowDataAccess;
+import com.centurylink.mdw.test.MockRuntimeContext;
 import com.centurylink.mdw.util.log.AbstractStandardLoggerBase;
 import com.centurylink.mdw.util.log.LoggerUtil;
 
@@ -25,7 +26,7 @@ public class ActivityLogger extends AbstractStandardLoggerBase {
 
     public ActivityLogger(ActivityRuntimeContext runtimeContext) {
         this.runtimeContext = runtimeContext;
-        if (runtimeContext.getPerformanceLevel() < 9)
+        if (runtimeContext.getPerformanceLevel() < 9 && !(runtimeContext instanceof MockRuntimeContext))
             this.runtimeContext.setLogPersister(ActivityLogger::persist);
     }
 

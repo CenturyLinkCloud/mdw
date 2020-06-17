@@ -159,7 +159,7 @@ public abstract class BaseActivity implements GeneralActivity {
      */
     public void prepare(ActivityRuntimeContext runtimeContext) {
         if (!(logger instanceof ActivityLogger))
-            logger = new ActivityLogger(_runtimeContext);
+            logger = new ActivityLogger(runtimeContext);
 
         EngineDataAccess edao = EngineDataAccessCache.getInstance(true, 9);
         // InternalMessenger msgBroker = MessengerFactory.newInternalMessenger();
