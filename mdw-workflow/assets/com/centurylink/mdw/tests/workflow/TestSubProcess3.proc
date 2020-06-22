@@ -3,32 +3,32 @@ activities:
   name: Start
   implementor: com.centurylink.mdw.workflow.activity.process.ProcessStartActivity
   attributes:
-    WORK_DISPLAY_INFO: x=83,y=77,w=60,h=40
+    WORK_DISPLAY_INFO: x=76,y=80,w=60,h=40
   transitions:
   - id: T27
     to: A31
     event: FINISH
     attributes:
-      TRANSITION_DISPLAY_INFO: lx=219,ly=96,type=Elbow,xs=147&266,ys=97&97
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=206,ly=101,xs=140&272,ys=101&101
 - id: A31
   name: Calculate sqaure
   implementor: com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity
   attributes:
-    Rule: 'result = argument * argument;   '
+    Rule: result = argument * argument;
     SCRIPT: Groovy
-    WORK_DISPLAY_INFO: x=270,y=70,w=100,h=60
+    WORK_DISPLAY_INFO: x=276,y=69,w=100,h=60
   transitions:
   - id: T1
     to: A33
     event: FINISH
     attributes:
-      TRANSITION_DISPLAY_INFO: lx=454,ly=98,type=Elbow,xs=374&533,ys=98&98
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=459,ly=94,xs=380&538,ys=94&94
 - id: A33
   name: Finish
   implementor: com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity
   attributes:
     DoNotNotifyCaller: 'false'
-    WORK_DISPLAY_INFO: x=537,y=78,w=60,h=40
+    WORK_DISPLAY_INFO: x=542,y=73,w=60,h=40
 variables:
   argument:
     type: java.lang.Integer
