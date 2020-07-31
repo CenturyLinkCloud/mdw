@@ -44,6 +44,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -695,11 +696,51 @@ public abstract class TestCaseScript extends Script {
 
         CompilerConfiguration compilerCfg = new CompilerConfiguration();
         compilerCfg.setScriptBaseClass(DelegatingScript.class.getName());
-        GroovyShell shell = new GroovyShell(TestCaseScript.class.getClassLoader(), getBinding(), compilerCfg);
-        DelegatingScript script = (DelegatingScript) shell.parse("return \"\"\"" + before + "\"\"\"");
-        script.setDelegate(TestCaseScript.this);
-        // restore escaped \$ to $ for comparison
-        return script.run().toString().replaceAll("\\\\$", "\\$");
+
+        // Groovy has limit on size of script so split/re-join if needed
+        int index = 1;
+        int initialFromIdx = 50000;
+        int maxGroovyScriptLength = 65000;  //it is 65536 but allowing a bit of slack for maneuvering
+        String remaining = before;
+        List<Character> specialChars = Arrays.asList('$','{','}','\\','"','n','r');
+        StringBuilder after = new StringBuilder();
+        while (index > 0) {
+             String chunk;
+             index = remaining.indexOf("variable:", initialFromIdx);
+             int fromIdx = initialFromIdx;
+             while (index > maxGroovyScriptLength && (fromIdx/10) > 5) {
+                 fromIdx = fromIdx/10;
+                 index = remaining.indexOf("variable:", fromIdx);
+             }
+             if (index > 0) {
+                 if (index > maxGroovyScriptLength) { // Single variable value is longer than groovy max chars
+                     index = maxGroovyScriptLength;  // Start with this chunk
+                     String tmp = remaining.substring(0, index+1); //In case last char is $ so include full ${
+                     // Check for ending inside an expression or special character
+                     while (tmp.lastIndexOf("${") >= 0 && tmp.lastIndexOf("${") < index ||
+                             specialChars.contains(tmp.charAt(index-1))) {
+                         // If inside an expression, move index outside of it ${...}
+                         if (remaining.indexOf("}", tmp.lastIndexOf("${")) > (index+1))
+                             index = remaining.indexOf("}", tmp.lastIndexOf("${")) + 1;
+                         // Make sure not ending on a special character
+                         while (specialChars.contains(remaining.charAt(index-1)))
+                             index++; //Special character, move forward until regular character
+                         tmp = remaining.substring(0, index+1); // Check if now inside another expressions
+                     }
+                 }
+                 chunk = remaining.substring(0, index);
+                 remaining = remaining.substring(index);
+             }
+             else {
+                 chunk = remaining;
+             }
+             GroovyShell shell = new GroovyShell(TestCaseScript.class.getClassLoader(), getBinding(), compilerCfg);
+             DelegatingScript script = (DelegatingScript) shell.parse("return \"\"\"" + chunk + "\"\"\"");
+             script.setDelegate(TestCaseScript.this);
+             // restore escaped \$ to $ for comparison
+             after.append(script.run().toString().replaceAll("\\\\$", "\\$"));
+        }
+        return after.toString();
     }
 
     public boolean isStubbing() {
