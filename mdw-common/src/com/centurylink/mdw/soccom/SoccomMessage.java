@@ -48,7 +48,7 @@ class SoccomMessage
 
     static byte[] makeMessage(String msgbody, String msgid) {
         StringBuffer sb = new StringBuffer();
-        int length = msgbody.length();
+        int length = msgbody.getBytes().length; //This instead of msgbody.length() because not always same length
         if (_seqno==0) {
             if (hostname == null)
                 setHostName();
