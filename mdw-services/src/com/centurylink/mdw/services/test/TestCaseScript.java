@@ -517,7 +517,7 @@ public abstract class TestCaseScript extends Script {
     }
 
     public TestCaseAdapterStub endpoint(Closure<Boolean> matcher, Closure<String> responder, Closure<?> init) throws TestException {
-        TestCaseAdapterStub adapterStub = adapter(matcher, null, init);
+        TestCaseAdapterStub adapterStub = adapter(matcher, responder, init);
         adapterStub.setEndpoint(true);
         return adapterStub;
     }
@@ -549,7 +549,7 @@ public abstract class TestCaseScript extends Script {
                                 Object req = new JsonSlurper().parseText(request.toString());
                                 binding.setVariable("request", req);
                             }
-                            else {
+                            else if (request.toString().length() > 0){
                                 GPathResult gpathRequest = new XmlSlurper().parseText(request.toString());
                                 binding.setVariable("request", gpathRequest);
                             }
@@ -562,7 +562,7 @@ public abstract class TestCaseScript extends Script {
                             return script.run().toString();
                         }
                         catch (Exception ex) {
-                            getTestCaseRun().getLog().println("Cannot perform stub substitutions for request: " + request);
+                            getTestCaseRun().getLog().println("Cannot perform stub response substitutions for request: " + request);
                             ex.printStackTrace(getTestCaseRun().getLog());
                         }
                     }
