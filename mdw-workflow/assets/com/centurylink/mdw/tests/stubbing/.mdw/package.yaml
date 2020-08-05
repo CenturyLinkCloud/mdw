@@ -1,7 +1,7 @@
 schemaVersion: '6.1'
 name: com.centurylink.mdw.tests.stubbing
-version: 6.1.37-SNAPSHOT
+version: 6.1.37
 
 dependencies:
-  - com.centurylink.mdw.base v6.1.37-SNAPSHOT
-  - com.centurylink.mdw.testing v6.1.37-SNAPSHOT
+  - com.centurylink.mdw.base v6.1.37
+  - com.centurylink.mdw.testing v6.1.37
