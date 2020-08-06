@@ -183,7 +183,8 @@ implements <a href="../../../../../../com/centurylink/mdw/translator/JsonTransla
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>java.lang.Object</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/common/translator/impl/JsonableTranslator.html#fromJson-org.json.JSONObject-">fromJson</a></span>(org.json.JSONObject&nbsp;json)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/common/translator/impl/JsonableTranslator.html#fromJson-org.json.JSONObject-java.lang.String-">fromJson</a></span>(org.json.JSONObject&nbsp;json,
+        java.lang.String&nbsp;type)</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>org.json.JSONObject</code></td>
@@ -193,14 +194,16 @@ implements <a href="../../../../../../com/centurylink/mdw/translator/JsonTransla
 <td class="colFirst"><code>java.lang.Object</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/common/translator/impl/JsonableTranslator.html#toObject-java.lang.String-java.lang.String-">toObject</a></span>(java.lang.String&nbsp;str,
         java.lang.String&nbsp;type)</code>
-<div class="block">TODO honor runtime type</div>
+<div class="block">toObject converts String to DocumentReference,
+ whereas this methods deserializes to actual object</div>
 </td>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/common/translator/impl/JsonableTranslator.html#toString-java.lang.Object-java.lang.String-">toString</a></span>(java.lang.Object&nbsp;obj,
         java.lang.String&nbsp;variableType)</code>
-<div class="block">TODO prop-driven JSONABLE_TYPE population</div>
+<div class="block">toString converts DocumentReference to string,
+ whereas this method serializes the actual object to string</div>
 </td>
 </tr>
 </table>
@@ -230,7 +233,7 @@ implements <a href="../../../../../../com/centurylink/mdw/translator/JsonTransla
 <!--   -->
 </a>
 <h3>Methods inherited from interface&nbsp;com.centurylink.mdw.translator.<a href="../../../../../../com/centurylink/mdw/translator/JsonTranslator.html" title="interface in com.centurylink.mdw.translator">JsonTranslator</a></h3>
-<code><a href="../../../../../../com/centurylink/mdw/translator/JsonTranslator.html#createJsonable-org.json.JSONObject-">createJsonable</a>, <a href="../../../../../../com/centurylink/mdw/translator/JsonTranslator.html#getPackage--">getPackage</a></code></li>
+<code><a href="../../../../../../com/centurylink/mdw/translator/JsonTranslator.html#createJsonable-org.json.JSONObject-java.lang.String-">createJsonable</a>, <a href="../../../../../../com/centurylink/mdw/translator/JsonTranslator.html#getPackage--">getPackage</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.com.centurylink.mdw.variable.VariableTranslator">
@@ -279,7 +282,9 @@ implements <a href="../../../../../../com/centurylink/mdw/translator/JsonTransla
 <pre>public&nbsp;java.lang.Object&nbsp;toObject(java.lang.String&nbsp;str,
                                  java.lang.String&nbsp;type)
                           throws <a href="../../../../../../com/centurylink/mdw/translator/TranslationException.html" title="class in com.centurylink.mdw.translator">TranslationException</a></pre>
-<div class="block">TODO honor runtime type</div>
+<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../../../../../com/centurylink/mdw/translator/DocumentReferenceTranslator.html#toObject-java.lang.String-java.lang.String-">DocumentReferenceTranslator</a></code></span></div>
+<div class="block">toObject converts String to DocumentReference,
+ whereas this methods deserializes to actual object</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../../../../../com/centurylink/mdw/translator/DocumentReferenceTranslator.html#toObject-java.lang.String-java.lang.String-">toObject</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../com/centurylink/mdw/translator/DocumentReferenceTranslator.html" title="class in com.centurylink.mdw.translator">DocumentReferenceTranslator</a></code></dd>
@@ -300,7 +305,9 @@ implements <a href="../../../../../../com/centurylink/mdw/translator/JsonTransla
 <pre>public&nbsp;java.lang.String&nbsp;toString(java.lang.Object&nbsp;obj,
                                  java.lang.String&nbsp;variableType)
                           throws <a href="../../../../../../com/centurylink/mdw/translator/TranslationException.html" title="class in com.centurylink.mdw.translator">TranslationException</a></pre>
-<div class="block">TODO prop-driven JSONABLE_TYPE population</div>
+<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../../../../../com/centurylink/mdw/translator/DocumentReferenceTranslator.html#toString-java.lang.Object-java.lang.String-">DocumentReferenceTranslator</a></code></span></div>
+<div class="block">toString converts DocumentReference to string,
+ whereas this method serializes the actual object to string</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../../../../../com/centurylink/mdw/translator/DocumentReferenceTranslator.html#toString-java.lang.Object-java.lang.String-">toString</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../com/centurylink/mdw/translator/DocumentReferenceTranslator.html" title="class in com.centurylink.mdw.translator">DocumentReferenceTranslator</a></code></dd>
@@ -328,17 +335,18 @@ implements <a href="../../../../../../com/centurylink/mdw/translator/JsonTransla
 </dl>
 </li>
 </ul>
-<a name="fromJson-org.json.JSONObject-">
+<a name="fromJson-org.json.JSONObject-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>fromJson</h4>
-<pre>public&nbsp;java.lang.Object&nbsp;fromJson(org.json.JSONObject&nbsp;json)
+<pre>public&nbsp;java.lang.Object&nbsp;fromJson(org.json.JSONObject&nbsp;json,
+                                 java.lang.String&nbsp;type)
                           throws <a href="../../../../../../com/centurylink/mdw/translator/TranslationException.html" title="class in com.centurylink.mdw.translator">TranslationException</a></pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../../com/centurylink/mdw/translator/JsonTranslator.html#fromJson-org.json.JSONObject-">fromJson</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../com/centurylink/mdw/translator/JsonTranslator.html" title="interface in com.centurylink.mdw.translator">JsonTranslator</a></code></dd>
+<dd><code><a href="../../../../../../com/centurylink/mdw/translator/JsonTranslator.html#fromJson-org.json.JSONObject-java.lang.String-">fromJson</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../com/centurylink/mdw/translator/JsonTranslator.html" title="interface in com.centurylink.mdw.translator">JsonTranslator</a></code></dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../../../com/centurylink/mdw/translator/TranslationException.html" title="class in com.centurylink.mdw.translator">TranslationException</a></code></dd>
 </dl>

@@ -148,11 +148,15 @@ var activeTableTab = "activeTableTab";
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>default java.lang.Object</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/translator/JsonTranslator.html#createJsonable-org.json.JSONObject-">createJsonable</a></span>(org.json.JSONObject&nbsp;json)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/translator/JsonTranslator.html#createJsonable-org.json.JSONObject-java.lang.String-">createJsonable</a></span>(org.json.JSONObject&nbsp;json,
+              java.lang.String&nbsp;type)</code>
+<div class="block">For compatibility</div>
+</td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>java.lang.Object</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/translator/JsonTranslator.html#fromJson-org.json.JSONObject-">fromJson</a></span>(org.json.JSONObject&nbsp;json)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/translator/JsonTranslator.html#fromJson-org.json.JSONObject-java.lang.String-">fromJson</a></span>(org.json.JSONObject&nbsp;json,
+        java.lang.String&nbsp;type)</code>&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a></code></td>
@@ -212,13 +216,14 @@ var activeTableTab = "activeTableTab";
 </dl>
 </li>
 </ul>
-<a name="fromJson-org.json.JSONObject-">
+<a name="fromJson-org.json.JSONObject-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>fromJson</h4>
-<pre>java.lang.Object&nbsp;fromJson(org.json.JSONObject&nbsp;json)
+<pre>java.lang.Object&nbsp;fromJson(org.json.JSONObject&nbsp;json,
+                          java.lang.String&nbsp;type)
                    throws <a href="../../../../com/centurylink/mdw/translator/TranslationException.html" title="class in com.centurylink.mdw.translator">TranslationException</a></pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
@@ -235,15 +240,21 @@ var activeTableTab = "activeTableTab";
 <pre><a href="../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;getPackage()</pre>
 </li>
 </ul>
-<a name="createJsonable-org.json.JSONObject-">
+<a name="createJsonable-org.json.JSONObject-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>createJsonable</h4>
-<pre>default&nbsp;java.lang.Object&nbsp;createJsonable(org.json.JSONObject&nbsp;json)
+<pre>default&nbsp;java.lang.Object&nbsp;createJsonable(org.json.JSONObject&nbsp;json,
+                                        java.lang.String&nbsp;type)
                                  throws java.lang.Exception</pre>
+<div class="block">For compatibility</div>
 <dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>json</code> - </dd>
+<dd><code>type</code> - </dd>
+<dt><span class="returnLabel">Returns:</span></dt>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.lang.Exception</code></dd>
 </dl>
