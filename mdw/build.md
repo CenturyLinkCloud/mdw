@@ -39,6 +39,8 @@
   8b. (Snapshot Build)
     - Snapshot repo: https://oss.sonatype.org/content/repositories/snapshots/com/centurylink/mdw/
 
+  Note : If it doesnt show up in the repository make sure the user has read /write access to nexus mdw repo
+
 9. (Formal builds only) On GitHub:
   - Make sure all closed issues have the current milestone assigned; otherwise they will not be included in release notes.
   - Create a milestone marker for the next build. (https://github.com/CenturyLinkCloud/mdw/milestones/new)
