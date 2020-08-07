@@ -1,7 +1,7 @@
 schemaVersion: '6.1'
 name: com.centurylink.mdw.tests.services.sub
-version: 6.1.37
+version: 6.1.38-SNAPSHOT
 
 dependencies:
-  - com.centurylink.mdw.base v6.1.37
-  - com.centurylink.mdw.testing v6.1.37
+  - com.centurylink.mdw.base v6.1.38-SNAPSHOT
+  - com.centurylink.mdw.testing v6.1.38-SNAPSHOT

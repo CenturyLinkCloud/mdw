@@ -1,6 +1,6 @@
 schemaVersion: '6.1'
 name: com.centurylink.mdw.servicenow
-version: 6.1.37
+version: 6.1.38-SNAPSHOT
 
 dependencies:
-  - com.centurylink.mdw.base v6.1.37
+  - com.centurylink.mdw.base v6.1.38-SNAPSHOT
