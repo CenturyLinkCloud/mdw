@@ -1,6 +1,23 @@
-# Change Log
+# Changelog
+
+## [6.1.37](https://github.com/CenturyLinkCloud/mdw/tree/6.1.37) (2020-08-07)
+
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.36...6.1.37)
+
+**Implemented enhancements:**
+
+- Support for MongoDB 4.x [\#845](https://github.com/CenturyLinkCloud/mdw/issues/845)
+- Gson variable type for JSON content [\#451](https://github.com/CenturyLinkCloud/mdw/issues/451)
+
+**Closed issues:**
+
+- Automated tests misc issues [\#853](https://github.com/CenturyLinkCloud/mdw/issues/853)
+- When stubbing, sometimes message sent from client to stub server is missing last few characters [\#850](https://github.com/CenturyLinkCloud/mdw/issues/850)
+- Automated test expected/actual YAML files cannot be parsed by Groovy if larger than 65k characters [\#849](https://github.com/CenturyLinkCloud/mdw/issues/849)
+- Unit testing using MockRuntimeContext is broken [\#846](https://github.com/CenturyLinkCloud/mdw/issues/846)
 
 ## [6.1.36](https://github.com/CenturyLinkCloud/mdw/tree/6.1.36) (2020-06-05)
+
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.35...6.1.36)
 
 **Implemented enhancements:**
@@ -22,12 +39,13 @@
 - Class `com.centurylink.mdw.cache.impl.PackageCache` has been moved to package `com.centurylink.mdw.cache.asset`.
 - Method `Package.getCloudClassLoader()` has been renamed to `getClassLoader()`.
 - Static method `ApplicationContext.getContextCloudClassLoader()` has been renamed to `getContextPackageClassLoader`.
-- Constructor for `com.centurylink.mdw.event.EventHandlerException` no longer takes a code.  
+- Constructor for `com.centurylink.mdw.event.EventHandlerException` no longer takes a code.
 - API methods `WorkflowServices.invokeServiceProcess()` and `ProcessEngineDriver.invokeServiceProcess()`
   now return a Response model object instead of a plain string.  To unwrap the raw string payload,
   use `Response.getContent()`.
 
 ## [6.1.35](https://github.com/CenturyLinkCloud/mdw/tree/6.1.35) (2020-05-14)
+
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.34...6.1.35)
 
 **Implemented enhancements:**
@@ -37,6 +55,7 @@
 - Use Git history directly instead of ASSET\_REF for inflights [\#816](https://github.com/CenturyLinkCloud/mdw/issues/816)
 
 ## [6.1.34](https://github.com/CenturyLinkCloud/mdw/tree/6.1.34) (2020-05-01)
+
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.33...6.1.34)
 
 **Implemented enhancements:**
@@ -53,6 +72,7 @@
 - Dashboard and milestones compatibility with mdw-mobile [\#835](https://github.com/CenturyLinkCloud/mdw/issues/835)
 
 ## [6.1.33](https://github.com/CenturyLinkCloud/mdw/tree/6.1.33) (2020-04-03)
+
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.32...6.1.33)
 
 **Implemented enhancements:**
@@ -75,6 +95,7 @@
 - CLI process export to HTML/PDF fails to display icons for built-in activities [\#800](https://github.com/CenturyLinkCloud/mdw/issues/800)
 
 ## [6.1.32](https://github.com/CenturyLinkCloud/mdw/tree/6.1.32) (2020-03-06)
+
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.31...6.1.32)
 
 **Implemented enhancements:**
@@ -93,6 +114,7 @@
 - Hub zoom controls can overlay Inspector tab [\#795](https://github.com/CenturyLinkCloud/mdw/issues/795)
 
 ## [6.1.31](https://github.com/CenturyLinkCloud/mdw/tree/6.1.31) (2020-02-14)
+
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.30...6.1.31)
 
 **Implemented enhancements:**
@@ -111,6 +133,7 @@
 - CLI dependencies failure with OpenJDK 11 [\#728](https://github.com/CenturyLinkCloud/mdw/issues/728)
 
 ## [6.1.30](https://github.com/CenturyLinkCloud/mdw/tree/6.1.30) (2020-01-10)
+
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.29...6.1.30)
 
 **Implemented enhancements:**
@@ -132,6 +155,7 @@
   and/or [MDW Studio](https://centurylinkcloud.github.io/mdw/docs/guides/mdw-studio/) version 2.0.2 or later.
 
 ## [6.1.29](https://github.com/CenturyLinkCloud/mdw/tree/6.1.29) (2019-12-13)
+
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.28...6.1.29)
 
 **Implemented enhancements:**
@@ -176,10 +200,11 @@
           <artifactId>groovy-all</artifactId>
           <version>2.5.8</version>
           <type>pom</type>
-      </dependency>  
+      </dependency>
   ```
 
 ## [6.1.28](https://github.com/CenturyLinkCloud/mdw/tree/6.1.28) (2019-11-22)
+
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.27...6.1.28)
 
 **Implemented enhancements:**
@@ -203,6 +228,7 @@
      - https://github.com/CenturyLinkCloud/mdw/blob/master/mdw/database/oracle/mdw_upgrade_6.0_To_6.1.sql
 
 ## [6.1.27](https://github.com/CenturyLinkCloud/mdw/tree/6.1.27) (2019-11-08)
+
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.26...6.1.27)
 
 **Implemented enhancements:**
@@ -221,6 +247,7 @@
 - Cancel/Complete error task should not retrigger already-proceeded flow [\#744](https://github.com/CenturyLinkCloud/mdw/issues/744)
 
 ## [6.1.26](https://github.com/CenturyLinkCloud/mdw/tree/6.1.26) (2019-10-04)
+
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.25...6.1.26)
 
 **Implemented enhancements:**
@@ -249,6 +276,7 @@
     Without upgrading to 1.3.6+, base activities will be missing from Studio's Toolbox view.
 
 ## [6.1.25](https://github.com/CenturyLinkCloud/mdw/tree/6.1.25) (2019-09-06)
+
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.24...6.1.25)
 
 **Implemented enhancements:**
@@ -262,6 +290,7 @@
 - Excel export fails for instance lists in MDWHub [\#734](https://github.com/CenturyLinkCloud/mdw/issues/734)
 
 ## [6.1.24](https://github.com/CenturyLinkCloud/mdw/tree/6.1.24) (2019-08-21)
+
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.23...6.1.24)
 
 **Closed issues:**
@@ -269,6 +298,7 @@
 - Milestone StackOverflowErrors due to duplication in activity/instance hierarchy [\#730](https://github.com/CenturyLinkCloud/mdw/issues/730)
 
 ## [6.1.23](https://github.com/CenturyLinkCloud/mdw/tree/6.1.23) (2019-08-10)
+
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.22...6.1.23)
 
 **Implemented enhancements:**
@@ -294,6 +324,7 @@
     Reasons for this are outlined [in the documentation](https://centurylinkcloud.github.io/mdw/docs/designer/designer-support/).
 
 ## [6.1.22](https://github.com/CenturyLinkCloud/mdw/tree/6.1.22) (2019-07-19)
+
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.21...6.1.22)
 
 **Implemented enhancements:**
@@ -313,6 +344,7 @@
 - Transition delay value is wrong when entered via Hub [\#631](https://github.com/CenturyLinkCloud/mdw/issues/631)
 
 ## [6.1.21](https://github.com/CenturyLinkCloud/mdw/tree/6.1.21) (2019-06-22)
+
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.20...6.1.21)
 
 **Implemented enhancements:**
@@ -328,6 +360,7 @@
 - Include milestones/Main.jsx in React asset precompilation [\#690](https://github.com/CenturyLinkCloud/mdw/issues/690)
 
 ## [6.1.20](https://github.com/CenturyLinkCloud/mdw/tree/6.1.20) (2019-06-08)
+
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.19...6.1.20)
 
 **Implemented enhancements:**
@@ -348,6 +381,7 @@
 - Process count in Dashboard chart can differ from that shown in process list [\#673](https://github.com/CenturyLinkCloud/mdw/issues/673)
 
 ## [6.1.19](https://github.com/CenturyLinkCloud/mdw/tree/6.1.19) (2019-05-23)
+
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.18...6.1.19)
 
 **Closed issues:**
@@ -356,6 +390,7 @@
 - AssetImportMonitor Vercheck exception [\#669](https://github.com/CenturyLinkCloud/mdw/issues/669)
 
 ## [6.1.18](https://github.com/CenturyLinkCloud/mdw/tree/6.1.18) (2019-05-17)
+
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.17...6.1.18)
 
 **Closed issues:**
@@ -366,6 +401,7 @@
 - Support for in-flight dynamic java activity java code [\#641](https://github.com/CenturyLinkCloud/mdw/issues/641)
 
 ## [6.1.17](https://github.com/CenturyLinkCloud/mdw/tree/6.1.17) (2019-05-10)
+
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.16...6.1.17)
 
 **Compatibility Notes:**
@@ -394,6 +430,7 @@
 - Vercheck should ignore line-ending diffs for text assets [\#638](https://github.com/CenturyLinkCloud/mdw/issues/638)
 
 ## [6.1.16](https://github.com/CenturyLinkCloud/mdw/tree/6.1.16) (2019-03-29)
+
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.15...6.1.16)
 
 **Implemented enhancements:**
@@ -417,6 +454,7 @@
 - User-friendly message for tabs and nav links to missing React assets [\#609](https://github.com/CenturyLinkCloud/mdw/issues/609)
 
 ## [6.1.15](https://github.com/CenturyLinkCloud/mdw/tree/6.1.15) (2019-02-21)
+
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.14...6.1.15)
 
 **Compatibility Notes:**
@@ -483,6 +521,7 @@
 - HTTP 500 when querying for Tasks by nonexistent workgroup [\#560](https://github.com/CenturyLinkCloud/mdw/issues/560)
 
 ## [6.1.13](https://github.com/CenturyLinkCloud/mdw/tree/6.1.13) (2019-01-12)
+
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.11...6.1.13)
 
 **Implemented enhancements:**
@@ -521,6 +560,7 @@
 - Dashboard charts are broken [\#462](https://github.com/CenturyLinkCloud/mdw/issues/462)
 
 ## [6.1.11](https://github.com/CenturyLinkCloud/mdw/tree/6.1.11) (2018-11-02)
+
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.09...6.1.11)
 
 **Implemented enhancements:**
@@ -563,6 +603,7 @@
 - Manual task completion in package-level error handlers [\#484](https://github.com/CenturyLinkCloud/mdw/issues/484)
 
 ## [6.1.09](https://github.com/CenturyLinkCloud/mdw/tree/6.1.09) (2018-09-14)
+
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.08...6.1.09)
 
 **Implemented enhancements:**
@@ -592,6 +633,7 @@
 - Error accessing Hub for spring boot app with mdw dependency and not in dev mode [\#487](https://github.com/CenturyLinkCloud/mdw/issues/487)
 
 ## [6.1.08](https://github.com/CenturyLinkCloud/mdw/tree/6.1.08) (2018-08-31)
+
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.07...6.1.08)
 
 **Implemented enhancements:**
@@ -608,6 +650,7 @@
 - Error creating assets in newly-created package in MDWHub [\#461](https://github.com/CenturyLinkCloud/mdw/issues/461)
 
 ## [6.1.07](https://github.com/CenturyLinkCloud/mdw/tree/6.1.07) (2018-08-10)
+
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.06...6.1.07)
 
 **Implemented enhancements:**
