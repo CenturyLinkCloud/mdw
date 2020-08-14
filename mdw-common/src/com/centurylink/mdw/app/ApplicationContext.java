@@ -26,6 +26,7 @@ import com.centurylink.mdw.container.plugin.CommonThreadPool;
 import com.centurylink.mdw.container.plugin.MdwDataSource;
 import com.centurylink.mdw.container.plugin.tomcat.TomcatDataSource;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
+import com.centurylink.mdw.git.VersionControlAccess;
 import com.centurylink.mdw.model.system.Server;
 import com.centurylink.mdw.startup.StartupException;
 import com.centurylink.mdw.util.ClasspathUtil;
@@ -160,6 +161,8 @@ public class ApplicationContext {
                 threadPoolProvider = Class.forName(tpProviderClass).asSubclass(ThreadPoolProvider.class).newInstance();
             }
             logger.info("Thread Pool Provider: " + threadPoolProvider.getClass().getName());
+
+            VersionControlAccess.getVersionControl(ApplicationContext.getAssetRoot());  // Initializes assets in case initial environment startup scenario
 
             startupTime = new Date();
         }
