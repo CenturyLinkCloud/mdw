@@ -120,7 +120,7 @@ public class MdwMain {
 
             if (PropertyManager.getBooleanProperty("mdw.asset.history.preload", true)) {
                 // pre-load asset history
-                AssetHistory.load();
+                AssetHistory.getAsset(0L);  // Loads history if not already loaded
             }
 
             logger.info("Initialize " + AssetImportMonitor.class.getName());
