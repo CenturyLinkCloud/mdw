@@ -1,5 +1,13 @@
 # Changelog
 
+## [6.1.38](https://github.com/CenturyLinkCloud/mdw/tree/6.1.38) (2020-08-19)
+
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.37...6.1.38)
+
+**Closed issues:**
+
+- MDW will not start on clean environment needing to clone Git repo [\#856](https://github.com/CenturyLinkCloud/mdw/issues/856)
+
 ## [6.1.37](https://github.com/CenturyLinkCloud/mdw/tree/6.1.37) (2020-08-07)
 
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.36...6.1.37)
