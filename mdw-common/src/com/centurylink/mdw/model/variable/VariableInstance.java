@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.model.variable;
 
+import com.centurylink.mdw.cache.asset.PackageCache;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.translator.DocumentReferenceTranslator;
@@ -98,6 +99,8 @@ public class VariableInstance implements Jsonable, Serializable, Comparable<Vari
             return value;
         if (data == null)
             return null;
+        if (pkg == null)
+            pkg = PackageCache.getMdwBasePackage();
         value = pkg.getStringValue(type, data);
         return value;
     }
@@ -112,6 +115,8 @@ public class VariableInstance implements Jsonable, Serializable, Comparable<Vari
             return this.data;
         if (value == null)
             return null;
+        if (pkg == null)
+            pkg = PackageCache.getMdwBasePackage();
         data = pkg.getObjectValue(type, value);
         return data;
     }
@@ -127,6 +132,8 @@ public class VariableInstance implements Jsonable, Serializable, Comparable<Vari
             return false;
         if (!value.startsWith("DOCUMENT:"))
             return false;
+        if (pkg == null)
+            pkg = PackageCache.getMdwBasePackage();
         return pkg.getTranslator(type) instanceof DocumentReferenceTranslator;
     }
 
