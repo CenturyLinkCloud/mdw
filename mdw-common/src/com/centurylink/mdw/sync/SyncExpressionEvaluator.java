@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.sync;
 
+import com.centurylink.mdw.cache.asset.PackageCache;
 import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -60,6 +61,11 @@ public class SyncExpressionEvaluator {
             this.syncExpression = getDefaultSyncExpression();
         else
             this.syncExpression = syncExpression;
+
+        if (pkg == null)
+            this.pkg = PackageCache.getMdwBasePackage();
+        else
+            this.pkg = pkg;
     }
 
     /**
