@@ -235,6 +235,7 @@ public class HttpHelper {
 
         connection.prepare("PUT");
 
+        //check content-type
         String contentType = connection.getHeader("Content-Type");
         if (contentType == null)
             contentType = connection.getHeader("content-type");
