@@ -1,6 +1,3 @@
-/**
- * Copyright (c) 2018 CenturyLink, Inc. All Rights Reserved.
- */
 package com.centurylink.mdw.service.rest;
 
 import java.io.File;

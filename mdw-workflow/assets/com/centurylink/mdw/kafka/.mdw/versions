@@ -1,10 +1,10 @@
-KafkaAdapter.java=13
+KafkaAdapter.java=14
 KafkaProducer.proc=7
 KafkaProducer.test=1
 KafkaProducer.yaml=4
-KafkaProducerTest.java=2
-MDWKafkaListener.java=6
-MDWKafkaListenerRegistration.java=5
+KafkaProducerTest.java=3
+MDWKafkaListener.java=7
+MDWKafkaListenerRegistration.java=6
 kafka-clients-1.0.0.jar=1
 kafka.pagelet=1
 kafka.png=1

@@ -1,6 +1,3 @@
-/**
- * Copyright (c) 2018 CenturyLink, Inc. All Rights Reserved.
- */
 package com.centurylink.mdw.model;
 
 public class AppSummary implements Jsonable {

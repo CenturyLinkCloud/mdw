@@ -1,8 +1,8 @@
 schemaVersion: '6.1'
 name: com.centurylink.mdw.tests.script
-version: 6.1.39-SNAPSHOT
+version: 6.1.39
 
 dependencies:
-  - com.centurylink.mdw.base v6.1.39-SNAPSHOT
-  - com.centurylink.mdw.kotlin v6.1.39-SNAPSHOT
-  - com.centurylink.mdw.testing v6.1.39-SNAPSHOT
+  - com.centurylink.mdw.base v6.1.39
+  - com.centurylink.mdw.kotlin v6.1.39
+  - com.centurylink.mdw.testing v6.1.39

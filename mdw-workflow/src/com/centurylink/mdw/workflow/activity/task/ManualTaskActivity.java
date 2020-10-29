@@ -1,18 +1,3 @@
-/*
- * Copyright (C) 2017 CenturyLink, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.centurylink.mdw.workflow.activity.task;
 
 import java.util.HashMap;
@@ -143,7 +128,7 @@ public abstract class ManualTaskActivity extends AbstractWait implements TaskAct
      * The resume method for ManualTaskAndEventWait is handling internal functions related to
      * task completion as well as custom events, so it is not supposed to be overriden. The method
      * is therefore declared as final. To customize handling of events, please override
-     * the method {@link #processOtherMessage(String, String)}
+     * the method
      */
     public final boolean resume(InternalEvent event) throws ActivityException {
         // secondary owner type must be OwnerType.EXTERNAL_EVENT_INSTANCE
@@ -156,8 +141,8 @@ public abstract class ManualTaskActivity extends AbstractWait implements TaskAct
      * of waiting. It re-register the event waits including waiting for task to complete.
      * If any event has already arrived, it processes it immediately.
      *
-     * Customization should be done with the methods {@link #processOtherMessage(String, String)}
-     * and {@link #registerWaitEvents()}.
+     * Customization should be done with the methods
+     * and .
      */
     public final boolean resumeWaiting(InternalEvent event) throws ActivityException {
         boolean done;

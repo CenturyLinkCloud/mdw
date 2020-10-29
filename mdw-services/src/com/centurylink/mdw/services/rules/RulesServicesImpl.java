@@ -1,6 +1,3 @@
-/**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
- */
 package com.centurylink.mdw.services.rules;
 
 import com.centurylink.mdw.cache.asset.PackageCache;

@@ -1,6 +1,3 @@
-/*
- * Copyright (c) 2019 CenturyLink, Inc. All Rights Reserved.
- */
 package com.centurylink.mdw.cli;
 
 import java.io.File;

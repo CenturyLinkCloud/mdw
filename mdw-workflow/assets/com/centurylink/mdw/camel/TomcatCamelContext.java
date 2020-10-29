@@ -1,6 +1,3 @@
-/**
- * Copyright (c) 2017 CenturyLink, Inc. All Rights Reserved.
- */
 package com.centurylink.mdw.camel;
 
 import java.io.IOException;
