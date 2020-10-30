@@ -27,6 +27,7 @@ script:
   - ./gradlew --no-daemon publishAll
 after_failure:
   - cat ../testResults/mdw-function-test-results.json
+  - cat ../testResults/com.centurylink.mdw.tests.workflow/Crossmap.log
 #  - cat ../testResults/com.centurylink.mdw.tests.services/UnparseableResponse.log
 #  - cat ../testResults/com.centurylink.mdw.tests.services/UnparseableResponse.yaml
   - cat mdw.log

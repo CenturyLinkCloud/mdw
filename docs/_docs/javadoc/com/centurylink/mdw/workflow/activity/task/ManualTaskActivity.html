@@ -513,7 +513,7 @@ implements <a href="../../../../../../com/centurylink/mdw/activity/types/TaskAct
 <div class="block">The resume method for ManualTaskAndEventWait is handling internal functions related to
  task completion as well as custom events, so it is not supposed to be overriden. The method
  is therefore declared as final. To customize handling of events, please override
- the method <code>#processOtherMessage(String, String)</code></div>
+ the method</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../../../../../com/centurylink/mdw/activity/types/SuspendableActivity.html#resume-com.centurylink.mdw.model.event.InternalEvent-">resume</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../com/centurylink/mdw/activity/types/SuspendableActivity.html" title="interface in com.centurylink.mdw.activity.types">SuspendableActivity</a></code></dd>
@@ -538,8 +538,8 @@ implements <a href="../../../../../../com/centurylink/mdw/activity/types/TaskAct
  of waiting. It re-register the event waits including waiting for task to complete.
  If any event has already arrived, it processes it immediately.
 
- Customization should be done with the methods <code>#processOtherMessage(String, String)</code>
- and <code>#registerWaitEvents()</code>.</div>
+ Customization should be done with the methods
+ and .</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../../../../../com/centurylink/mdw/activity/types/SuspendableActivity.html#resumeWaiting-com.centurylink.mdw.model.event.InternalEvent-">resumeWaiting</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../com/centurylink/mdw/activity/types/SuspendableActivity.html" title="interface in com.centurylink.mdw.activity.types">SuspendableActivity</a></code></dd>
