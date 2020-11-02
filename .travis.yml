@@ -28,7 +28,8 @@ script:
 after_failure:
   - cat ../testResults/mdw-function-test-results.json
   - cat ../testResults/com.centurylink.mdw.tests.workflow/Crossmap.log
-#  - cat ../testResults/com.centurylink.mdw.tests.services/UnparseableResponse.log
+  - cat ../testResults/com.centurylink.mdw.tests.workflow/ActivityLogging.log
+  - cat ../testResults/com.centurylink.mdw.tests.services/UnparseableResponse.log
 #  - cat ../testResults/com.centurylink.mdw.tests.services/UnparseableResponse.yaml
   - cat mdw.log
   - sleep 9s
