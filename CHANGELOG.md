@@ -1,5 +1,15 @@
 # Changelog
 
+## [6.1.39](https://github.com/CenturyLinkCloud/mdw/tree/6.1.39) (2020-10-29)
+
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.38...6.1.39)
+
+**Implemented enhancements:**
+
+- changing the header of the java code files to remove centurylink [\#862](https://github.com/CenturyLinkCloud/mdw/issues/862)
+- Rebranding from centurylink to Lumen [\#861](https://github.com/CenturyLinkCloud/mdw/issues/861)
+
+
 ## [6.1.38](https://github.com/CenturyLinkCloud/mdw/tree/6.1.38) (2020-08-19)
 
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.37...6.1.38)
