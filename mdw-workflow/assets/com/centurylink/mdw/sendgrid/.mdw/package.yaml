@@ -1,6 +1,6 @@
 schemaVersion: '6.1'
 name: com.centurylink.mdw.sendgrid
-version: 6.1.39
+version: 6.1.40-SNAPSHOT
 
 dependencies:
-  - com.centurylink.mdw.base v6.1.39
+  - com.centurylink.mdw.base v6.1.40-SNAPSHOT

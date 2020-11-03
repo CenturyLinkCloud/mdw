@@ -9,7 +9,7 @@ import io.swagger.annotations.SwaggerDefinition;
  * TODO: /mdw context root is hard-coded in annotation value
  */
 @SwaggerDefinition(
-  info=@Info(title="MDW REST API", description="MDW Application Services", version="6.1.39"),
+  info=@Info(title="MDW REST API", description="MDW Application Services", version="6.1.40"),
   schemes={SwaggerDefinition.Scheme.HTTP, SwaggerDefinition.Scheme.HTTPS},
   basePath="/mdw/api",
   externalDocs=@ExternalDocs(value="MDW", url="https://github.com/CenturyLinkCloud/mdw"))
