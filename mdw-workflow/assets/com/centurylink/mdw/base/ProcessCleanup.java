@@ -75,7 +75,7 @@ public class ProcessCleanup implements com.centurylink.mdw.model.monitor.Schedul
         if (cleanupScript == null) {
             cleanupScript = "Cleanup-Runtime.sql";
         }
-
+        //database
         DatabaseAccess db = new DatabaseAccess(null);
         cleanup(db, cleanupScript, maxProcesses, processExpirationDays, eventExpirationDays,
                 commitInterval, null);
